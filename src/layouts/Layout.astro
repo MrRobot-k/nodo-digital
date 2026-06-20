@@ -7,11 +7,11 @@ interface Props {
 }
 
 const {
-  title = 'Nexova | Software, Webs y Automatización con IA — Cd. Victoria',
+  title = 'Xolventa | Software, Webs y Automatización con IA — Cd. Victoria',
   description = 'Ayudo a negocios locales de Cd. Victoria a automatizar procesos, crear sistemas de venta e inventario, y dar a conocer sus servicios con páginas web profesionales. Pago único o mensual según el proyecto.'
 } = Astro.props;
 
-const domain = 'https://nexova.vercel.app';
+const domain = 'https://xolventa.vercel.app';
 const ogImage = `${domain}/og-image.webp`;
 ---
 <!doctype html>
@@ -41,7 +41,7 @@ const ogImage = `${domain}/og-image.webp`;
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
-      "name": "Nexova",
+      "name": "Xolventa",
       "description": description,
       "url": domain,
       "image": ogImage,

@@ -1,4 +1,4 @@
-# Nexova
+# Xolventa
 
 **Soluciones técnicas para negocios de Cd. Victoria.**
 
@@ -14,4 +14,4 @@ Desarrollo sistemas de venta e inventario, páginas web profesionales y automati
 ## Contacto
 
 WhatsApp: [834 255 0555](https://wa.me/528342550555)  
-Web: https://nexova.vercel.app
+Web: https://xolventa.vercel.app
