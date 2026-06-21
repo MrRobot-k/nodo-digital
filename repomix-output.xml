@@ -312,357 +312,12 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
 export { Textarea }
 </file>
 
-<file path="src/components/ContactForm.tsx">
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-
-const WHATSAPP_NUMBER = '528342550555';
-
-export default function ContactForm() {
-  const [nombre, setNombre] = useState('');
-  const [negocio, setNegocio] = useState('');
-  const [problema, setProblema] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    let mensaje = `Hola, soy ${nombre}.`;
-
-    if (negocio.trim()) {
-      mensaje += ` Tengo un negocio llamado "${negocio}".`;
-    }
-
-    mensaje += `\n\nTe cuento mi situación:\n${problema}`;
-
-    const mensajeCodificado = encodeURIComponent(mensaje);
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensajeCodificado}`;
-
-    window.open(whatsappUrl, '_blank');
-
-    setTimeout(() => {
-      setNombre('');
-      setNegocio('');
-      setProblema('');
-      setIsSubmitting(false);
-    }, 1000);
-  };
-
-  return (
-    <section id="contacto" className="py-20 md:py-28 px-6 bg-background border-t border-border">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-12">
-          <p className="badge text-accent mb-4">Contacto</p>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-balance mb-4">
-            Cu&eacute;ntame qu&eacute; traes entre manos
-          </h2>
-          <p className="text-muted-foreground text-sm md:text-base max-w-lg leading-relaxed">
-            Sin presi&oacute;n. Me cuentas tu situaci&oacute;n y vemos si puedo ayudarte.
-            Te responder&eacute; por WhatsApp para coordinar una pl&aacute;tica.
-          </p>
-        </div>
-
-        <div className="bg-card border border-border rounded-xl p-6 md:p-10 shadow-sm">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-1.5">
-              <Label htmlFor="nombre" className="text-foreground text-sm font-medium">
-                Tu nombre <span className="text-accent">*</span>
-              </Label>
-              <Input
-                id="nombre"
-                type="text"
-                placeholder="Ej: Juan Pérez"
-                value={nombre}
-                onChange={(e) => setNombre(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="negocio" className="text-foreground text-sm font-medium">
-                Nombre de tu negocio <span className="text-muted-foreground text-xs font-normal">(opcional)</span>
-              </Label>
-              <Input
-                id="negocio"
-                type="text"
-                placeholder="Ej: Taquería El Compa, Ferretería Martínez..."
-                value={negocio}
-                onChange={(e) => setNegocio(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="problema" className="text-foreground text-sm font-medium">
-                &iquest;Qu&eacute; necesitas? <span className="text-accent">*</span>
-              </Label>
-              <Textarea
-                id="problema"
-                placeholder="Cuéntame cómo funciona tu negocio, qué te gustaría automatizar, qué sistema necesitas, o qué problema tienes. Entre más claro, mejor."
-                value={problema}
-                onChange={(e) => setProblema(e.target.value)}
-                required
-                rows={5}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-accent text-accent-foreground hover:brightness-110 font-medium py-6 text-sm transition-all duration-200 shadow-lg shadow-accent/20"
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Abriendo WhatsApp...
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                  </svg>
-                  Enviar por WhatsApp
-                </span>
-              )}
-            </Button>
-
-            <p className="text-center text-muted-foreground text-xs">
-              Se abrir&aacute; WhatsApp con tu mensaje listo para enviar. No guardamos tus datos.
-            </p>
-          </form>
-        </div>
-      </div>
-    </section>
-  );
-}
-</file>
-
-<file path="src/components/Services.astro">
----
-<section id="servicios" class="py-20 md:py-28 px-6 bg-background">
-  <div class="max-w-5xl mx-auto">
-    <div class="mb-14">
-      <p class="badge text-accent mb-4">Servicios</p>
-      <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-balance mb-4">
-        Soluciones para los desafíos más comunes de los negocios locales
-      </h2>
-      <p class="text-muted-foreground max-w-lg text-sm md:text-base leading-relaxed">
-        Cada negocio enfrenta desafíos únicos. Aquí están las soluciones más comunes que ayudo a resolver.
-      </p>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-4">
-      <div class="group bg-card border border-border rounded-xl p-6 md:p-7 hover:shadow-lg hover:shadow-black/[0.02] hover:-translate-y-0.5 transition-all duration-300">
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 9v4"/><path d="M10 11h4"/><path d="M6 16h12"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="font-semibold text-foreground mb-1.5">Sistemas de venta e inventario</h3>
-            <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-              &iquest;Usas una app de pago que no termina de convencerte? Te construyo un sistema
-              a tu medida: punto de venta, control de inventario, corte de caja, clientes.
-              Es un desarrollo completo, por lo que se maneja con pago mensual e incluye soporte.
-            </p>
-            <div class="flex flex-wrap gap-1.5">
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Pago mensual</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Soporte incluido</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">PC, tablet y celular</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Personalizado</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group bg-card border border-border rounded-xl p-6 md:p-7 hover:shadow-lg hover:shadow-black/[0.02] hover:-translate-y-0.5 transition-all duration-300">
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="font-semibold text-foreground mb-1.5">P&aacute;ginas web para tu negocio</h3>
-            <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-              Tu negocio merece estar en internet. Te creo una p&aacute;gina donde tus clientes
-              encuentran tus servicios, horarios, ubicaci&oacute;n y pueden contactarte directo.
-              Se ve bien en cualquier dispositivo. Pago &uacute;nico y es tuya.
-            </p>
-            <div class="flex flex-wrap gap-1.5">
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Pago &uacute;nico</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Dise&ntilde;o profesional</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Adaptable a celulares</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">WhatsApp integrado</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group bg-card border border-border rounded-xl p-6 md:p-7 hover:shadow-lg hover:shadow-black/[0.02] hover:-translate-y-0.5 transition-all duration-300">
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a4 4 0 0 0-4 4v1a4 4 0 0 0-4 4 4 4 0 0 0 4 4h1v3a4 4 0 0 0 8 0v-3h1a4 4 0 0 0 4-4 4 4 0 0 0-4-4V6a4 4 0 0 0-4-4z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="font-semibold text-foreground mb-1.5">Automatizaciones con IA</h3>
-            <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-              Esas tareas que haces todos los d&iacute;as y te aburren o te quitan tiempo:
-              responder mensajes, organizar datos, generar reportes, dar seguimiento a clientes.
-              La IA puede hacerlas por ti. Se maneja con pago mensual y soporte continuo.
-            </p>
-            <div class="flex flex-wrap gap-1.5">
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Pago mensual</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Tareas repetitivas</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Respuestas autom&aacute;ticas</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Soporte incluido</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="group bg-card border border-border rounded-xl p-6 md:p-7 hover:shadow-lg hover:shadow-black/[0.02] hover:-translate-y-0.5 transition-all duration-300">
-        <div class="flex items-start gap-4">
-          <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-            </svg>
-          </div>
-          <div>
-            <h3 class="font-semibold text-foreground mb-1.5">Entrevista para tu negocio</h3>
-            <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-              Agendamos una pl&aacute;tica sin ning&uacute;n compromiso. Me cuentas c&oacute;mo trabajas,
-              qu&eacute; te quita tiempo, qu&eacute; tareas odias hacer, qu&eacute; problemas tienes con tu
-              sistema actual. De ah&iacute; vemos si puedo ayudarte.
-            </p>
-            <div class="flex flex-wrap gap-1.5">
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Sin costo</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Sin compromiso</span>
-              <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">Presencial o remoto</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-</file>
-
 <file path="src/lib/utils.ts">
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
-}
-</file>
-
-<file path="src/styles/global.css">
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
-    --font-sans: 'Inter', sans-serif;
-    --color-border: var(--border);
-    --color-input: var(--input);
-    --color-ring: var(--ring);
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-accent: var(--accent);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-destructive: var(--destructive);
-    --color-card: var(--card);
-    --color-card-foreground: var(--card-foreground);
-    --color-popover: var(--popover);
-    --color-popover-foreground: var(--popover-foreground);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
-}
-
-:root {
-    --background: #0a0a0a;
-    --foreground: #f5f5f5;
-    --card: #121212;
-    --card-foreground: #f5f5f5;
-    --popover: #121212;
-    --popover-foreground: #f5f5f5;
-    --primary: #0d1b2a;
-    --primary-foreground: #f5f5f5;
-    --secondary: #1a1a1a;
-    --secondary-foreground: #f5f5f5;
-    --muted: #1a1a1a;
-    --muted-foreground: #888888;
-    --accent: #00d4ff;
-    --accent-foreground: #0a0a0a;
-    --destructive: #ef4444;
-    --border: #2a2a2a;
-    --input: #2a2a2a;
-    --ring: #00d4ff;
-    --chart-1: #00d4ff;
-    --chart-2: #a78bfa;
-    --chart-3: #f59e0b;
-    --chart-4: #10b981;
-    --chart-5: #ef4444;
-    --radius: 0.5rem;
-    --sidebar: #121212;
-    --sidebar-foreground: #f5f5f5;
-    --sidebar-primary: #00d4ff;
-    --sidebar-primary-foreground: #0a0a0a;
-    --sidebar-accent: #1a1a1a;
-    --sidebar-accent-foreground: #f5f5f5;
-    --sidebar-border: #2a2a2a;
-    --sidebar-ring: #00d4ff;
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans scroll-smooth;
-  }
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-  }
-  h1 {
-    font-weight: 700;
-    letter-spacing: -0.04em;
-  }
-}
-
-.badge {
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 0.6875rem;
-  font-weight: 600;
 }
 </file>
 
@@ -721,67 +376,10 @@ pnpm-debug.log*
 }
 </file>
 
-<file path="package.json">
-{
-  "name": "emprendimiento",
-  "type": "module",
-  "version": "0.0.1",
-  "engines": {
-    "node": ">=22.12.0"
-  },
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "@astrojs/react": "^5.0.7",
-    "@base-ui/react": "^1.5.0",
-    "@fontsource-variable/geist": "^5.2.9",
-    "@tailwindcss/vite": "^4.3.1",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "astro": "^6.4.6",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "esbuild": "0.25.2",
-    "lucide-react": "^1.18.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "shadcn": "^4.11.0",
-    "tailwind-merge": "^3.6.0",
-    "tailwindcss": "^4.3.1",
-    "tw-animate-css": "^1.4.0"
-  }
-}
-</file>
-
 <file path="pnpm-workspace.yaml">
 allowBuilds:
   esbuild: true
   sharp: true
-</file>
-
-<file path="tsconfig.json">
-{
-  "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*"
-  ],
-  "exclude": [
-    "dist"
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
 </file>
 
 <file path="public/robots.txt">
@@ -803,109 +401,504 @@ Sitemap: https://xolventa.vercel.app/sitemap.xml
 </urlset>
 </file>
 
+<file path="src/components/ContactForm.tsx">
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+
+const WHATSAPP_NUMBER = '528342550555';
+
+export default function ContactForm() {
+  const [nombre, setNombre] = useState('');
+  const [negocio, setNegocio] = useState('');
+  const [domicilio, setDomicilio] = useState('');
+  const [problema, setProblema] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    let mensaje = `Hola, soy ${nombre}.`;
+
+    if (negocio.trim()) {
+      mensaje += ` Tengo un negocio llamado "${negocio}".`;
+    }
+
+    if (domicilio.trim()) {
+      mensaje += ` Está ubicado en: ${domicilio}.`;
+    }
+
+    mensaje += `\n\nTe cuento mi situación:\n${problema}`;
+
+    const mensajeCodificado = encodeURIComponent(mensaje);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensajeCodificado}`;
+
+    window.open(whatsappUrl, '_blank');
+
+    setTimeout(() => {
+      setNombre('');
+      setNegocio('');
+      setDomicilio('');
+      setProblema('');
+      setIsSubmitting(false);
+    }, 1000);
+  };
+
+  return (
+    <section id="contacto" className="py-20 md:py-28 px-6 bg-background border-t border-border">
+      <div className="max-w-3xl mx-auto">
+        <div className="mb-12">
+          <p className="badge text-accent mb-4">Contacto</p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-balance mb-4">
+            Cu&eacute;ntame qu&eacute; traes entre manos
+          </h2>
+          <p className="text-muted-foreground text-sm md:text-base max-w-lg leading-relaxed">
+            Sin presi&oacute;n. Me cuentas tu situaci&oacute;n y vemos si puedo ayudarte.
+            Te responder&eacute; por WhatsApp para coordinar una pl&aacute;tica.
+          </p>
+        </div>
+
+        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
+          <div className="flex items-center gap-1.5 px-5 py-3 border-b border-border bg-secondary/40">
+            <span className="w-2.5 h-2.5 rounded-full bg-border"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-border"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-border"></span>
+            <span className="ml-2 text-xs text-muted-foreground font-mono-label">nuevo-proyecto.md</span>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-5 p-6 md:p-8">
+            <div className="space-y-1.5">
+              <Label htmlFor="nombre" className="text-foreground text-sm font-medium">
+                Tu nombre <span className="text-accent">*</span>
+              </Label>
+              <Input
+                id="nombre"
+                type="text"
+                placeholder="Ej: Juan Pérez"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="negocio" className="text-foreground text-sm font-medium">
+                Nombre de tu negocio <span className="text-muted-foreground text-xs font-normal">(opcional)</span>
+              </Label>
+              <Input
+                id="negocio"
+                type="text"
+                placeholder="Ej: Taquería El Compa, Ferretería Martínez..."
+                value={negocio}
+                onChange={(e) => setNegocio(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="domicilio" className="text-foreground text-sm font-medium">
+                Domicilio de tu negocio <span className="text-muted-foreground text-xs font-normal">(opcional)</span>
+              </Label>
+              <Input
+                id="domicilio"
+                type="text"
+                placeholder="Ej: Calle Hidalgo 123, Centro, Cd. Victoria"
+                value={domicilio}
+                onChange={(e) => setDomicilio(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="problema" className="text-foreground text-sm font-medium">
+                &iquest;Qu&eacute; necesitas? <span className="text-accent">*</span>
+              </Label>
+              <Textarea
+                id="problema"
+                placeholder="Cuéntame cómo funciona tu negocio, qué te gustaría automatizar, qué sistema necesitas, o qué problema tienes. Entre más claro, mejor."
+                value={problema}
+                onChange={(e) => setProblema(e.target.value)}
+                required
+                rows={5}
+              />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-accent text-accent-foreground hover:brightness-110 font-medium py-6 text-sm transition-all duration-200 shadow-lg shadow-accent/20"
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  </svg>
+                  Abriendo WhatsApp...
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                  </svg>
+                  Enviar por WhatsApp
+                </span>
+              )}
+            </Button>
+
+            <p className="text-center text-muted-foreground text-xs">
+              Se abrir&aacute; WhatsApp con tu mensaje listo para enviar. No guardamos tus datos.
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
+</file>
+
+<file path="src/components/Services.astro">
+---
+const servicios = [
+  {
+    numero: "01",
+    titulo: "Apps personalizadas para tu negocio",
+    texto: "¿Usas una app genérica que no termina de convencerte? Te construyo un sistema a tu medida: punto de venta, control de inventario, citas, clientes, o lo que tu negocio realmente necesite.",
+    tags: ["Pago mensual", "Soporte incluido", "PC, tablet y celular"],
+    destacado: true,
+  },
+  {
+    numero: "02",
+    titulo: "Páginas web para tu negocio",
+    texto: "Tu negocio merece estar en internet. Una página donde tus clientes encuentran tus servicios, horarios y ubicación, y pueden contactarte directo.",
+    tags: ["Pago único", "WhatsApp integrado"],
+  },
+  {
+    numero: "03",
+    titulo: "Automatizaciones con IA",
+    texto: "Esas tareas que haces todos los días y te quitan tiempo: responder mensajes, organizar datos, generar reportes. La IA puede hacerlas por ti.",
+    tags: ["Pago mensual", "Soporte continuo"],
+  },
+  {
+    numero: "04",
+    titulo: "Entrevista para tu negocio",
+    texto: "Agendamos una plática sin compromiso. Me cuentas cómo trabajas y qué te quita tiempo. De ahí vemos si puedo ayudarte.",
+    tags: ["Sin costo", "Presencial o remoto"],
+  },
+];
+---
+<section id="servicios" class="py-20 md:py-28 px-6 bg-background border-t border-border">
+  <div class="max-w-5xl mx-auto">
+    <div class="mb-14 max-w-xl">
+      <p class="badge text-accent mb-4">Servicios</p>
+      <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+        Soluciones para los desafíos más comunes de los negocios locales
+      </h2>
+      <p class="text-muted-foreground text-sm md:text-base leading-relaxed">
+        Cada negocio enfrenta desaf&iacute;os &uacute;nicos. Aqu&iacute; est&aacute;n las soluciones m&aacute;s comunes que ayudo a resolver.
+      </p>
+    </div>
+
+    <div class="border-t border-border">
+      {servicios.map((s) => (
+        <div
+          class:list={[
+            "group grid md:grid-cols-[80px_1fr] gap-4 md:gap-8 py-8 md:py-10 border-b border-border transition-colors",
+            s.destacado && "md:py-12"
+          ]}
+        >
+          <div class="flex md:block items-baseline gap-3">
+            <span class="font-mono-label text-2xl md:text-3xl text-muted-foreground/40 group-hover:text-accent/60 transition-colors">
+              {s.numero}
+            </span>
+          </div>
+          <div class="max-w-2xl">
+            <h3 class:list={["font-semibold text-foreground mb-2", s.destacado ? "text-xl md:text-2xl" : "text-lg"]}>
+              {s.titulo}
+            </h3>
+            <p class="text-muted-foreground text-sm md:text-base leading-relaxed mb-4">
+              {s.texto}
+            </p>
+            <div class="flex flex-wrap gap-2">
+              {s.tags.map((tag) => (
+                <span class="font-mono-label text-[0.6875rem] text-muted-foreground border border-border px-2.5 py-1 rounded-md">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+</file>
+
+<file path="src/styles/global.css">
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: #0a0a0a;
+    --foreground: #f5f5f5;
+    --card: #121212;
+    --card-foreground: #f5f5f5;
+    --popover: #121212;
+    --popover-foreground: #f5f5f5;
+    --primary: #0d1b2a;
+    --primary-foreground: #f5f5f5;
+    --secondary: #1a1a1a;
+    --secondary-foreground: #f5f5f5;
+    --muted: #1a1a1a;
+    --muted-foreground: #888888;
+    --accent: #00d4ff;
+    --accent-foreground: #0a0a0a;
+    --destructive: #ef4444;
+    --border: #2a2a2a;
+    --input: #2a2a2a;
+    --ring: #00d4ff;
+    --chart-1: #00d4ff;
+    --chart-2: #22d3a8;
+    --chart-3: #f59e0b;
+    --chart-4: #10b981;
+    --chart-5: #ef4444;
+    --radius: 0.5rem;
+    --sidebar: #121212;
+    --sidebar-foreground: #f5f5f5;
+    --sidebar-primary: #00d4ff;
+    --sidebar-primary-foreground: #0a0a0a;
+    --sidebar-accent: #1a1a1a;
+    --sidebar-accent-foreground: #f5f5f5;
+    --sidebar-border: #2a2a2a;
+    --sidebar-ring: #00d4ff;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  h1 {
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+  p {
+    text-wrap: pretty;
+  }
+}
+
+.badge {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.font-mono-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+</file>
+
+<file path="astro.config.mjs">
+// @ts-check
+import { defineConfig } from 'astro/config';
+
+import react from '@astrojs/react';
+
+import tailwindcss from '@tailwindcss/vite';
+
+// https://astro.build/config
+export default defineConfig({
+  site: 'https://xolventa.vercel.app',
+  integrations: [react()],
+
+  vite: {
+    plugins: [tailwindcss()]
+  }
+});
+</file>
+
+<file path="package.json">
+{
+  "name": "emprendimiento",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^5.0.7",
+    "@base-ui/react": "^1.5.0",
+    "@fontsource-variable/geist": "^5.2.9",
+    "@tailwindcss/vite": "^4.3.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vercel/analytics": "^2.0.1",
+    "astro": "^6.4.6",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "esbuild": "0.25.2",
+    "lucide-react": "^1.18.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "shadcn": "^4.11.0",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.1",
+    "tw-animate-css": "^1.4.0"
+  }
+}
+</file>
+
+<file path="tsconfig.json">
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+</file>
+
 <file path="src/components/About.astro">
+---
+const pasos = [
+  {
+    n: "1",
+    titulo: "Agendamos una plática",
+    texto: "Sin costo, sin compromiso. Me cuentas cómo funciona tu negocio y qué te gustaría mejorar o qué tareas odias hacer.",
+  },
+  {
+    n: "2",
+    titulo: "Propongo una solución concreta",
+    texto: "Te explico qué puedo hacer, cuánto tiempo tomaría y qué costo tiene. Sin tecnicismos raros ni promesas falsas.",
+  },
+  {
+    n: "3",
+    titulo: "Construyo y entrego",
+    texto: "Desarrollo tu sistema, web o automatización. Te explico cómo usarlo y queda funcionando.",
+  },
+  {
+    n: "4",
+    titulo: "Precios claros desde el inicio",
+    texto: "Cosas sencillas como una página web informativa se pagan una sola vez. Sistemas complejos o automatizaciones se manejan con pago mensual y soporte incluido.",
+  },
+];
+
+const puntos = [
+  "Desarrollado en Cd. Victoria para negocios de la región",
+  "Cada negocio es único, lo que construyo se adapta a ti",
+  "Pago único o mensual según el tipo de proyecto",
+  "Aunque no compres, te ayudo a elegir lo mejor",
+];
 ---
 <section id="about" class="py-20 md:py-28 px-6 bg-card border-t border-border">
   <div class="max-w-5xl mx-auto">
     <div class="grid lg:grid-cols-2 gap-12 md:gap-20 items-start">
       <div>
         <p class="badge text-accent mb-4">C&oacute;mo trabajo</p>
-        <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-balance mb-6">
+        <h2 class="text-3xl md:text-4xl font-bold tracking-tight mb-6">
           Conozco tu negocio, luego te propongo algo &uacute;til
         </h2>
-        <p class="text-muted-foreground leading-relaxed mb-8 text-sm md:text-base">
+        <p class="text-muted-foreground leading-relaxed mb-10 text-sm md:text-base max-w-md">
           Vivo en Cd. Victoria y conozco el d&iacute;a a d&iacute;a de los negocios locales.
           No te voy a vender tecnolog&iacute;a que no necesitas. Primero nos tomamos un caf&eacute;
           o una videollamada, identificamos d&oacute;nde pierdes tiempo y dinero, y de ah&iacute;
           partimos para construir la soluci&oacute;n justa para ti.
         </p>
 
-        <div class="space-y-5">
-          <div class="flex gap-4 group">
-            <div class="flex flex-col items-center">
-              <span class="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0">1</span>
-              <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
+        <div>
+          {pasos.map((p, i) => (
+            <div class="flex gap-4 group">
+              <div class="flex flex-col items-center">
+                <span class="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-mono-label flex-shrink-0">{p.n}</span>
+                {i < pasos.length - 1 && <div class="w-px flex-1 bg-border mt-2"></div>}
+              </div>
+              <div class="pb-7">
+                <h4 class="font-medium text-sm text-foreground mb-1">{p.titulo}</h4>
+                <p class="text-muted-foreground text-sm leading-relaxed">{p.texto}</p>
+              </div>
             </div>
-            <div class="pb-5 group-last:pb-0">
-              <h4 class="font-medium text-sm text-foreground mb-0.5">Agendamos una pl&aacute;tica</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">Sin costo, sin compromiso. Me cuentas c&oacute;mo funciona tu negocio y qu&eacute; te gustar&iacute;a mejorar o qu&eacute; tareas odias hacer.</p>
-            </div>
-          </div>
-          <div class="flex gap-4 group">
-            <div class="flex flex-col items-center">
-              <span class="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0">2</span>
-              <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
-            </div>
-            <div class="pb-5 group-last:pb-0">
-              <h4 class="font-medium text-sm text-foreground mb-0.5">Propongo una soluci&oacute;n concreta</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">Te explico qu&eacute; puedo hacer, cu&aacute;nto tiempo tomar&iacute;a y qu&eacute; costo tiene. Sin tecnicismos raros ni promesas falsas.</p>
-            </div>
-          </div>
-          <div class="flex gap-4 group">
-            <div class="flex flex-col items-center">
-              <span class="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0">3</span>
-              <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
-            </div>
-            <div class="pb-5 group-last:pb-0">
-              <h4 class="font-medium text-sm text-foreground mb-0.5">Construyo y entrego</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">Desarrollo tu sistema, web o automatizaci&oacute;n. Te explico c&oacute;mo usarlo y queda funcionando.</p>
-            </div>
-          </div>
-          <div class="flex gap-4 group">
-            <div class="flex flex-col items-center">
-              <span class="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0">4</span>
-              <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
-            </div>
-            <div class="pb-5 group-last:pb-0">
-              <h4 class="font-medium text-sm text-foreground mb-0.5">Precios claros desde el inicio</h4>
-              <p class="text-muted-foreground text-sm leading-relaxed">Cosas sencillas como una pagina web informativa se pagan una sola vez. Sistemas complejos o automatizaciones se manejan con pago mensual y soporte incluido.</p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      <div>
-        <div class="bg-background border border-border rounded-2xl p-7 md:p-8 relative">
-          <div class="absolute top-4 right-4 w-16 h-16 bg-accent/5 rounded-full blur-xl -z-10"></div>
-          
-          <div class="flex items-center gap-3 mb-6 pb-6 border-b border-border">
-            <div class="w-11 h-11 rounded-full bg-accent flex items-center justify-center text-white text-sm font-semibold">N</div>
-            <div>
-              <div class="text-sm font-medium text-foreground">Xolventa</div>
-              <div class="text-xs text-muted-foreground">Cd. Victoria, Tamaulipas</div>
+      <div class="lg:pt-1">
+        <p class="font-mono-label text-xs text-muted-foreground mb-5">Por qu&eacute; Xolventa</p>
+        <div class="space-y-0">
+          {puntos.map((punto, i) => (
+            <div class:list={["flex gap-4 py-5", i < puntos.length - 1 && "border-b border-border"]}>
+              <span class="font-mono-label text-accent text-sm flex-shrink-0 pt-0.5">0{i + 1}</span>
+              <p class="text-foreground/90 text-sm leading-relaxed">{punto}</p>
             </div>
-          </div>
+          ))}
+        </div>
 
-          <div class="space-y-5">
-            <div class="flex gap-3">
-              <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 9v4"/><path d="M10 11h4"/></svg>
-              <div>
-                <div class="text-sm font-medium text-foreground">Soluciones locales</div>
-                <div class="text-xs text-muted-foreground">Desarrollado en Cd. Victoria para negocios de la regi&oacute;n</div>
-              </div>
-            </div>
-            <div class="flex gap-3">
-              <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-              <div>
-                <div class="text-sm font-medium text-foreground">A tu medida</div>
-                <div class="text-xs text-muted-foreground">Cada negocio es &uacute;nico, como las calles de Cd. Victoria</div>
-              </div>
-            </div>
-            <div class="flex gap-3">
-              <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              <div>
-                <div class="text-sm font-medium text-foreground">Precios justos</div>
-                <div class="text-xs text-muted-foreground">Pago &uacute;nico o mensual seg&uacute;n el proyecto</div>
-              </div>
-            </div>
-            <div class="flex gap-3">
-              <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-              <div>
-                <div class="text-sm font-medium text-foreground">Asesor&iacute;a gratuita</div>
-                <div class="text-xs text-muted-foreground">Aunque no compres, te ayudo a elegir lo mejor</div>
-              </div>
-            </div>
-          </div>
+        <div class="mt-10 rounded-xl border border-accent/20 bg-accent/[0.04] p-6">
+          <p class="text-sm text-foreground/90 leading-relaxed">
+            <span class="text-accent font-medium">Ciudad Victoria, Tamaulipas.</span>
+            {" "}Si tu negocio está aquí, probablemente ya conozco a alguien que trabaja cerca de ti.
+          </p>
         </div>
       </div>
     </div>
@@ -946,8 +939,30 @@ const currentYear = new Date().getFullYear();
 </footer>
 </file>
 
+<file path="src/pages/index.astro">
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Services from '../components/Services.astro';
+import About from '../components/About.astro';
+import ContactForm from '../components/ContactForm.tsx';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout>
+  <main>
+    <Hero />
+    <Services />
+    <About />
+    <ContactForm client:load />
+  </main>
+  <Footer />
+</Layout>
+</file>
+
 <file path="src/layouts/Layout.astro">
 ---
+import Analytics from '@vercel/analytics/astro';
 import '../styles/global.css';
 
 interface Props {
@@ -1016,306 +1031,15 @@ const ogImage = `${domain}/og-image.webp`;
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
     <title>{title}</title>
+    <Analytics />
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased">
     <slot />
   </body>
 </html>
-</file>
-
-<file path="src/pages/index.astro">
----
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import ContactForm from '../components/ContactForm.tsx';
-import Footer from '../components/Footer.astro';
----
-
-<Layout>
-  <main>
-    <Hero />
-
-    <!-- Services -->
-    <section id="servicios" class="py-20 md:py-28 px-6 bg-background border-t border-border">
-      <div class="max-w-5xl mx-auto">
-        <div class="mb-14">
-          <p class="badge text-accent mb-4">Servicios</p>
-          <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-balance mb-4">
-            Soluciones para los desaf&iacute;os m&aacute;s comunes de los negocios locales
-          </h2>
-          <p class="text-muted-foreground max-w-lg text-sm md:text-base leading-relaxed">
-            Cada negocio enfrenta desaf&iacute;os &uacute;nicos. Aqu&iacute; est&aacute;n las soluciones m&aacute;s comunes que ayudo a resolver.
-          </p>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-5">
-          <div class="group relative bg-card border border-border rounded-xl p-6 md:p-7 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_0_24px_-4px_rgba(0,212,255,0.12)]">
-            <div class="flex items-start gap-4">
-              <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-accent/20 transition-colors">
-                <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 9v4"/><path d="M10 11h4"/><path d="M6 16h12"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-foreground mb-1.5">Sistemas de venta e inventario</h3>
-                <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-                  &iquest;Usas una app de pago que no termina de convencerte? Te construyo un sistema
-                  a tu medida: punto de venta, control de inventario, corte de caja, clientes.
-                  Es un desarrollo completo, por lo que se maneja con pago mensual e incluye soporte.
-                </p>
-                <div class="flex flex-wrap gap-1.5">
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Pago mensual</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Soporte incluido</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">PC, tablet y celular</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Personalizado</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="group relative bg-card border border-border rounded-xl p-6 md:p-7 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_0_24px_-4px_rgba(0,212,255,0.12)]">
-            <div class="flex items-start gap-4">
-              <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-accent/20 transition-colors">
-                <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><line x1="2" y1="12" x2="22" y2="12"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-foreground mb-1.5">P&aacute;ginas web para tu negocio</h3>
-                <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-                  Tu negocio merece estar en internet. Te creo una p&aacute;gina donde tus clientes
-                  encuentran tus servicios, horarios, ubicaci&oacute;n y pueden contactarte directo.
-                  Se ve bien en cualquier dispositivo. Pago &uacute;nico y es tuya.
-                </p>
-                <div class="flex flex-wrap gap-1.5">
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Pago &uacute;nico</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Dise&ntilde;o profesional</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Adaptable a celulares</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">WhatsApp integrado</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="group relative bg-card border border-border rounded-xl p-6 md:p-7 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_0_24px_-4px_rgba(0,212,255,0.12)]">
-            <div class="flex items-start gap-4">
-              <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-accent/20 transition-colors">
-                <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2a4 4 0 0 0-4 4v1a4 4 0 0 0-4 4 4 4 0 0 0 4 4h1v3a4 4 0 0 0 8 0v-3h1a4 4 0 0 0 4-4 4 4 0 0 0-4-4V6a4 4 0 0 0-4-4z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-foreground mb-1.5">Automatizaciones con IA</h3>
-                <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-                  Esas tareas que haces todos los d&iacute;as y te aburren o te quitan tiempo:
-                  responder mensajes, organizar datos, generar reportes, dar seguimiento a clientes.
-                  La IA puede hacerlas por ti. Se maneja con pago mensual y soporte continuo.
-                </p>
-                <div class="flex flex-wrap gap-1.5">
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Pago mensual</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Tareas repetitivas</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Respuestas autom&aacute;ticas</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Soporte incluido</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="group relative bg-card border border-border rounded-xl p-6 md:p-7 transition-all duration-300 hover:border-accent/30 hover:shadow-[0_0_24px_-4px_rgba(0,212,255,0.12)]">
-            <div class="flex items-start gap-4">
-              <div class="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-accent/20 transition-colors">
-                <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
-              </div>
-              <div>
-                <h3 class="font-semibold text-foreground mb-1.5">Entrevista para tu negocio</h3>
-                <p class="text-muted-foreground text-sm leading-relaxed mb-3">
-                  Agendamos una pl&aacute;tica sin ning&uacute;n compromiso. Me cuentas c&oacute;mo trabajas,
-                  qu&eacute; te quita tiempo, qu&eacute; tareas odias hacer, qu&eacute; problemas tienes con tu
-                  sistema actual. De ah&iacute; vemos si puedo ayudarte.
-                </p>
-                <div class="flex flex-wrap gap-1.5">
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Sin costo</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Sin compromiso</span>
-                  <span class="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md border border-border/50">Presencial o remoto</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- About -->
-    <section id="about" class="py-20 md:py-28 px-6 bg-background border-t border-border">
-      <div class="max-w-5xl mx-auto">
-        <div class="grid lg:grid-cols-2 gap-12 md:gap-20 items-start">
-          <div>
-            <p class="badge text-accent mb-4">C&oacute;mo trabajo</p>
-            <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-balance mb-6">
-              Primero te escucho, luego te propongo algo &uacute;til
-            </h2>
-            <p class="text-muted-foreground leading-relaxed mb-8 text-sm md:text-base">
-              Vivo en Cd. Victoria y conozco el d&iacute;a a d&iacute;a de los negocios locales.
-              No te voy a vender tecnolog&iacute;a que no necesitas. Primero nos tomamos un caf&eacute;
-              o una videollamada, identificamos d&oacute;nde pierdes tiempo y dinero, y de ah&iacute;
-              partimos para construir la soluci&oacute;n justa para ti.
-            </p>
-
-            <div class="space-y-5">
-              <div class="flex gap-4 group">
-                <div class="flex flex-col items-center">
-                  <span class="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0 border border-accent/20">1</span>
-                  <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
-                </div>
-                <div class="pb-5 group-last:pb-0">
-                  <h4 class="font-medium text-sm text-foreground mb-0.5">Agendamos una pl&aacute;tica</h4>
-                  <p class="text-muted-foreground text-sm leading-relaxed">Sin costo, sin compromiso. Me cuentas c&oacute;mo funciona tu negocio y qu&eacute; te gustar&iacute;a mejorar o qu&eacute; tareas odias hacer.</p>
-                </div>
-              </div>
-              <div class="flex gap-4 group">
-                <div class="flex flex-col items-center">
-                  <span class="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0 border border-accent/20">2</span>
-                  <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
-                </div>
-                <div class="pb-5 group-last:pb-0">
-                  <h4 class="font-medium text-sm text-foreground mb-0.5">Propongo una soluci&oacute;n concreta</h4>
-                  <p class="text-muted-foreground text-sm leading-relaxed">Te explico qu&eacute; puedo hacer, cu&aacute;nto tiempo tomar&iacute;a y qu&eacute; costo tiene. Sin tecnicismos raros ni promesas falsas.</p>
-                </div>
-              </div>
-              <div class="flex gap-4 group">
-                <div class="flex flex-col items-center">
-                  <span class="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0 border border-accent/20">3</span>
-                  <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
-                </div>
-                <div class="pb-5 group-last:pb-0">
-                  <h4 class="font-medium text-sm text-foreground mb-0.5">Construyo y entrego</h4>
-                  <p class="text-muted-foreground text-sm leading-relaxed">Desarrollo tu sistema, web o automatizaci&oacute;n. Te explico c&oacute;mo usarlo y queda funcionando.</p>
-                </div>
-              </div>
-              <div class="flex gap-4 group">
-                <div class="flex flex-col items-center">
-                  <span class="w-7 h-7 rounded-full bg-accent/15 flex items-center justify-center text-accent text-xs font-semibold flex-shrink-0 border border-accent/20">4</span>
-                  <div class="w-px flex-1 bg-border mt-2 group-last:hidden"></div>
-                </div>
-                <div class="pb-5 group-last:pb-0">
-                  <h4 class="font-medium text-sm text-foreground mb-0.5">Precios claros desde el inicio</h4>
-                  <p class="text-muted-foreground text-sm leading-relaxed">Cosas sencillas como una pagina web informativa se pagan una sola vez. Sistemas complejos o automatizaciones se manejan con pago mensual y soporte incluido.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div class="bg-card border border-border rounded-2xl p-7 md:p-8 relative">
-              <div class="absolute top-4 right-4 w-16 h-16 bg-accent/8 rounded-full blur-xl -z-10"></div>
-
-              <div class="flex items-center gap-3 mb-6 pb-6 border-b border-border">
-                <div class="w-11 h-11 rounded-full bg-accent flex items-center justify-center text-accent-foreground text-sm font-semibold shadow-sm shadow-accent/20">N</div>
-                <div>
-                  <div class="text-sm font-medium text-foreground">Xolventa</div>
-                  <div class="text-xs text-muted-foreground">Cd. Victoria, Tamaulipas</div>
-                </div>
-              </div>
-
-              <div class="space-y-5">
-                <div class="flex gap-3">
-                  <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 9v4"/><path d="M10 11h4"/></svg>
-                  <div>
-                    <div class="text-sm font-medium text-foreground">Soluciones locales</div>
-                    <div class="text-xs text-muted-foreground">Desarrollado en Cd. Victoria para negocios de la regi&oacute;n</div>
-                  </div>
-                </div>
-                <div class="flex gap-3">
-                  <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                  <div>
-                    <div class="text-sm font-medium text-foreground">A tu medida</div>
-                    <div class="text-xs text-muted-foreground">Cada negocio es &uacute;nico, como las calles de Cd. Victoria</div>
-                  </div>
-                </div>
-                <div class="flex gap-3">
-                  <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                  <div>
-                    <div class="text-sm font-medium text-foreground">Precios justos</div>
-                    <div class="text-xs text-muted-foreground">Pago &uacute;nico o mensual seg&uacute;n el proyecto</div>
-                  </div>
-                </div>
-                <div class="flex gap-3">
-                  <svg class="w-4 h-4 text-accent mt-0.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
-                  <div>
-                    <div class="text-sm font-medium text-foreground">Asesor&iacute;a gratuita</div>
-                    <div class="text-xs text-muted-foreground">Aunque no compres, te ayudo a elegir lo mejor</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <ContactForm client:load />
-  </main>
-  <Footer />
-</Layout>
-</file>
-
-<file path="astro.config.mjs">
-// @ts-check
-import { defineConfig } from 'astro/config';
-
-import react from '@astrojs/react';
-
-import tailwindcss from '@tailwindcss/vite';
-
-// https://astro.build/config
-export default defineConfig({
-  site: 'https://xolventa.vercel.app',
-  integrations: [react()],
-
-  vite: {
-    plugins: [tailwindcss()]
-  }
-});
-</file>
-
-<file path="src/components/Hero.astro">
-<section class="relative overflow-hidden bg-background text-foreground">
-  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-    <div class="absolute -top-48 -right-48 w-[700px] h-[700px] bg-accent/5 rounded-full blur-[150px]"></div>
-    <div class="absolute -bottom-48 -left-48 w-[500px] h-[500px] bg-accent/3 rounded-full blur-[120px]"></div>
-  </div>
-
-  <div class="relative max-w-5xl mx-auto px-6 py-20 md:py-32">
-    <div class="max-w-3xl">
-      <img src="/logo-xolventa.png" alt="Xolventa" class="w-full max-w-lg mx-0 mb-12 brightness-[1.02]" />
-
-      <p class="badge text-accent mb-6 tracking-[0.12em]">CD. VICTORIA, TAMAULIPAS</p>
-
-      <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold tracking-[-0.04em] leading-[1.05] mb-6 text-balance text-foreground">
-        Soluciones técnicas personalizadas para negocios de <span class="text-accent">Cd. Victoria</span>
-      </h1>
-
-      <p class="text-muted-foreground text-base md:text-lg max-w-xl leading-relaxed mb-10">
-        Automatiza procesos, controla tu inventario, mejora tu presencia online. Sin rodeos, sin tecnolog&iacute;a que no necesitas.
-      </p>
-
-      <div class="flex flex-wrap gap-4">
-        <a href="#contacto" class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent text-accent-foreground font-medium px-6 py-3 text-sm hover:brightness-110 transition-all duration-200 shadow-lg shadow-accent/20">
-          Cu&eacute;ntame tu proyecto
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-        <a href="#servicios" class="inline-flex items-center justify-center gap-2 rounded-lg border border-border text-foreground font-medium px-6 py-3 text-sm hover:bg-secondary transition-all duration-200">
-          Ver servicios
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
 </file>
 
 <file path="README.md">
@@ -1337,6 +1061,86 @@ Desarrollo sistemas de venta e inventario, páginas web profesionales y automati
 
 WhatsApp: [834 255 0555](https://wa.me/528342550555)  
 Web: [xolventa.vercel.app](https://xolventa.vercel.app)
+</file>
+
+<file path="src/components/Hero.astro">
+<section class="relative overflow-hidden bg-background text-foreground border-b border-border">
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+    <div class="absolute top-0 right-0 w-px h-full bg-linear-to-b from-transparent via-border to-transparent hidden lg:block" style="left: 58%"></div>
+    <div class="absolute -top-32 right-0 w-105 h-105 bg-accent/60 rounded-full blur-[140px]"></div>
+  </div>
+
+  <div class="relative max-w-6xl mx-auto px-6 py-16 md:py-24">
+    <div class="grid lg:grid-cols-[1fr_420px] gap-12 lg:gap-16 items-start">
+      <div class="lg:pt-4">
+        <img src="/logo-xolventa.png" alt="Xolventa" class="h-14 w-auto mb-10" />
+
+        <p class="badge text-accent mb-5">Cd. Victoria, Tamaulipas</p>
+
+        <h1 class="text-4xl sm:text-5xl md:text-[3.4rem] font-bold tracking-[-0.04em] leading-[1.04] mb-6 text-foreground">
+          Tecnología a la medida de tu negocio, no al revés
+        </h1>
+
+        <p class="text-muted-foreground text-base md:text-lg max-w-md leading-relaxed mb-10">
+          Apps personalizadas, páginas web y automatizaciones construidas para cómo trabajas tú &mdash;no para una plantilla gen&eacute;rica. Sin tecnología que no necesitas.
+        </p>
+
+        <div class="flex flex-wrap gap-3 mb-12">
+          <a href="#contacto" class="inline-flex items-center justify-center gap-2 rounded-lg bg-accent text-accent-foreground font-medium px-6 py-3 text-sm hover:brightness-110 transition-all duration-200 shadow-lg shadow-accent/20">
+            Cu&eacute;ntame tu proyecto
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="#servicios" class="inline-flex items-center justify-center gap-2 rounded-lg border border-border text-foreground font-medium px-6 py-3 text-sm hover:bg-secondary transition-all duration-200">
+            Ver servicios
+          </a>
+        </div>
+
+        <div class="flex items-center gap-6 text-xs text-muted-foreground font-mono-label">
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+            Asesoría inicial sin costo
+          </span>
+          <span class="flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-accent"></span>
+            Pago único o mensual
+          </span>
+        </div>
+      </div>
+
+      <div class="lg:pt-4">
+        <div class="rounded-xl border border-border bg-card overflow-hidden shadow-2xl shadow-black/40">
+          <div class="flex items-center gap-1.5 px-4 py-3 border-b border-border bg-secondary/40">
+            <span class="w-2.5 h-2.5 rounded-full bg-border"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-border"></span>
+            <span class="w-2.5 h-2.5 rounded-full bg-border"></span>
+            <span class="ml-2 text-xs text-muted-foreground font-mono-label">nuevo-proyecto.md</span>
+          </div>
+          <div class="p-5 font-mono-label text-[13px] leading-relaxed">
+            <p class="text-muted-foreground mb-3"><span class="text-accent">#</span> Diagnóstico inicial</p>
+            <p class="text-foreground/90 mb-4">"Llevo todo a mano y se me olvidan<br/>cosas, quiero algo hecho para mí."</p>
+
+            <p class="text-muted-foreground mb-3"><span class="text-accent">#</span> Solución propuesta</p>
+            <div class="space-y-2 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="text-accent">✓</span>
+                <span class="text-foreground/80">App a la medida de tu proceso</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-accent">✓</span>
+                <span class="text-foreground/80">Sin pasos ni pantallas de más</span>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-border flex items-center justify-between">
+              <span class="text-muted-foreground">tiempo estimado</span>
+              <span class="text-accent">1 mes</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 </file>
 
 </files>
