@@ -102,7 +102,7 @@ export default function HeroSection() {
       </div>
 
       {/* ── Navigation ── */}
-      <header className="absolute top-0 left-0 right-0 z-50">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#070b0a]/60 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
           <span className="text-white text-lg font-bold tracking-[0.15em]">
             XOLVENTA
