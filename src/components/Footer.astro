@@ -4,13 +4,13 @@ const currentYear = new Date().getFullYear();
 
 <footer class="border-t border-white/10 py-16 px-6 relative overflow-hidden">
   {/* Ambient background styling */}
-  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-32 bg-[--color-accent] rounded-t-[100%] mix-blend-screen opacity-[0.02] filter blur-[64px] pointer-events-none"></div>
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-32 bg-[--color-accent] rounded-t-[100%] mix-blend-screen opacity-[0.02] filter blur-3x1 pointer-events-none"></div>
 
   <div class="max-w-6xl mx-auto relative z-10">
     <div class="grid md:grid-cols-4 gap-12 mb-16">
       <div class="md:col-span-2">
         <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 bg-gradient-to-br from-[--color-accent] to-emerald-700 flex items-center justify-center rounded-[--radius] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+          <div class="w-10 h-10 bg-linear-to-br from-[--color-accent] to-emerald-700 flex items-center justify-center rounded-[--radius] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
             <span class="text-white font-bold text-sm">X</span>
           </div>
           <span class="text-2xl font-bold tracking-tight text-white">Xolventa</span>
@@ -43,7 +43,7 @@ const currentYear = new Date().getFullYear();
       </div>
     </div>
 
-    <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8"></div>
+    <div class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent mb-8"></div>
 
     <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
       <p class="text-sm text-zinc-500">

@@ -40,13 +40,37 @@ The content is organized as follows:
 </file_summary>
 
 <directory_structure>
+.agents/
+  skills/
+    playwright-cli/
+      references/
+        element-attributes.md
+        playwright-tests.md
+        request-mocking.md
+        running-code.md
+        session-management.md
+        spec-driven-testing.md
+        storage-state.md
+        test-generation.md
+        tracing.md
+        video-recording.md
+      SKILL.md
+.mind/
+  checkpoints/
+    checkpoint-20260625-145131.json
+  memories/
+    local-mind-setup.json
+  links.json
+  mind.sh
+  space.json
+.playwright-cli/
+  page-2026-06-25T15-12-23-571Z.yml
 icons/
   logo-xolventa.png
 public/
   favicon.png
   logo-xolventa.png
   robot.png
-  robot.svg
   robots.txt
   sitemap.xml
 src/
@@ -61,6 +85,7 @@ src/
     ContactForm.tsx
     Footer.astro
     Hero.astro
+    HeroSection.tsx
     Services.astro
   layouts/
     Layout.astro
@@ -72,79 +97,2508 @@ src/
     global.css
 .gitignore
 astro.config.mjs
+CLAUDE.md
 components.json
 package.json
 pnpm-workspace.yaml
 README.md
+skills-lock.json
 tsconfig.json
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
 
-<file path="public/robot.svg">
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-robot"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M6 6a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v4a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2l0 -4" /><path d="M12 2v2" /><path d="M9 12v9" /><path d="M15 12v9" /><path d="M5 16l4 -2" /><path d="M15 14l4 2" /><path d="M9 18h6" /><path d="M10 8v.01" /><path d="M14 8v.01" /></svg>
+<file path=".agents/skills/playwright-cli/references/element-attributes.md">
+# Inspecting Element Attributes
+
+When the snapshot doesn't show an element's `id`, `class`, `data-*` attributes, or other DOM properties, use `eval` to inspect them.
+
+## Examples
+
+```bash
+playwright-cli snapshot
+# snapshot shows a button as e7 but doesn't reveal its id or data attributes
+
+# get the element's id
+playwright-cli eval "el => el.id" e7
+
+# get all CSS classes
+playwright-cli eval "el => el.className" e7
+
+# get a specific attribute
+playwright-cli eval "el => el.getAttribute('data-testid')" e7
+playwright-cli eval "el => el.getAttribute('aria-label')" e7
+
+# get a computed style property
+playwright-cli eval "el => getComputedStyle(el).display" e7
+```
 </file>
 
-<file path="src/components/ui/button.tsx">
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
-import { cva, type VariantProps } from "class-variance-authority"
+<file path=".agents/skills/playwright-cli/references/playwright-tests.md">
+# Running Playwright Tests
 
-import { cn } from "@/lib/utils"
+To run Playwright tests, use the `npx playwright test` command, or a package manager script. To avoid opening the interactive html report, use `PLAYWRIGHT_HTML_OPEN=never` environment variable.
 
-const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
-        outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
-        ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
-        destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
-        "icon-lg": "size-9",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
-    },
+```bash
+# Run all tests
+PLAYWRIGHT_HTML_OPEN=never npx playwright test
+
+# Run all tests through a custom npm script
+PLAYWRIGHT_HTML_OPEN=never npm run special-test-command
+```
+
+# Debugging Playwright Tests
+
+To debug a failing Playwright test, run it with `--debug=cli` option. This command will pause the test at the start and print the debugging instructions.
+
+**IMPORTANT**: run the command in the background and check the output until "Debugging Instructions" is printed. Make sure to stop the command after you have finished.
+
+Once instructions containing a session name are printed, use `playwright-cli` to attach the session and explore the page.
+
+```bash
+# Run the test
+PLAYWRIGHT_HTML_OPEN=never npx playwright test --debug=cli
+# ...
+# ... debugging instructions for "tw-abcdef" session ...
+# ...
+
+# Attach to the test
+playwright-cli attach tw-abcdef
+```
+
+Keep the test running in the background while you explore and look for a fix.
+The test is paused at the start, so you should step over or pause at a particular location
+where the problem is most likely to be.
+
+Every action you perform with `playwright-cli` generates corresponding Playwright TypeScript code.
+This code appears in the output and can be copied directly into the test. Most of the time, a specific locator or an expectation should be updated, but it could also be a bug in the app. Use your judgement.
+
+After fixing the test, stop the background test run. Rerun to check that test passes.
+</file>
+
+<file path=".agents/skills/playwright-cli/references/request-mocking.md">
+# Request Mocking
+
+Intercept, mock, modify, and block network requests.
+
+## CLI Route Commands
+
+```bash
+# Mock with custom status
+playwright-cli route "**/*.jpg" --status=404
+
+# Mock with JSON body
+playwright-cli route "**/api/users" --body='[{"id":1,"name":"Alice"}]' --content-type=application/json
+
+# Mock with custom headers
+playwright-cli route "**/api/data" --body='{"ok":true}' --header="X-Custom: value"
+
+# Remove headers from requests
+playwright-cli route "**/*" --remove-header=cookie,authorization
+
+# List active routes
+playwright-cli route-list
+
+# Remove a route or all routes
+playwright-cli unroute "**/*.jpg"
+playwright-cli unroute
+```
+
+## URL Patterns
+
+```
+**/api/users           - Exact path match
+**/api/*/details       - Wildcard in path
+**/*.{png,jpg,jpeg}    - Match file extensions
+**/search?q=*          - Match query parameters
+```
+
+## Advanced Mocking with run-code
+
+For conditional responses, request body inspection, response modification, or delays:
+
+### Conditional Response Based on Request
+
+```bash
+playwright-cli run-code "async page => {
+  await page.route('**/api/login', route => {
+    const body = route.request().postDataJSON();
+    if (body.username === 'admin') {
+      route.fulfill({ body: JSON.stringify({ token: 'mock-token' }) });
+    } else {
+      route.fulfill({ status: 401, body: JSON.stringify({ error: 'Invalid' }) });
+    }
+  });
+}"
+```
+
+### Modify Real Response
+
+```bash
+playwright-cli run-code "async page => {
+  await page.route('**/api/user', async route => {
+    const response = await route.fetch();
+    const json = await response.json();
+    json.isPremium = true;
+    await route.fulfill({ response, json });
+  });
+}"
+```
+
+### Simulate Network Failures
+
+```bash
+playwright-cli run-code "async page => {
+  await page.route('**/api/offline', route => route.abort('internetdisconnected'));
+}"
+# Options: connectionrefused, timedout, connectionreset, internetdisconnected
+```
+
+### Delayed Response
+
+```bash
+playwright-cli run-code "async page => {
+  await page.route('**/api/slow', async route => {
+    await new Promise(r => setTimeout(r, 3000));
+    route.fulfill({ body: JSON.stringify({ data: 'loaded' }) });
+  });
+}"
+```
+</file>
+
+<file path=".agents/skills/playwright-cli/references/running-code.md">
+# Running Custom Playwright Code
+
+Use `run-code` to execute arbitrary Playwright code for advanced scenarios not covered by CLI commands.
+
+## Syntax
+
+```bash
+playwright-cli run-code "async page => {
+  // Your Playwright code here
+  // Access page.context() for browser context operations
+}"
+```
+
+You can also load the function from a file:
+
+```bash
+playwright-cli run-code --filename=./my-script.js
+```
+
+
+The code must be a single function expression, it is wrapped in `(...)` and evaluated.
+import/export/require syntax is not supported.
+
+## Geolocation
+
+```bash
+# Grant geolocation permission and set location
+playwright-cli run-code "async page => {
+  await page.context().grantPermissions(['geolocation']);
+  await page.context().setGeolocation({ latitude: 37.7749, longitude: -122.4194 });
+}"
+
+# Set location to London
+playwright-cli run-code "async page => {
+  await page.context().grantPermissions(['geolocation']);
+  await page.context().setGeolocation({ latitude: 51.5074, longitude: -0.1278 });
+}"
+
+# Clear geolocation override
+playwright-cli run-code "async page => {
+  await page.context().clearPermissions();
+}"
+```
+
+## Permissions
+
+```bash
+# Grant multiple permissions
+playwright-cli run-code "async page => {
+  await page.context().grantPermissions([
+    'geolocation',
+    'notifications',
+    'camera',
+    'microphone'
+  ]);
+}"
+
+# Grant permissions for specific origin
+playwright-cli run-code "async page => {
+  await page.context().grantPermissions(['clipboard-read'], {
+    origin: 'https://example.com'
+  });
+}"
+```
+
+## Media Emulation
+
+```bash
+# Emulate dark color scheme
+playwright-cli run-code "async page => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+}"
+
+# Emulate light color scheme
+playwright-cli run-code "async page => {
+  await page.emulateMedia({ colorScheme: 'light' });
+}"
+
+# Emulate reduced motion
+playwright-cli run-code "async page => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+}"
+
+# Emulate print media
+playwright-cli run-code "async page => {
+  await page.emulateMedia({ media: 'print' });
+}"
+```
+
+## Wait Strategies
+
+```bash
+# Wait for network idle
+playwright-cli run-code "async page => {
+  await page.waitForLoadState('networkidle');
+}"
+
+# Wait for specific element
+playwright-cli run-code "async page => {
+  await page.locator('.loading').waitFor({ state: 'hidden' });
+}"
+
+# Wait for function to return true
+playwright-cli run-code "async page => {
+  await page.waitForFunction(() => window.appReady === true);
+}"
+
+# Wait with timeout
+playwright-cli run-code "async page => {
+  await page.locator('.result').waitFor({ timeout: 10000 });
+}"
+```
+
+## Frames and Iframes
+
+```bash
+# Work with iframe
+playwright-cli run-code "async page => {
+  const frame = page.locator('iframe#my-iframe').contentFrame();
+  await frame.locator('button').click();
+}"
+
+# Get all frames
+playwright-cli run-code "async page => {
+  const frames = page.frames();
+  return frames.map(f => f.url());
+}"
+```
+
+## File Downloads
+
+```bash
+# Handle file download
+playwright-cli run-code "async page => {
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('link', { name: 'Download' }).click();
+  const download = await downloadPromise;
+  await download.saveAs('./downloaded-file.pdf');
+  return download.suggestedFilename();
+}"
+```
+
+## Clipboard
+
+```bash
+# Read clipboard (requires permission)
+playwright-cli run-code "async page => {
+  await page.context().grantPermissions(['clipboard-read']);
+  return await page.evaluate(() => navigator.clipboard.readText());
+}"
+
+# Write to clipboard
+playwright-cli run-code "async page => {
+  await page.evaluate(text => navigator.clipboard.writeText(text), 'Hello clipboard!');
+}"
+```
+
+## Page Information
+
+```bash
+# Get page title
+playwright-cli run-code "async page => {
+  return await page.title();
+}"
+
+# Get current URL
+playwright-cli run-code "async page => {
+  return page.url();
+}"
+
+# Get page content
+playwright-cli run-code "async page => {
+  return await page.content();
+}"
+
+# Get viewport size
+playwright-cli run-code "async page => {
+  return page.viewportSize();
+}"
+```
+
+## JavaScript Execution
+
+```bash
+# Execute JavaScript and return result
+playwright-cli run-code "async page => {
+  return await page.evaluate(() => {
+    return {
+      userAgent: navigator.userAgent,
+      language: navigator.language,
+      cookiesEnabled: navigator.cookieEnabled
+    };
+  });
+}"
+
+# Pass arguments to evaluate
+playwright-cli run-code "async page => {
+  const multiplier = 5;
+  return await page.evaluate(m => document.querySelectorAll('li').length * m, multiplier);
+}"
+```
+
+## Error Handling
+
+```bash
+# Try-catch in run-code
+playwright-cli run-code "async page => {
+  try {
+    await page.getByRole('button', { name: 'Submit' }).click({ timeout: 1000 });
+    return 'clicked';
+  } catch (e) {
+    return 'element not found';
   }
-)
+}"
+```
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-  return (
-    <ButtonPrimitive
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+## Complex Workflows
+
+```bash
+# Login and save state
+playwright-cli run-code "async page => {
+  await page.goto('https://example.com/login');
+  await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('secret');
+  await page.getByRole('button', { name: 'Sign in' }).click();
+  await page.waitForURL('**/dashboard');
+  await page.context().storageState({ path: 'auth.json' });
+  return 'Login successful';
+}"
+
+# Scrape data from multiple pages
+playwright-cli run-code "async page => {
+  const results = [];
+  for (let i = 1; i <= 3; i++) {
+    await page.goto(\`https://example.com/page/\${i}\`);
+    const items = await page.locator('.item').allTextContents();
+    results.push(...items);
+  }
+  return results;
+}"
+```
+</file>
+
+<file path=".agents/skills/playwright-cli/references/session-management.md">
+# Browser Session Management
+
+Run multiple isolated browser sessions concurrently with state persistence.
+
+## Named Browser Sessions
+
+Use `-s` flag to isolate browser contexts:
+
+```bash
+# Browser 1: Authentication flow
+playwright-cli -s=auth open https://app.example.com/login
+
+# Browser 2: Public browsing (separate cookies, storage)
+playwright-cli -s=public open https://example.com
+
+# Commands are isolated by browser session
+playwright-cli -s=auth fill e1 "user@example.com"
+playwright-cli -s=public snapshot
+```
+
+## Browser Session Isolation Properties
+
+Each browser session has independent:
+- Cookies
+- LocalStorage / SessionStorage
+- IndexedDB
+- Cache
+- Browsing history
+- Open tabs
+
+## Browser Session Commands
+
+```bash
+# List all browser sessions
+playwright-cli list
+
+# Stop a browser session (close the browser)
+playwright-cli close                # stop the default browser
+playwright-cli -s=mysession close   # stop a named browser
+
+# Stop all browser sessions
+playwright-cli close-all
+
+# Forcefully kill all daemon processes (for stale/zombie processes)
+playwright-cli kill-all
+
+# Delete browser session user data (profile directory)
+playwright-cli delete-data                # delete default browser data
+playwright-cli -s=mysession delete-data   # delete named browser data
+```
+
+## Environment Variable
+
+Set a default browser session name via environment variable:
+
+```bash
+export PLAYWRIGHT_CLI_SESSION="mysession"
+playwright-cli open example.com  # Uses "mysession" automatically
+```
+
+## Common Patterns
+
+### Concurrent Scraping
+
+```bash
+#!/bin/bash
+# Scrape multiple sites concurrently
+
+# Start all browsers
+playwright-cli -s=site1 open https://site1.com &
+playwright-cli -s=site2 open https://site2.com &
+playwright-cli -s=site3 open https://site3.com &
+wait
+
+# Take snapshots from each
+playwright-cli -s=site1 snapshot
+playwright-cli -s=site2 snapshot
+playwright-cli -s=site3 snapshot
+
+# Cleanup
+playwright-cli close-all
+```
+
+### A/B Testing Sessions
+
+```bash
+# Test different user experiences
+playwright-cli -s=variant-a open "https://app.com?variant=a"
+playwright-cli -s=variant-b open "https://app.com?variant=b"
+
+# Compare
+playwright-cli -s=variant-a screenshot
+playwright-cli -s=variant-b screenshot
+```
+
+### Persistent Profile
+
+By default, browser profile is kept in memory only. Use `--persistent` flag on `open` to persist the browser profile to disk:
+
+```bash
+# Use persistent profile (auto-generated location)
+playwright-cli open https://example.com --persistent
+
+# Use persistent profile with custom directory
+playwright-cli open https://example.com --profile=/path/to/profile
+```
+
+## Attaching to a Running Browser
+
+Use `attach` to connect to a browser that is already running, instead of launching a new one.
+
+### Attach by channel name
+
+Connect to a running Chrome or Edge instance by its channel name. The browser must have remote debugging enabled — navigate to `chrome://inspect/#remote-debugging` in the target browser and check "Allow remote debugging for this browser instance".
+
+```bash
+# Attach to Chrome
+playwright-cli attach --cdp=chrome
+
+# Attach to Chrome Canary
+playwright-cli attach --cdp=chrome-canary
+
+# Attach to Microsoft Edge
+playwright-cli attach --cdp=msedge
+
+# Attach to Edge Dev
+playwright-cli attach --cdp=msedge-dev
+```
+
+Supported channels: `chrome`, `chrome-beta`, `chrome-dev`, `chrome-canary`, `msedge`, `msedge-beta`, `msedge-dev`, `msedge-canary`.
+
+When `--session` is not provided, the session is named after the channel (e.g. `--cdp=msedge` creates a session called `msedge`), so parallel attaches to Chrome and Edge don't collide on `default`. Pass `--session=<name>` to override.
+
+### Attach via CDP endpoint
+
+Connect to a browser that exposes a Chrome DevTools Protocol endpoint:
+
+```bash
+playwright-cli attach --cdp=http://localhost:9222
+```
+
+### Attach via browser extension
+
+Connect to a browser with the Playwright extension installed:
+
+```bash
+playwright-cli attach --extension
+```
+
+### Detach
+
+Tear down an attached session without affecting the external browser:
+
+```bash
+# Detach the default attached session
+playwright-cli detach
+
+# Detach a specific attached session
+playwright-cli -s=msedge detach
+```
+
+`detach` only works on sessions created via `attach`. For sessions created via `open`, use `close`.
+
+## Default Browser Session
+
+When `-s` is omitted, commands use the default browser session:
+
+```bash
+# These use the same default browser session
+playwright-cli open https://example.com
+playwright-cli snapshot
+playwright-cli close  # Stops default browser
+```
+
+## Browser Session Configuration
+
+Configure a browser session with specific settings when opening:
+
+```bash
+# Open with config file
+playwright-cli open https://example.com --config=.playwright/my-cli.json
+
+# Open with specific browser
+playwright-cli open https://example.com --browser=firefox
+
+# Open in headed mode
+playwright-cli open https://example.com --headed
+
+# Open with persistent profile
+playwright-cli open https://example.com --persistent
+```
+
+## Best Practices
+
+### 1. Name Browser Sessions Semantically
+
+```bash
+# GOOD: Clear purpose
+playwright-cli -s=github-auth open https://github.com
+playwright-cli -s=docs-scrape open https://docs.example.com
+
+# AVOID: Generic names
+playwright-cli -s=s1 open https://github.com
+```
+
+### 2. Always Clean Up
+
+```bash
+# Stop browsers when done
+playwright-cli -s=auth close
+playwright-cli -s=scrape close
+
+# Or stop all at once
+playwright-cli close-all
+
+# If browsers become unresponsive or zombie processes remain
+playwright-cli kill-all
+```
+
+### 3. Delete Stale Browser Data
+
+```bash
+# Remove old browser data to free disk space
+playwright-cli -s=oldsession delete-data
+```
+</file>
+
+<file path=".agents/skills/playwright-cli/references/spec-driven-testing.md">
+# Spec-driven testing (plan → generate → heal)
+
+End-to-end workflow for authoring and maintaining Playwright tests using `playwright-cli`. The three sections below can be used independently:
+
+- **Planning** — explore the app, produce a spec file describing what to test.
+- **Generate** — turn a spec into Playwright test files. Update the spec if it's vague or stale.
+- **Heal** — diagnose failing tests, fix the code, reconcile the spec with reality.
+
+All three lean on the same mechanic: run `npx playwright test --debug=cli` in the background, then `playwright-cli attach tw-XXXX` to drive the paused page interactively. See [playwright-tests.md](playwright-tests.md) for the debug/attach mechanics and [test-generation.md](test-generation.md) for how every `playwright-cli` action emits Playwright TypeScript.
+
+---
+
+## 1. Planning
+
+Goal: produce a spec file (e.g. `specs/<feature>.plan.md`) that enumerates the scenarios to test. **Always** write the spec to a file.
+
+### 1.1 Prerequisite: workspace
+
+Check the workspace has Playwright installed before anything else:
+
+```bash
+# Either of these confirms a workspace:
+test -f playwright.config.ts || test -f playwright.config.js
+npx --no-install playwright --version
+```
+
+If there is no Playwright install, bootstrap one and let the user pick the defaults:
+
+```bash
+npm init playwright@latest
+```
+
+### 1.2 Prerequisite: seed test
+
+A **seed test** is a minimal test that lands the page in the state every scenario starts from: navigation to the app, any required login, feature flags, etc. Scenarios assume a fresh start *after* the seed. `--debug=cli` pauses *inside* this test, so the seed is where every planning and generation session begins.
+
+Minimum viable seed:
+
+```ts
+// tests/seed.spec.ts
+import { test } from '@playwright/test';
+
+test('seed', async ({ page }) => {
+  await page.goto('https://example.com/');
+});
+```
+
+Preferred — push navigation into a fixture so scenario tests reuse it:
+
+```ts
+// tests/fixtures.ts
+import { test as baseTest } from '@playwright/test';
+export { expect } from '@playwright/test';
+
+export const test = baseTest.extend({
+  page: async ({ page }, use) => {
+    await page.goto('https://example.com/');
+    await use(page);
+  },
+});
+```
+
+```ts
+// tests/seed.spec.ts
+import { test } from './fixtures';
+
+test('seed', async ({ page }) => {
+  // Fixture already navigates. This empty body tells agents where to start.
+});
+```
+
+If no seed exists, create one that at least navigates to the app.
+
+### 1.3 Explore the app
+
+Launch the app via the seed in the background and attach:
+
+```bash
+PLAYWRIGHT_HTML_OPEN=never npx playwright test tests/seed.spec.ts --debug=cli
+# wait for "Debugging Instructions" and the session name tw-XXXX
+playwright-cli attach tw-XXXX
+```
+
+Resume so the seed runs, then probe the app:
+
+```bash
+playwright-cli resume                   # resume so that seed test runs fully
+playwright-cli snapshot                 # inventory of interactive elements
+playwright-cli click e5                 # follow a flow
+playwright-cli eval "location.href"     # read URL / state
+playwright-cli show --annotate          # ask the user to point at something
+```
+
+Map out:
+
+- Interactive surfaces (forms, buttons, lists, filters, modals).
+- Primary user journeys end-to-end.
+- Edge cases: empty states, validation errors, very long input, boundary values.
+- Persistence: reload, local/session storage, URL fragments.
+- Navigation: which controls change the URL, back/forward behaviour.
+
+**Important**: Do not just open the app url with playwright-cli, always go through the test to capture any custom setup done there.
+**Important**: Stop the background test when done exploring.
+
+### 1.4 Write the spec file
+
+Save under `specs/<feature>.plan.md`. Use this structure:
+
+```markdown
+# <Feature> Test Plan
+
+## Application Overview
+
+<One paragraph describing what the feature does and why it matters.>
+
+## Test Scenarios
+
+### 1. <Group Name>
+
+**Seed:** `tests/seed.spec.ts`
+
+#### 1.1. <kebab-case-scenario-name>
+
+**File:** `tests/<group>/<kebab-case-scenario-name>.spec.ts`
+
+**Steps:**
+  1. <Concrete user step>
+    - expect: <observable outcome>
+    - expect: <another observable outcome>
+  2. <Next step>
+    - expect: <outcome>
+
+#### 1.2. <next-scenario>
+...
+
+### 2. <Next Group>
+
+**Seed:** `tests/seed.spec.ts`
+...
+```
+
+Guidelines:
+
+- Each scenario is independent and starts from the seed's fresh state — never chain scenarios.
+- Scenario names are kebab-case and match the test file name (`should-add-single-todo` → `should-add-single-todo.spec.ts`).
+- Cover happy path, edge cases, validation, negative flows, persistence.
+- Write steps at the user level ("Type 'Buy milk' into the input"), not the API level ("call `fill`").
+- Put observable outcomes in `- expect:` bullets; each becomes an assertion during generation.
+
+---
+
+## 2. Generate
+
+Goal: take a spec file and produce Playwright test files. Optionally update the spec if it has drifted.
+
+### 2.1 Inputs
+
+- **Spec file**, e.g. `specs/basic-operations.plan.md`.
+- **Target**: either a single scenario (e.g. `1.2`), a whole group (`1`), or all.
+- **Seed file**, read from the `**Seed:**` line of the scenario's group.
+
+### 2.2 Generate one scenario
+
+For each target scenario, in sequence (never in parallel — scenarios share the seed session):
+
+```bash
+PLAYWRIGHT_HTML_OPEN=never npx playwright test <seed-file> --debug=cli   # background
+playwright-cli attach tw-XXXX
+# resume
+```
+
+**Do not** just open the app url with playwright-cli, always go through the test to capture any custom setup done there.
+
+Walk the scenario's `Steps:` one by one with `playwright-cli`, treating the spec as the plan and the live app as the source of truth. If a step is vague ("click the button" — which button?), references an element that no longer exists, or contradicts the app's actual behaviour, use your judgement: update the spec to match what the app really does, then keep going. Editing the spec mid-generation is expected.
+
+Every action prints the equivalent Playwright TypeScript (see [test-generation.md](test-generation.md)):
+
+```bash
+playwright-cli snapshot                         # find refs
+playwright-cli fill e3 "John Doe"               # -> page.getByRole('textbox', {...}).fill(...)
+playwright-cli press Enter
+playwright-cli click e7
+```
+
+For each `- expect:` bullet, add an explicit assertion. See [test-generation.md](test-generation.md) for details.
+
+Collect the generated code and write the test file at the path given in the spec:
+
+```ts
+// spec: specs/basic-operations.plan.md
+// seed: tests/seed.spec.ts
+import { test, expect } from './fixtures';   // or '@playwright/test' if no fixtures file
+
+test.describe('Signing in and out', () => {
+  test('should sign in', async ({ page }) => {
+    // 1. Navigate to the application
+    // (handled by the seed fixture)
+
+    // 2. Type 'John Doe' into the username field
+    await page.getByRole('textbox', { name: 'username' }).fill('John Doe');
+
+    // 3. Type password
+    await page.getByRole('textbox', { name: 'password' }).fill('TestPassword');
+
+    // 4. Press Enter to submit
+    await page.getByRole('textbox', { name: 'password' }).press('Enter');
+
+    await expect(page.getByRole('heading')).toContainText('Welcome, John Doe!');
+  });
+});
+```
+
+Rules:
+
+- **One test per file.** File path, describe name, and test name come verbatim from the spec (minus the ordinal).
+- Prefix each numbered step with a `// N. <step text>` comment before its actions.
+- Use the describe group name verbatim from the spec (no `1.` ordinal).
+- Import from `./fixtures` if the project has one; otherwise `@playwright/test`.
+- **Important**: close the CLI session and stop the background test before moving to the next scenario.
+
+### 2.3 Generate multiple scenarios
+
+Loop 2.2 over the targeted scenarios one at a time, restarting the seed between each so every test starts from a clean page. This is safe to parallelise due to unique generated session names - just make sure each test run is stopped.
+
+### 2.4 Run generated tests
+
+After generation, run the new tests once:
+
+```bash
+PLAYWRIGHT_HTML_OPEN=never npx playwright test tests/<group>/<scenario>.spec.ts
+```
+
+Any failure goes to Section 3.
+
+---
+
+## 3. Heal
+
+Goal: fix failing tests, and update the spec if the app's intended behaviour changed.
+
+### 3.1 Find failing tests
+
+```bash
+PLAYWRIGHT_HTML_OPEN=never npx playwright test
+```
+
+Record the list of failing `<file>:<line>` entries and process them one at a time. Do not attempt parallel fixes — shared state and the single CLI session make that fragile.
+
+### 3.2 Debug one failure
+
+Run the single failing test in debug mode in the background, then attach:
+
+```bash
+PLAYWRIGHT_HTML_OPEN=never npx playwright test tests/<group>/<scenario>.spec.ts:<line> --debug=cli
+# wait for "Debugging Instructions" and the tw-XXXX session name
+playwright-cli attach tw-XXXX
+```
+
+The test is paused at the start. Step forward or run to until just before the failing action or assertion, then diagnose:
+
+```bash
+playwright-cli snapshot                # did the element change / move / rename?
+playwright-cli console                 # app-side errors?
+playwright-cli requests                # failed request? wrong payload?
+playwright-cli show --annotate         # ask the user to point somewhere
+```
+
+Common causes: selector drift, new wrapper element, label/ARIA rename, timing (transition, async load), assertion text updated in the app, test data leaking between runs.
+
+Rehearse the corrected interaction with `playwright-cli` — the generated code in the output is what you paste back into the test.
+
+### 3.3 Apply the fix
+
+Edit the test file: update the locator, assertion, step order, or inputs to match the corrected behaviour. Stop the background debug run. Rerun the single test to confirm green.
+
+Never skip hooks or add sleeps as a fix. Never use `networkidle`.
+
+### 3.4 Reconcile with the spec
+
+Open the spec referenced by the `// spec:` header in the test file and locate the scenario that matches the test.
+
+- **Fix was purely technical** (locator drift, better assertion shape) and the spec's user-level behaviour still matches the app → leave the spec alone.
+- **Fix changed user-visible steps, inputs, order, or expected outcomes** that the spec describes → update the spec to match reality. Keep the scenario id and file path stable; only the step / expect lines change.
+- **Unclear whether the app change is intentional** (spec is stale) **or a regression** (test was right, app is wrong) → **stop and ask the user**. Provide:
+  - the scenario id (e.g. `2.3`),
+  - the spec lines that no longer match,
+  - the observed app behaviour (quote a snapshot excerpt or a concrete outcome).
+
+Only after the user answers, either update the spec (intentional change) or file/flag the test as covering a bug (regression).
+
+### 3.5 Iteration and giving up
+
+- Fix failures one at a time; rerun after each.
+- If after thorough investigation you are confident the test is correct but the app is wrong *and* the user has confirmed it's a bug: mark the test `test.fixme(...)` with a comment pointing at the user's decision or issue link. Never silently skip.
+
+---
+
+## Cross-references
+
+| For... | See |
+|---|---|
+| `--debug=cli` / attach mechanics | [playwright-tests.md](playwright-tests.md) |
+| How `playwright-cli` actions become TS | [test-generation.md](test-generation.md) |
+| Mocking requests during exploration/generation | [request-mocking.md](request-mocking.md) |
+| Managing the CLI browser session | [session-management.md](session-management.md) |
+</file>
+
+<file path=".agents/skills/playwright-cli/references/storage-state.md">
+# Storage Management
+
+Manage cookies, localStorage, sessionStorage, and browser storage state.
+
+## Storage State
+
+Save and restore complete browser state including cookies and storage.
+
+### Save Storage State
+
+```bash
+# Save to auto-generated filename (storage-state-{timestamp}.json)
+playwright-cli state-save
+
+# Save to specific filename
+playwright-cli state-save my-auth-state.json
+```
+
+### Restore Storage State
+
+```bash
+# Load storage state from file
+playwright-cli state-load my-auth-state.json
+
+# Reload page to apply cookies
+playwright-cli open https://example.com
+```
+
+### Storage State File Format
+
+The saved file contains:
+
+```json
+{
+  "cookies": [
+    {
+      "name": "session_id",
+      "value": "abc123",
+      "domain": "example.com",
+      "path": "/",
+      "expires": 1893456000,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://example.com",
+      "localStorage": [
+        { "name": "theme", "value": "dark" },
+        { "name": "user_id", "value": "12345" }
+      ]
+    }
+  ]
 }
+```
 
-export { Button, buttonVariants }
+## Cookies
+
+### List All Cookies
+
+```bash
+playwright-cli cookie-list
+```
+
+### Filter Cookies by Domain
+
+```bash
+playwright-cli cookie-list --domain=example.com
+```
+
+### Filter Cookies by Path
+
+```bash
+playwright-cli cookie-list --path=/api
+```
+
+### Get Specific Cookie
+
+```bash
+playwright-cli cookie-get session_id
+```
+
+### Set a Cookie
+
+```bash
+# Basic cookie
+playwright-cli cookie-set session abc123
+
+# Cookie with options
+playwright-cli cookie-set session abc123 --domain=example.com --path=/ --httpOnly --secure --sameSite=Lax
+
+# Cookie with expiration (Unix timestamp)
+playwright-cli cookie-set remember_me token123 --expires=1893456000
+```
+
+### Delete a Cookie
+
+```bash
+playwright-cli cookie-delete session_id
+```
+
+### Clear All Cookies
+
+```bash
+playwright-cli cookie-clear
+```
+
+### Advanced: Multiple Cookies or Custom Options
+
+For complex scenarios like adding multiple cookies at once, use `run-code`:
+
+```bash
+playwright-cli run-code "async page => {
+  await page.context().addCookies([
+    { name: 'session_id', value: 'sess_abc123', domain: 'example.com', path: '/', httpOnly: true },
+    { name: 'preferences', value: JSON.stringify({ theme: 'dark' }), domain: 'example.com', path: '/' }
+  ]);
+}"
+```
+
+## Local Storage
+
+### List All localStorage Items
+
+```bash
+playwright-cli localstorage-list
+```
+
+### Get Single Value
+
+```bash
+playwright-cli localstorage-get token
+```
+
+### Set Value
+
+```bash
+playwright-cli localstorage-set theme dark
+```
+
+### Set JSON Value
+
+```bash
+playwright-cli localstorage-set user_settings '{"theme":"dark","language":"en"}'
+```
+
+### Delete Single Item
+
+```bash
+playwright-cli localstorage-delete token
+```
+
+### Clear All localStorage
+
+```bash
+playwright-cli localstorage-clear
+```
+
+### Advanced: Multiple Operations
+
+For complex scenarios like setting multiple values at once, use `run-code`:
+
+```bash
+playwright-cli run-code "async page => {
+  await page.evaluate(() => {
+    localStorage.setItem('token', 'jwt_abc123');
+    localStorage.setItem('user_id', '12345');
+    localStorage.setItem('expires_at', Date.now() + 3600000);
+  });
+}"
+```
+
+## Session Storage
+
+### List All sessionStorage Items
+
+```bash
+playwright-cli sessionstorage-list
+```
+
+### Get Single Value
+
+```bash
+playwright-cli sessionstorage-get form_data
+```
+
+### Set Value
+
+```bash
+playwright-cli sessionstorage-set step 3
+```
+
+### Delete Single Item
+
+```bash
+playwright-cli sessionstorage-delete step
+```
+
+### Clear sessionStorage
+
+```bash
+playwright-cli sessionstorage-clear
+```
+
+## IndexedDB
+
+### List Databases
+
+```bash
+playwright-cli run-code "async page => {
+  return await page.evaluate(async () => {
+    const databases = await indexedDB.databases();
+    return databases;
+  });
+}"
+```
+
+### Delete Database
+
+```bash
+playwright-cli run-code "async page => {
+  await page.evaluate(() => {
+    indexedDB.deleteDatabase('myDatabase');
+  });
+}"
+```
+
+## Common Patterns
+
+### Authentication State Reuse
+
+```bash
+# Step 1: Login and save state
+playwright-cli open https://app.example.com/login
+playwright-cli snapshot
+playwright-cli fill e1 "user@example.com"
+playwright-cli fill e2 "password123"
+playwright-cli click e3
+
+# Save the authenticated state
+playwright-cli state-save auth.json
+
+# Step 2: Later, restore state and skip login
+playwright-cli state-load auth.json
+playwright-cli open https://app.example.com/dashboard
+# Already logged in!
+```
+
+### Save and Restore Roundtrip
+
+```bash
+# Set up authentication state
+playwright-cli open https://example.com
+playwright-cli eval "() => { document.cookie = 'session=abc123'; localStorage.setItem('user', 'john'); }"
+
+# Save state to file
+playwright-cli state-save my-session.json
+
+# ... later, in a new session ...
+
+# Restore state
+playwright-cli state-load my-session.json
+playwright-cli open https://example.com
+# Cookies and localStorage are restored!
+```
+
+## Security Notes
+
+- Never commit storage state files containing auth tokens
+- Add `*.auth-state.json` to `.gitignore`
+- Delete state files after automation completes
+- Use environment variables for sensitive data
+- By default, sessions run in-memory mode which is safer for sensitive operations
+</file>
+
+<file path=".agents/skills/playwright-cli/references/test-generation.md">
+# Test Generation
+
+Generate Playwright test code automatically as you interact with the browser.
+
+## How It Works
+
+Every action you perform with `playwright-cli` generates corresponding Playwright TypeScript code.
+This code appears in the output and can be copied directly into your test files.
+
+## Example Workflow
+
+```bash
+# Start a session
+playwright-cli open https://example.com/login
+
+# Take a snapshot to see elements
+playwright-cli snapshot
+# Output shows: e1 [textbox "Email"], e2 [textbox "Password"], e3 [button "Sign In"]
+
+# Fill form fields - generates code automatically
+playwright-cli fill e1 "user@example.com"
+# Ran Playwright code:
+# await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
+
+playwright-cli fill e2 "password123"
+# Ran Playwright code:
+# await page.getByRole('textbox', { name: 'Password' }).fill('password123');
+
+playwright-cli click e3
+# Ran Playwright code:
+# await page.getByRole('button', { name: 'Sign In' }).click();
+```
+
+## Building a Test File
+
+Collect the generated code into a Playwright test:
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('login flow', async ({ page }) => {
+  // Generated code from playwright-cli session:
+  await page.goto('https://example.com/login');
+  await page.getByRole('textbox', { name: 'Email' }).fill('user@example.com');
+  await page.getByRole('textbox', { name: 'Password' }).fill('password123');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+
+  // Add assertions
+  await expect(page).toHaveURL(/.*dashboard/);
+});
+```
+
+## Best Practices
+
+### 1. Use Semantic Locators
+
+The generated code uses role-based locators when possible, which are more resilient:
+
+```typescript
+// Generated (good - semantic)
+await page.getByRole('button', { name: 'Submit' }).click();
+
+// Avoid (fragile - CSS selectors)
+await page.locator('#submit-btn').click();
+```
+
+### 2. Explore Before Recording
+
+Take snapshots to understand the page structure before recording actions:
+
+```bash
+playwright-cli open https://example.com
+playwright-cli snapshot
+# Review the element structure
+playwright-cli click e5
+```
+
+### 3. Add Assertions Manually
+
+Generated code captures actions but not assertions. Add expectations in your test using one of the recommended matchers:
+
+- `toBeVisible()` — element is rendered and visible
+- `toHaveText(text)` — element text content matches
+- `toHaveValue(value) / toBeEmpty()` — input/select value matches
+- `toBeChecked() / toBeUnchecked()` — checkbox state matches
+- `toMatchAriaSnapshot(snapshot)` — page (or locator) matches a partial accessibility snapshot
+
+Use `playwright-cli generate-locator <target>` to produce the locator expression for the assertion, and the snapshot/eval commands to capture the expected value.
+
+When asserting text content, make sure that generated locator does not contain text from the element itself. `getByTestId()` or `getByLabel()` usually work well with asserting text. When locator is text-based, prefer `toBeVisible()` instead.
+
+Snapshot to be matched does not have to contain all the information - only capture what's necessary for the assertion. You can use regular expressions for unstable values.
+
+```bash
+# Get a stable locator for an element ref to use in the assertion
+playwright-cli --raw generate-locator e5
+# getByRole('button', { name: 'Submit' })
+
+# Capture expected text content for toHaveText
+playwright-cli --raw eval "el => el.textContent" e5
+
+# Capture expected input value for toHaveValue/toBeEmpty
+playwright-cli --raw eval "el => el.value" e5
+
+# Capture expected aria snapshot for toMatchAriaSnapshot/toBeChecked
+# (whole page, or use a ref to scope to a region)
+playwright-cli --raw snapshot
+playwright-cli --raw snapshot e5
+```
+
+```typescript
+// Generated action
+await page.getByRole('button', { name: 'Submit' }).click();
+
+// Manual assertions using the outputs above:
+await expect(page.getByRole('alert', { name: 'Success' })).toBeVisible();
+await expect(page.getByTestId('main-header')).toHaveText('Welcome, user');
+await expect(page.getByRole('textbox', { name: 'Email' })).toHaveValue('user@example.com');
+await expect(page.getByRole('checkbox', { name: 'Enable notifications' })).toBeChecked();
+
+// toMatchAriaSnapshot on the whole page, finds a matching region
+await expect(page).toMatchAriaSnapshot(`
+  - heading "Welcome, user"
+  - link /\\d+ new messages?/
+  - button "Sign out"
+`);
+
+// toMatchAriaSnapshot scoped to a region
+await expect(page.getByRole('navigation')).toMatchAriaSnapshot(`
+  - link "Home"
+  - link /\\d+ new messages?/
+  - link "Profile"
+`);
+```
+</file>
+
+<file path=".agents/skills/playwright-cli/references/tracing.md">
+# Tracing
+
+Capture detailed execution traces for debugging and analysis. Traces include DOM snapshots, screenshots, network activity, and console logs.
+
+## Basic Usage
+
+```bash
+# Start trace recording
+playwright-cli tracing-start
+
+# Perform actions
+playwright-cli open https://example.com
+playwright-cli click e1
+playwright-cli fill e2 "test"
+
+# Stop trace recording
+playwright-cli tracing-stop
+```
+
+## Trace Output Files
+
+When you start tracing, Playwright creates a `traces/` directory with several files:
+
+### `trace-{timestamp}.trace`
+
+**Action log** - The main trace file containing:
+- Every action performed (clicks, fills, navigations)
+- DOM snapshots before and after each action
+- Screenshots at each step
+- Timing information
+- Console messages
+- Source locations
+
+### `trace-{timestamp}.network`
+
+**Network log** - Complete network activity:
+- All HTTP requests and responses
+- Request headers and bodies
+- Response headers and bodies
+- Timing (DNS, connect, TLS, TTFB, download)
+- Resource sizes
+- Failed requests and errors
+
+### `resources/`
+
+**Resources directory** - Cached resources:
+- Images, fonts, stylesheets, scripts
+- Response bodies for replay
+- Assets needed to reconstruct page state
+
+## What Traces Capture
+
+| Category | Details |
+|----------|---------|
+| **Actions** | Clicks, fills, hovers, keyboard input, navigations |
+| **DOM** | Full DOM snapshot before/after each action |
+| **Screenshots** | Visual state at each step |
+| **Network** | All requests, responses, headers, bodies, timing |
+| **Console** | All console.log, warn, error messages |
+| **Timing** | Precise timing for each operation |
+
+## Use Cases
+
+### Debugging Failed Actions
+
+```bash
+playwright-cli tracing-start
+playwright-cli open https://app.example.com
+
+# This click fails - why?
+playwright-cli click e5
+
+playwright-cli tracing-stop
+# Open trace to see DOM state when click was attempted
+```
+
+### Analyzing Performance
+
+```bash
+playwright-cli tracing-start
+playwright-cli open https://slow-site.com
+playwright-cli tracing-stop
+
+# View network waterfall to identify slow resources
+```
+
+### Capturing Evidence
+
+```bash
+# Record a complete user flow for documentation
+playwright-cli tracing-start
+
+playwright-cli open https://app.example.com/checkout
+playwright-cli fill e1 "4111111111111111"
+playwright-cli fill e2 "12/25"
+playwright-cli fill e3 "123"
+playwright-cli click e4
+
+playwright-cli tracing-stop
+# Trace shows exact sequence of events
+```
+
+## Trace vs Video vs Screenshot
+
+| Feature | Trace | Video | Screenshot |
+|---------|-------|-------|------------|
+| **Format** | .trace file | .webm video | .png/.jpeg image |
+| **DOM inspection** | Yes | No | No |
+| **Network details** | Yes | No | No |
+| **Step-by-step replay** | Yes | Continuous | Single frame |
+| **File size** | Medium | Large | Small |
+| **Best for** | Debugging | Demos | Quick capture |
+
+## Best Practices
+
+### 1. Start Tracing Before the Problem
+
+```bash
+# Trace the entire flow, not just the failing step
+playwright-cli tracing-start
+playwright-cli open https://example.com
+# ... all steps leading to the issue ...
+playwright-cli tracing-stop
+```
+
+### 2. Clean Up Old Traces
+
+Traces can consume significant disk space:
+
+```bash
+# Remove traces older than 7 days
+find .playwright-cli/traces -mtime +7 -delete
+```
+
+## Limitations
+
+- Traces add overhead to automation
+- Large traces can consume significant disk space
+- Some dynamic content may not replay perfectly
+</file>
+
+<file path=".agents/skills/playwright-cli/references/video-recording.md">
+# Video Recording
+
+Capture browser automation sessions as video for debugging, documentation, or verification. Produces WebM (VP8/VP9 codec).
+
+## Basic Recording
+
+```bash
+# Open browser first
+playwright-cli open
+
+# Start recording
+playwright-cli video-start demo.webm
+
+# Add a chapter marker for section transitions
+playwright-cli video-chapter "Getting Started" --description="Opening the homepage" --duration=2000
+
+# Navigate and perform actions
+playwright-cli goto https://example.com
+playwright-cli snapshot
+playwright-cli click e1
+
+# Add another chapter
+playwright-cli video-chapter "Filling Form" --description="Entering test data" --duration=2000
+playwright-cli fill e2 "test input"
+
+# Stop and save
+playwright-cli video-stop
+```
+
+## Best Practices
+
+### 1. Use Descriptive Filenames
+
+```bash
+# Include context in filename
+playwright-cli video-start recordings/login-flow-2024-01-15.webm
+playwright-cli video-start recordings/checkout-test-run-42.webm
+```
+
+### 2. Record entire hero scripts.
+
+When recording a video for the user or as a proof of work, it is best to create a code snippet and execute it with run-code.
+It allows inserting appropriate pauses between the actions and annotating the video. There are new Playwright APIs for that.
+
+1) Perform scenario using CLI and take note of all locators and actions. You'll need those locators to request their bounding boxes for highlight.
+2) Create a file with the intended script for video (below). Use pressSequentially w/ delay for nice typing, make reasonable pauses.
+3) Use playwright-cli run-code --filename your-script.js
+
+**Important**: Overlays are `pointer-events: none` — they do not interfere with page interactions. You can safely keep sticky overlays visible while clicking, filling, or performing any actions on the page.
+
+```js
+async page => {
+  await page.screencast.start({ path: 'video.webm', size: { width: 1280, height: 800 } });
+  await page.goto('https://demo.playwright.dev/todomvc');
+
+  // Show a chapter card — blurs the page and shows a dialog.
+  // Blocks until duration expires, then auto-removes.
+  // Use this for simple use cases, but always feel free to hand-craft your own beautiful
+  // overlay via await page.screencast.showOverlay().
+  await page.screencast.showChapter('Adding Todo Items', {
+    description: 'We will add several items to the todo list.',
+    duration: 2000,
+  });
+
+  // Perform action
+  await page.getByRole('textbox', { name: 'What needs to be done?' }).pressSequentially('Walk the dog', { delay: 60 });
+  await page.getByRole('textbox', { name: 'What needs to be done?' }).press('Enter');
+  await page.waitForTimeout(1000);
+
+  // Show next chapter
+  await page.screencast.showChapter('Verifying Results', {
+    description: 'Checking the item appeared in the list.',
+    duration: 2000,
+  });
+
+  // Add a sticky annotation that stays while you perform actions.
+  // Overlays are pointer-events: none, so they won't block clicks.
+  const annotation = await page.screencast.showOverlay(`
+    <div style="position: absolute; top: 8px; right: 8px;
+      padding: 6px 12px; background: rgba(0,0,0,0.7);
+      border-radius: 8px; font-size: 13px; color: white;">
+      ✓ Item added successfully
+    </div>
+  `);
+
+  // Perform more actions while the annotation is visible
+  await page.getByRole('textbox', { name: 'What needs to be done?' }).pressSequentially('Buy groceries', { delay: 60 });
+  await page.getByRole('textbox', { name: 'What needs to be done?' }).press('Enter');
+  await page.waitForTimeout(1500);
+
+  // Remove the annotation when done
+  await annotation.dispose();
+
+  // You can also highlight relevant locators and provide contextual annotations.
+  const bounds = await page.getByText('Walk the dog').boundingBox();
+  await page.screencast.showOverlay(`
+    <div style="position: absolute;
+      top: ${bounds.y}px;
+      left: ${bounds.x}px;
+      width: ${bounds.width}px;
+      height: ${bounds.height}px;
+      border: 1px solid red;">
+    </div>
+    <div style="position: absolute;
+      top: ${bounds.y + bounds.height + 5}px;
+      left: ${bounds.x + bounds.width / 2}px;
+      transform: translateX(-50%);
+      padding: 6px;
+      background: #808080;
+      border-radius: 10px;
+      font-size: 14px;
+      color: white;">Check it out, it is right above this text
+    </div>
+  `, { duration: 2000 });
+
+  await page.screencast.stop();
+}
+```
+
+Embrace creativity, overlays are powerful.
+
+### Overlay API Summary
+
+| Method | Use Case |
+|--------|----------|
+| `page.screencast.showChapter(title, { description?, duration?, styleSheet? })` | Full-screen chapter card with blurred backdrop — ideal for section transitions |
+| `page.screencast.showOverlay(html, { duration? })` | Custom HTML overlay — use for callouts, labels, highlights |
+| `disposable.dispose()` | Remove a sticky overlay added without duration |
+| `page.screencast.hideOverlays()` / `page.screencast.showOverlays()` | Temporarily hide/show all overlays |
+
+## Tracing vs Video
+
+| Feature | Video | Tracing |
+|---------|-------|---------|
+| Output | WebM file | Trace file (viewable in Trace Viewer) |
+| Shows | Visual recording | DOM snapshots, network, console, actions |
+| Use case | Demos, documentation | Debugging, analysis |
+| Size | Larger | Smaller |
+
+## Limitations
+
+- Recording adds slight overhead to automation
+- Large recordings can consume significant disk space
+</file>
+
+<file path=".agents/skills/playwright-cli/SKILL.md">
+---
+name: playwright-cli
+description: Automate browser interactions, test web pages and work with Playwright tests.
+allowed-tools: Bash(playwright-cli:*) Bash(npx:*) Bash(npm:*)
+---
+
+# Browser Automation with playwright-cli
+
+## Quick start
+
+```bash
+# open new browser
+playwright-cli open
+# navigate to a page
+playwright-cli goto https://playwright.dev
+# interact with the page using refs from the snapshot
+playwright-cli click e15
+playwright-cli type "page.click"
+playwright-cli press Enter
+# take a screenshot (rarely used, as snapshot is more common)
+playwright-cli screenshot
+# close the browser
+playwright-cli close
+```
+
+## Commands
+
+### Core
+
+```bash
+playwright-cli open
+# open and navigate right away
+playwright-cli open https://example.com/
+playwright-cli goto https://playwright.dev
+playwright-cli type "search query"
+playwright-cli click e3
+playwright-cli dblclick e7
+# --submit presses Enter after filling the element
+playwright-cli fill e5 "user@example.com"  --submit
+playwright-cli drag e2 e8
+# drop files or data onto an element (from outside the page)
+playwright-cli drop e4 --path=./image.png
+playwright-cli drop e4 --data="text/plain=hello world"
+playwright-cli hover e4
+playwright-cli select e9 "option-value"
+playwright-cli upload ./document.pdf
+playwright-cli check e12
+playwright-cli uncheck e12
+playwright-cli snapshot
+playwright-cli eval "document.title"
+playwright-cli eval "el => el.textContent" e5
+# get element id, class, or any attribute not visible in the snapshot
+playwright-cli eval "el => el.id" e5
+playwright-cli eval "el => el.getAttribute('data-testid')" e5
+playwright-cli dialog-accept
+playwright-cli dialog-accept "confirmation text"
+playwright-cli dialog-dismiss
+playwright-cli resize 1920 1080
+playwright-cli close
+```
+
+### Navigation
+
+```bash
+playwright-cli go-back
+playwright-cli go-forward
+playwright-cli reload
+```
+
+### Keyboard
+
+```bash
+playwright-cli press Enter
+playwright-cli press ArrowDown
+playwright-cli keydown Shift
+playwright-cli keyup Shift
+```
+
+### Mouse
+
+```bash
+playwright-cli mousemove 150 300
+playwright-cli mousedown
+playwright-cli mousedown right
+playwright-cli mouseup
+playwright-cli mouseup right
+playwright-cli mousewheel 0 100
+```
+
+### Save as
+
+```bash
+playwright-cli screenshot
+playwright-cli screenshot e5
+playwright-cli screenshot --filename=page.png
+playwright-cli pdf --filename=page.pdf
+```
+
+### Tabs
+
+```bash
+playwright-cli tab-list
+playwright-cli tab-new
+playwright-cli tab-new https://example.com/page
+playwright-cli tab-close
+playwright-cli tab-close 2
+playwright-cli tab-select 0
+```
+
+### Storage
+
+```bash
+playwright-cli state-save
+playwright-cli state-save auth.json
+playwright-cli state-load auth.json
+
+# Cookies
+playwright-cli cookie-list
+playwright-cli cookie-list --domain=example.com
+playwright-cli cookie-get session_id
+playwright-cli cookie-set session_id abc123
+playwright-cli cookie-set session_id abc123 --domain=example.com --httpOnly --secure
+playwright-cli cookie-delete session_id
+playwright-cli cookie-clear
+
+# LocalStorage
+playwright-cli localstorage-list
+playwright-cli localstorage-get theme
+playwright-cli localstorage-set theme dark
+playwright-cli localstorage-delete theme
+playwright-cli localstorage-clear
+
+# SessionStorage
+playwright-cli sessionstorage-list
+playwright-cli sessionstorage-get step
+playwright-cli sessionstorage-set step 3
+playwright-cli sessionstorage-delete step
+playwright-cli sessionstorage-clear
+```
+
+### Network
+
+```bash
+playwright-cli route "**/*.jpg" --status=404
+playwright-cli route "https://api.example.com/**" --body='{"mock": true}'
+playwright-cli route-list
+playwright-cli unroute "**/*.jpg"
+playwright-cli unroute
+```
+
+### DevTools
+
+```bash
+playwright-cli console
+playwright-cli console warning
+playwright-cli requests
+playwright-cli request 5
+playwright-cli run-code "async page => await page.context().grantPermissions(['geolocation'])"
+playwright-cli run-code --filename=script.js
+playwright-cli tracing-start
+playwright-cli tracing-stop
+playwright-cli video-start video.webm
+playwright-cli video-chapter "Chapter Title" --description="Details" --duration=2000
+playwright-cli video-stop
+
+# annotate each subsequent action (click, type, ...) with a callout naming the action and highlighting the target
+playwright-cli video-show-actions --duration=600 --position=top-right
+playwright-cli video-hide-actions
+
+# launch the dashboard for UI review / design feedback — user annotates the page, you receive the annotated screenshot, snapshot, and notes
+playwright-cli show --annotate
+
+# generate a Playwright locator for an element from its ref or selector
+playwright-cli generate-locator e5 --raw
+
+# show a persistent highlight overlay for an element, optionally with a custom style
+playwright-cli highlight e5
+playwright-cli highlight e5 --style="outline: 3px dashed red"
+# hide a single element highlight, or all page highlights when no target is given
+playwright-cli highlight e5 --hide
+playwright-cli highlight --hide
+```
+
+## Raw output
+
+The global `--raw` option strips page status, generated code, and snapshot sections from the output, returning only the result value. Use it to pipe command output into other tools. Commands that don't produce output return nothing.
+
+```bash
+playwright-cli --raw eval "JSON.stringify(performance.timing)" | jq '.loadEventEnd - .navigationStart'
+playwright-cli --raw eval "JSON.stringify([...document.querySelectorAll('a')].map(a => a.href))" > links.json
+playwright-cli --raw snapshot > before.yml
+playwright-cli click e5
+playwright-cli --raw snapshot > after.yml
+diff before.yml after.yml
+TOKEN=$(playwright-cli --raw cookie-get session_id)
+playwright-cli --raw localstorage-get theme
+```
+
+For structured output wrapping every reply as JSON, pass --json
+```bash
+playwright-cli list --json
+```
+
+## Open parameters
+```bash
+# Use specific browser when creating session
+playwright-cli open --browser=chrome
+playwright-cli open --browser=firefox
+playwright-cli open --browser=webkit
+playwright-cli open --browser=msedge
+
+# Use persistent profile (by default profile is in-memory)
+playwright-cli open --persistent
+# Use persistent profile with custom directory
+playwright-cli open --profile=/path/to/profile
+
+# Connect to browser via Playwright Extension
+playwright-cli attach --extension=chrome
+
+# Connect to a running Chrome or Edge by channel name
+playwright-cli attach --cdp=chrome
+playwright-cli attach --cdp=msedge
+
+# Connect to a running browser via CDP endpoint
+playwright-cli attach --cdp=http://localhost:9222
+
+# Start with config file
+playwright-cli open --config=my-config.json
+
+# Close the browser
+playwright-cli close
+# Detach from an attached browser (leaves the external browser running)
+playwright-cli -s=msedge detach
+# Delete user data for the default session
+playwright-cli delete-data
+```
+
+## URLs with `&` on Windows
+
+On Windows, `cmd.exe` and PowerShell treat `&` as a command separator, so URLs with multiple query parameters get truncated before `playwright-cli` runs. Escape `&` with `^&` in `cmd.exe`, or use `--%` in PowerShell:
+
+```batch
+playwright-cli goto "https://example.com/?a=1^&b=2"
+```
+
+```powershell
+playwright-cli --% goto "https://example.com/?a=1&b=2"
+```
+
+## Snapshots
+
+After each command, playwright-cli provides a snapshot of the current browser state.
+
+```bash
+> playwright-cli goto https://example.com
+### Page
+- Page URL: https://example.com/
+- Page Title: Example Domain
+### Snapshot
+[Snapshot](.playwright-cli/page-2026-02-14T19-22-42-679Z.yml)
+```
+
+You can also take a snapshot on demand using `playwright-cli snapshot` command. All the options below can be combined as needed.
+
+```bash
+# default - save to a file with timestamp-based name
+playwright-cli snapshot
+
+# save to file, use when snapshot is a part of the workflow result
+playwright-cli snapshot --filename=after-click.yaml
+
+# snapshot an element instead of the whole page
+playwright-cli snapshot "#main"
+
+# limit snapshot depth for efficiency, take a partial snapshot afterwards
+playwright-cli snapshot --depth=4
+playwright-cli snapshot e34
+
+# include each element's bounding box as [box=x,y,width,height]
+playwright-cli snapshot --boxes
+```
+
+## Targeting elements
+
+By default, use refs from the snapshot to interact with page elements.
+
+```bash
+# get snapshot with refs
+playwright-cli snapshot
+
+# interact using a ref
+playwright-cli click e15
+```
+
+You can also use css selectors or Playwright locators.
+
+```bash
+# css selector
+playwright-cli click "#main > button.submit"
+
+# role locator
+playwright-cli click "getByRole('button', { name: 'Submit' })"
+
+# test id
+playwright-cli click "getByTestId('submit-button')"
+```
+
+## Browser Sessions
+
+```bash
+# create new browser session named "mysession" with persistent profile
+playwright-cli -s=mysession open example.com --persistent
+# same with manually specified profile directory (use when requested explicitly)
+playwright-cli -s=mysession open example.com --profile=/path/to/profile
+playwright-cli -s=mysession click e6
+playwright-cli -s=mysession close  # stop a named browser
+playwright-cli -s=mysession delete-data  # delete user data for persistent session
+
+playwright-cli list
+# Close all browsers
+playwright-cli close-all
+# Forcefully kill all browser processes
+playwright-cli kill-all
+```
+
+## Installation
+
+If global `playwright-cli` command is not available, try a local version via `npx playwright-cli`:
+
+```bash
+npx --no-install playwright-cli --version
+```
+
+When local version is available, use `npx playwright-cli` in all commands. Otherwise, install `playwright-cli` as a global command:
+
+```bash
+npm install -g @playwright/cli@latest
+```
+
+## Example: Form submission
+
+```bash
+playwright-cli open https://example.com/form
+playwright-cli snapshot
+
+playwright-cli fill e1 "user@example.com"
+playwright-cli fill e2 "password123"
+playwright-cli click e3
+playwright-cli snapshot
+playwright-cli close
+```
+
+## Example: Multi-tab workflow
+
+```bash
+playwright-cli open https://example.com
+playwright-cli tab-new https://example.com/other
+playwright-cli tab-list
+playwright-cli tab-select 0
+playwright-cli snapshot
+playwright-cli close
+```
+
+## Example: Debugging with DevTools
+
+```bash
+playwright-cli open https://example.com
+playwright-cli click e4
+playwright-cli fill e7 "test"
+playwright-cli console
+playwright-cli requests
+playwright-cli close
+```
+
+```bash
+playwright-cli open https://example.com
+playwright-cli tracing-start
+playwright-cli click e4
+playwright-cli fill e7 "test"
+playwright-cli tracing-stop
+playwright-cli close
+```
+
+## Example: Interactive session
+
+Ask the user for UI review or design feedback. The user draws boxes on the live page and types comments; you receive the annotated screenshot, the snapshot of the marked region, and the user's notes. Use this whenever the user asks for "UI review", "design feedback", or to "ask the user what they think / want / mean":
+
+```bash
+playwright-cli open https://example.com
+playwright-cli show --annotate
+```
+
+## Specific tasks
+
+* **Running and Debugging Playwright tests** [references/playwright-tests.md](references/playwright-tests.md)
+* **Request mocking** [references/request-mocking.md](references/request-mocking.md)
+* **Running Playwright code** [references/running-code.md](references/running-code.md)
+* **Browser session management** [references/session-management.md](references/session-management.md)
+* **Spec-driven testing (plan / generate / heal)** [references/spec-driven-testing.md](references/spec-driven-testing.md)
+* **Storage state (cookies, localStorage)** [references/storage-state.md](references/storage-state.md)
+* **Test generation** [references/test-generation.md](references/test-generation.md)
+* **Tracing** [references/tracing.md](references/tracing.md)
+* **Video recording** [references/video-recording.md](references/video-recording.md)
+* **Inspecting element attributes** [references/element-attributes.md](references/element-attributes.md)
+</file>
+
+<file path=".mind/checkpoints/checkpoint-20260625-145131.json">
+{
+  "space": "projects/landing-page",
+  "name": "checkpoint-20260625-145131",
+  "goal": "Setup local mind system",
+  "pending": "Add initial project memories, document key decisions",
+  "notes": "Created .mind/ directory structure, CLAUDE.md updated with project context, mind.sh helper script added",
+  "linked_memories": ["local-mind-setup"],
+  "created": "2026-06-25T14:51:31Z",
+  "updated": "2026-06-25T14:51:31Z",
+  "status": "active"
+}
+</file>
+
+<file path=".mind/memories/local-mind-setup.json">
+{
+  "space": "projects/landing-page",
+  "name": "local-mind-setup",
+  "content": "**What**: Configured local mind system for persistent context\\n**Why**: MCP mind server not available in this environment\\n**Where**: .mind/ directory with memories/, checkpoints/, links.json\\n**Learned**: Local JSON files provide ~80% of MCP value (persistence, search, linking) without server dependency\n",
+  "tags": ["cat:config","cat:decision"],
+  "links_to": [],
+  "created": "2026-06-25T14:51:16Z",
+  "updated": "2026-06-25T14:51:16Z",
+  "tier": "T2"
+}
+</file>
+
+<file path=".mind/links.json">
+[]
+</file>
+
+<file path=".mind/mind.sh">
+#!/bin/bash
+# Local Mind CLI helper for landing-page project
+# Usage: .mind/mind.sh <command> [args]
+
+MIND_DIR="$(dirname "$0")"
+SPACE_NAME="projects/landing-page"
+
+case "$1" in
+  init)
+    echo "Mind space already initialized at $MIND_DIR"
+    ;;
+
+  memory-add)
+    # Usage: .mind/mind.sh memory-add "name" "content" "tag1,tag2" ["link1,link2"]
+    NAME="$2"
+    CONTENT="$3"
+    TAGS="$4"
+    LINKS="${5:-}"
+    FILE="$MIND_DIR/memories/$NAME.json"
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+    IFS=',' read -ra TAG_ARRAY <<< "$TAGS"
+    TAG_JSON=$(printf '"%s",' "${TAG_ARRAY[@]}" | sed 's/,$//')
+
+    LINK_JSON="[]"
+    if [ -n "$LINKS" ]; then
+      IFS=',' read -ra LINK_ARRAY <<< "$LINKS"
+      LINK_JSON=$(printf '"%s",' "${LINK_ARRAY[@]}" | sed 's/,$//')
+      LINK_JSON="[$LINK_JSON]"
+    fi
+
+    cat > "$FILE" <<EOF
+{
+  "space": "$SPACE_NAME",
+  "name": "$NAME",
+  "content": $(echo "$CONTENT" | jq -Rs .),
+  "tags": [$TAG_JSON],
+  "links_to": $LINK_JSON,
+  "created": "$TIMESTAMP",
+  "updated": "$TIMESTAMP",
+  "tier": "T2"
+}
+EOF
+    echo "Memory created: $FILE"
+    ;;
+
+  memory-list)
+    ls "$MIND_DIR/memories"/*.json 2>/dev/null | xargs -I {} basename {} .json
+    ;;
+
+  memory-read)
+    cat "$MIND_DIR/memories/$2.json" 2>/dev/null | jq .
+    ;;
+
+  memory-search)
+    grep -r -i "$2" "$MIND_DIR/memories/" --include="*.json" | jq -r '.name' | sort -u
+    ;;
+
+  checkpoint-save)
+    # Usage: .mind/mind.sh checkpoint-save "goal" "pending" "notes" ["mem1,mem2"]
+    GOAL="$2"
+    PENDING="$3"
+    NOTES="$4"
+    LINKED="${5:-}"
+    NAME="checkpoint-$(date -u +"%Y%m%d-%H%M%S")"
+    FILE="$MIND_DIR/checkpoints/$NAME.json"
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+    LINKED_JSON="[]"
+    if [ -n "$LINKED" ]; then
+      IFS=',' read -ra LINK_ARRAY <<< "$LINKED"
+      LINKED_JSON=$(printf '"%s",' "${LINK_ARRAY[@]}" | sed 's/,$//')
+      LINKED_JSON="[$LINKED_JSON]"
+    fi
+
+    cat > "$FILE" <<EOF
+{
+  "space": "$SPACE_NAME",
+  "name": "$NAME",
+  "goal": "$GOAL",
+  "pending": "$PENDING",
+  "notes": "$NOTES",
+  "linked_memories": $LINKED_JSON,
+  "created": "$TIMESTAMP",
+  "updated": "$TIMESTAMP",
+  "status": "active"
+}
+EOF
+    echo "Checkpoint saved: $FILE"
+    ;;
+
+  checkpoint-list)
+    ls "$MIND_DIR/checkpoints"/*.json 2>/dev/null | xargs -I {} basename {} .json
+    ;;
+
+  checkpoint-load)
+    cat "$MIND_DIR/checkpoints/$2.json" 2>/dev/null | jq .
+    ;;
+
+  checkpoint-done)
+    # Usage: .mind/mind.sh checkpoint-done "checkpoint-name" "summary"
+    CP_NAME="$2"
+    SUMMARY="$3"
+    CP_FILE="$MIND_DIR/checkpoints/$CP_NAME.json"
+    SESSION_FILE="$MIND_DIR/memories/session-$(date -u +"%Y%m%d-%H%M%S").json"
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+    if [ ! -f "$CP_FILE" ]; then
+      echo "Checkpoint not found: $CP_FILE"
+      exit 1
+    fi
+
+    # Create session memory from checkpoint
+    GOAL=$(jq -r '.goal' "$CP_FILE")
+    PENDING=$(jq -r '.pending' "$CP_FILE")
+    NOTES=$(jq -r '.notes' "$CP_FILE")
+    LINKED=$(jq -c '.linked_memories' "$CP_FILE")
+
+    cat > "$SESSION_FILE" <<EOF
+{
+  "space": "$SPACE_NAME",
+  "name": "session-$(date -u +"%Y%m%d-%H%M%S")",
+  "content": "**Session Summary**: $SUMMARY\n\n**Goal**: $GOAL\n**Pending**: $PENDING\n**Notes**: $NOTES",
+  "tags": ["cat:session"],
+  "links_to": $LINKED,
+  "created": "$TIMESTAMP",
+  "updated": "$TIMESTAMP",
+  "tier": "T2"
+}
+EOF
+
+    # Mark checkpoint as done
+    jq --arg status "completed" --arg updated "$TIMESTAMP" '.status = $status | .updated = $updated' "$CP_FILE" > "$CP_FILE.tmp" && mv "$CP_FILE.tmp" "$CP_FILE"
+
+    echo "Session memory created: $SESSION_FILE"
+    echo "Checkpoint marked complete: $CP_FILE"
+    ;;
+
+  link-create)
+    # Usage: .mind/mind.sh link-create "source" "target" "label"
+    SOURCE="$2"
+    TARGET="$3"
+    LABEL="$4"
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+    LINK="{\"source\":\"$SOURCE\",\"target\":\"$target\",\"label\":\"$LABEL\",\"created\":\"$TIMESTAMP\"}"
+    jq --argjson link "$LINK" '. += [$link]' "$MIND_DIR/links.json" > "$MIND_DIR/links.json.tmp" && mv "$MIND_DIR/links.json.tmp" "$MIND_DIR/links.json"
+    echo "Link created: $SOURCE --$LABEL--> $TARGET"
+    ;;
+
+  status)
+    echo "=== Mind Status ==="
+    echo "Space: $SPACE_NAME"
+    echo "Memories: $(ls "$MIND_DIR/memories"/*.json 2>/dev/null | wc -l)"
+    echo "Checkpoints: $(ls "$MIND_DIR/checkpoints"/*.json 2>/dev/null | wc -l)"
+    echo "Links: $(jq 'length' "$MIND_DIR/links.json")"
+    ;;
+
+  *)
+    echo "Usage: $0 {init|memory-add|memory-list|memory-read|memory-search|checkpoint-save|checkpoint-list|checkpoint-load|checkpoint-done|link-create|status}"
+    exit 1
+    ;;
+esac
+</file>
+
+<file path=".mind/space.json">
+{
+  "name": "projects/landing-page",
+  "description": "Context and decisions for landing-page",
+  "tags": ["type:project"],
+  "created": "2026-06-25T00:00:00Z",
+  "updated": "2026-06-25T00:00:00Z"
+}
+</file>
+
+<file path=".playwright-cli/page-2026-06-25T15-12-23-571Z.yml">
+- main [ref=e2]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic:
+        - img
+    - generic [ref=e10]:
+      - generic [ref=e11]: XOLVENTA
+      - navigation [ref=e12]:
+        - link "SERVICIOS" [ref=e13] [cursor=pointer]:
+          - /url: "#servicios"
+        - link "PROCESO" [ref=e14] [cursor=pointer]:
+          - /url: "#about"
+        - link "CONTACTO" [ref=e15] [cursor=pointer]:
+          - /url: "#contacto"
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]: "[ 2025 ]"
+        - heading "Primero te conozco," [level=3] [ref=e19]:
+          - text: Primero te
+          - emphasis [ref=e20]: conozco
+          - text: ","
+        - paragraph [ref=e21]: Consulta gratuita. Analizamos tu negocio y te proponemos la solución ideal.
+      - generic [ref=e24]: Cd. Victoria, Tamaulipas
+      - heading "Tecnología premium para tu negocio." [level=1] [ref=e25]
+      - paragraph [ref=e26]: Automatización con IA, software a la medida y páginas web profesionales para empresas en Ciudad Victoria. Primero te conozco, luego te propongo algo útil.
+      - link "Iniciar Proyecto" [ref=e27] [cursor=pointer]:
+        - /url: "#contacto"
+        - text: Iniciar Proyecto
+        - img [ref=e28]
+  - generic [ref=e31]:
+    - generic [ref=e32]:
+      - generic [ref=e35]: Nuestras Soluciones
+      - heading "Sistemas que transforman tu forma de trabajar" [level=2] [ref=e36]
+      - paragraph [ref=e37]: Soluciones técnicas de alto nivel diseñadas específicamente para automatizar, vender más y perder menos tiempo.
+    - generic [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e41]:
+          - img [ref=e44]
+          - heading "Sistemas Inteligentes" [level=3] [ref=e45]
+          - paragraph [ref=e46]: Software hecho a tu medida. Punto de venta, control de inventario o gestión integral. Olvídate de los sistemas lentos y genéricos.
+        - generic [ref=e47]:
+          - generic [ref=e48]: Arquitectura escalable
+          - generic [ref=e49]: Soporte VIP
+      - generic [ref=e50]:
+        - generic [ref=e52]:
+          - img [ref=e55]
+          - heading "Presencia Web" [level=3] [ref=e58]
+          - paragraph [ref=e59]: Páginas súper rápidas, optimizadas y hermosas. Integradas con WhatsApp para capturar leads 24/7.
+        - generic [ref=e61]: Pago único
+      - generic [ref=e62]:
+        - generic [ref=e64]:
+          - img [ref=e67]
+          - heading "Automatización con IA" [level=3] [ref=e70]
+          - paragraph [ref=e71]: La IA responde por ti, organiza tus datos y genera reportes. Delega el trabajo aburrido y enfócate en crecer tu negocio.
+        - generic [ref=e72]:
+          - generic [ref=e73]: Bots 24/7
+          - generic [ref=e74]: Eficiencia total
+      - generic [ref=e75]:
+        - generic [ref=e77]:
+          - img [ref=e80]
+          - heading "Asesoría Premium" [level=3] [ref=e83]
+          - paragraph [ref=e84]: Descubramos dónde pierdes tiempo y dinero. Diagnóstico completo sin costo para crear tu ruta de modernización.
+        - generic [ref=e85]:
+          - generic [ref=e86]: Sin compromiso
+          - generic [ref=e87]: Remoto/Local
+    - generic [ref=e88]:
+      - generic [ref=e89]:
+        - heading "¿No estás seguro por dónde empezar?" [level=4] [ref=e90]
+        - paragraph [ref=e91]: Podemos hacer un diagnóstico de tus procesos sin ningún costo.
+      - link "Agendar llamada" [ref=e92] [cursor=pointer]:
+        - /url: "#contacto"
+        - text: Agendar llamada
+        - img [ref=e93]
+  - generic [ref=e97]:
+    - generic [ref=e98]:
+      - generic [ref=e101]: Nuestra Filosofía
+      - heading "Primero te conozco, luego te propongo algo útil." [level=2] [ref=e102]
+      - paragraph [ref=e103]: Operando desde Cd. Victoria, Tamaulipas. Conozco las necesidades reales de los negocios locales. No te vendo tecnología por vender; construimos herramientas que generan impacto.
+      - generic [ref=e104]:
+        - generic [ref=e105]:
+          - generic [ref=e106]: 100%
+          - generic [ref=e107]: Enfoque Local
+        - generic [ref=e108]:
+          - generic [ref=e109]: "0"
+          - generic [ref=e110]: Plantillas Genéricas
+        - generic [ref=e111]:
+          - generic [ref=e112]: 24/7
+          - generic [ref=e113]: Disponibilidad de Sistemas
+      - generic [ref=e114]:
+        - img [ref=e116]
+        - generic [ref=e118]:
+          - heading "Garantía de calidad" [level=4] [ref=e119]
+          - paragraph [ref=e120]: Sistemas probados, seguros y diseñados específicamente para resolver los problemas de tu operativa diaria.
+    - generic [ref=e121]:
+      - generic [ref=e123]:
+        - generic [ref=e125]: "01"
+        - generic [ref=e126]:
+          - heading "Diagnóstico sin costo" [level=3] [ref=e127]
+          - paragraph [ref=e128]: Agendamos una videollamada o reunión presencial. Me cuentas cómo funciona tu negocio y qué procesos te gustaría optimizar.
+      - generic [ref=e129]:
+        - generic [ref=e131]: "02"
+        - generic [ref=e132]:
+          - heading "Arquitectura de solución" [level=3] [ref=e133]
+          - paragraph [ref=e134]: Te presento una propuesta clara. Tecnologías a utilizar, tiempos de entrega y costos exactos. Sin tecnicismos innecesarios.
+      - generic [ref=e135]:
+        - generic [ref=e137]: "03"
+        - generic [ref=e138]:
+          - heading "Desarrollo y despliegue" [level=3] [ref=e139]
+          - paragraph [ref=e140]: Construyo tu sistema utilizando las últimas tecnologías web. Te entrego un producto rápido, seguro y listo para escalar.
+      - generic [ref=e141]:
+        - generic [ref=e143]: "04"
+        - generic [ref=e144]:
+          - heading "Soporte premium" [level=3] [ref=e145]
+          - paragraph [ref=e146]: No te dejo solo. Ofrezco planes de soporte continuo para que tu tecnología siempre esté actualizada y funcionando al 100%.
+  - generic [ref=e150]:
+    - generic [ref=e151]:
+      - generic [ref=e154]: Inicia tu proyecto
+      - heading "¿Listo para modernizar tu negocio?" [level=2] [ref=e155]
+      - paragraph [ref=e156]: Cuéntame tus cuellos de botella. Agendaremos una asesoría gratuita de 30 minutos para analizar si la tecnología puede ayudarte a facturar más trabajando menos.
+      - generic [ref=e157]:
+        - generic [ref=e158]:
+          - img [ref=e160]
+          - generic [ref=e162]:
+            - paragraph [ref=e163]: Llamada directa
+            - paragraph [ref=e164]: +52 834 255 0555
+        - generic [ref=e165]:
+          - img [ref=e167]
+          - generic [ref=e170]:
+            - paragraph [ref=e171]: Ubicación
+            - paragraph [ref=e172]: Ciudad Victoria, Tam.
+    - generic [ref=e175]:
+      - generic [ref=e176]:
+        - generic [ref=e177]:
+          - text: Tu nombre
+          - generic [ref=e178]: "*"
+        - textbox "Tu nombre *" [ref=e179]:
+          - /placeholder: "Ej: Juan Pérez"
+      - generic [ref=e180]:
+        - generic [ref=e181]:
+          - text: Nombre de tu negocio
+          - generic [ref=e182]: (Opcional)
+        - textbox "Nombre de tu negocio (Opcional)" [ref=e183]:
+          - /placeholder: "Ej: Taquería El Compa"
+      - generic [ref=e184]:
+        - generic [ref=e185]:
+          - text: ¿En qué podemos ayudarte?
+          - generic [ref=e186]: "*"
+        - textbox "¿En qué podemos ayudarte? *" [ref=e187]:
+          - /placeholder: Describe los procesos que te quitan más tiempo o el sistema que tienes en mente...
+      - button "Enviar mensaje por WhatsApp" [ref=e188]:
+        - generic [ref=e189]:
+          - img
+          - text: Enviar mensaje por WhatsApp
+      - paragraph [ref=e190]: Información 100% confidencial. No spam, garantizado.
+  - generic [ref=e192]:
+    - generic [ref=e193]:
+      - generic [ref=e194]:
+        - generic [ref=e195]:
+          - generic [ref=e197]: X
+          - generic [ref=e198]: Xolventa
+        - paragraph [ref=e199]: Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
+      - generic [ref=e200]:
+        - generic [ref=e201]: Navegación
+        - navigation [ref=e202]:
+          - link "Soluciones" [ref=e203] [cursor=pointer]:
+            - /url: "#servicios"
+          - link "Metodología" [ref=e204] [cursor=pointer]:
+            - /url: "#about"
+          - link "Iniciar Proyecto" [ref=e205] [cursor=pointer]:
+            - /url: "#contacto"
+      - generic [ref=e206]:
+        - generic [ref=e207]: Contacto Directo
+        - link "834 255 0555" [ref=e208] [cursor=pointer]:
+          - /url: https://wa.me/528342550555
+          - img [ref=e209]
+          - text: 834 255 0555
+    - generic [ref=e212]:
+      - paragraph [ref=e213]: © 2026 Xolventa. Todos los derechos reservados.
+      - paragraph [ref=e216]: Sistemas operativos en Cd. Victoria, Tam.
+</file>
+
+<file path="CLAUDE.md">
+# Landing Page - Xolventa
+
+## Project Overview
+- **Framework**: Astro 6.4.6 + React 19 (islands)
+- **Styling**: Tailwind CSS 4.3 + shadcn/ui components
+- **Fonts**: Geist (via @fontsource-variable/geist)
+- **Deployment**: Vercel (analytics + speed insights)
+- **Node**: >=22.12.0
+
+## Commands
+```bash
+pnpm dev      # Development server
+pnpm build    # Production build
+pnpm preview  # Preview production build
+```
+
+## Structure
+```
+src/
+├── components/
+│   ├── Hero.astro / HeroSection.tsx      # Hero section (React island)
+│   ├── Services.astro                    # Services section
+│   ├── About.astro                       # About section
+│   ├── ContactForm.tsx                   # Contact form (React island)
+│   ├── Footer.astro                      # Footer
+│   └── ui/                               # shadcn/ui components (button, input, label, textarea, card)
+├── layouts/Layout.astro                  # Main layout
+├── pages/index.astro                     # Home page
+├── styles/global.css                     # Global styles + Tailwind
+└── lib/utils.ts                          # Utility functions (cn, etc.)
+```
+
+## Key Decisions (memories in .mind/)
+- **Astro + React islands**: Interactive components (Hero, ContactForm) use React; static sections use Astro
+- **Tailwind 4 + Vite plugin**: Modern Tailwind with @tailwindcss/vite
+- **shadcn/ui**: Component library for consistent UI
+- **Geist font**: Variable font for performance
+- **Vercel analytics**: Built-in analytics + speed insights
+
+## Current State
+- Project initialized with Astro + React + Tailwind + shadcn/ui
+- Basic landing page structure exists (Hero, Services, About, Contact, Footer)
+- Build output in `dist/`
+
+## Memory System
+Local mind system in `.mind/`:
+- `space.json` - Project metadata
+- `memories/` - Individual memories (JSON)
+- `checkpoints/` - Session checkpoints
+- `links.json` - Memory relationships
+
+Use `memory_add`, `checkpoint_save`, `checkpoint_load` patterns manually via file operations.
 </file>
 
 <file path="src/components/ui/card.tsx">
@@ -395,6 +2849,327 @@ Allow: /
 Sitemap: https://xolventa.vercel.app/sitemap.xml
 </file>
 
+<file path="src/components/ui/button.tsx">
+import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const buttonVariants = cva(
+  "group/button inline-flex shrink-0 items-center justify-center rounded-[--radius] border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground hover:bg-primary/80",
+        outline:
+          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+        ghost:
+          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        destructive:
+          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+      size: {
+        default:
+          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        xs: "h-6 gap-1 rounded-[--radius] px-2 text-xs in-data-[slot=button-group]:rounded-[--radius] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-7 gap-1 rounded-[--radius] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-[--radius] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        icon: "size-8",
+        "icon-xs":
+          "size-6 rounded-[--radius] in-data-[slot=button-group]:rounded-[--radius] [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm":
+          "size-7 rounded-[--radius] in-data-[slot=button-group]:rounded-[--radius]",
+        "icon-lg": "size-9",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
+  }
+)
+
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  ...props
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
+}
+
+export { Button, buttonVariants }
+</file>
+
+<file path="src/components/HeroSection.tsx">
+import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, Menu, X } from 'lucide-react';
+
+const NAV_LINKS = [
+  { label: 'SERVICIOS', href: '#servicios' },
+  { label: 'PROCESO', href: '#about' },
+  { label: 'CONTACTO', href: '#contacto' },
+];
+
+const HLS_SRC =
+  'https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
+
+export default function HeroSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    let hlsInstance: any = null;
+
+    (async () => {
+      const Hls = (await import('hls.js')).default;
+      if (Hls.isSupported()) {
+        hlsInstance = new Hls({ enableWorker: false });
+        hlsInstance.loadSource(HLS_SRC);
+        hlsInstance.attachMedia(video);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = HLS_SRC;
+      }
+    })();
+
+    return () => {
+      if (hlsInstance) hlsInstance.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [menuOpen]);
+
+  return (
+    <div className="relative min-h-screen bg-[#070b0a]">
+      {/* ── Fixed Video Background ── */}
+      <div className="fixed inset-0 z-0">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover opacity-60"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070b0a] via-[#070b0a]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#070b0a] via-transparent to-transparent" />
+
+        {/* Grid Lines */}
+        <div className="hidden lg:block absolute inset-0 pointer-events-none">
+          <div className="relative w-full h-full max-w-7xl mx-auto px-6">
+            <div
+              className="absolute top-0 bottom-0 w-px bg-white/[0.07]"
+              style={{ left: '25%' }}
+            />
+            <div
+              className="absolute top-0 bottom-0 w-px bg-white/[0.07]"
+              style={{ left: '50%' }}
+            />
+            <div
+              className="absolute top-0 bottom-0 w-px bg-white/[0.07]"
+              style={{ left: '75%' }}
+            />
+          </div>
+        </div>
+
+        {/* Central Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none w-full max-w-[1200px]">
+          <svg
+            viewBox="0 0 1200 400"
+            className="w-full h-auto"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <defs>
+              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="25" />
+              </filter>
+            </defs>
+            <ellipse
+              cx="600"
+              cy="200"
+              rx="500"
+              ry="120"
+              fill="#5ed29c"
+              opacity="0.10"
+              filter="url(#glow)"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* ── Navigation ── */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#070b0a]/60 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+          <span className="text-white text-lg font-bold tracking-[0.15em]">
+            XOLVENTA
+          </span>
+
+          <nav className="hidden lg:flex items-center gap-10">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-white/60 hover:text-[#5ed29c] text-xs font-semibold tracking-[0.12em] transition-colors duration-300"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
+
+          <button
+            className="lg:hidden text-white"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Abrir menú"
+          >
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </header>
+
+      {/* ── Mobile Menu ── */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-40 bg-[#070b0a]/95 flex flex-col items-center justify-center gap-10">
+          <button
+            className="absolute top-6 right-6 text-white"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Cerrar menú"
+          >
+            <X size={24} />
+          </button>
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              className="text-white text-xl font-semibold tracking-[0.12em] hover:text-[#5ed29c] transition-colors duration-300"
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      )}
+
+      {/* ── Hero Content ── */}
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-36 pb-20 min-h-screen flex flex-col justify-center">
+        {/* Liquid Glass Card */}
+        <div className="liquid-glass w-[200px] h-[200px] p-5 -translate-y-10 lg:-translate-y-12 mb-8">
+          <span className="block text-white/40 text-[13px] font-mono tracking-wider mb-3">
+            [ 2025 ]
+          </span>
+          <h3
+            className="text-[18px] text-white/90 leading-[1.25] mb-2 font-semibold"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            Primero te{' '}
+            <em className="font-[Instrument_Serif] italic font-normal text-white">
+              conozco
+            </em>
+            ,
+          </h3>
+          <p className="text-[11px] text-white/50 leading-relaxed">
+            Consulta gratuita. Analizamos tu negocio y te proponemos la solución ideal.
+          </p>
+        </div>
+
+        {/* Eyebrow */}
+        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-white/[0.08] bg-white/[0.03] mb-8 w-fit">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#5ed29c] animate-pulse" />
+          <span
+            className="text-[11px] font-bold tracking-[0.18em] text-[#5ed29c] uppercase leading-none"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            Cd. Victoria, Tamaulipas
+          </span>
+        </div>
+
+        {/* Main Headline */}
+        <h1
+          className="text-[40px] md:text-[64px] lg:text-[72px] font-extrabold uppercase tracking-tight text-white leading-[0.92] max-w-4xl mb-6"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          Tecnología premium para tu negocio
+          <span className="text-[#5ed29c]">.</span>
+        </h1>
+
+        {/* Description */}
+        <p
+          className="text-[14px] text-white/70 max-w-lg leading-relaxed mb-12"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          Automatización con IA, software a la medida y páginas web profesionales
+          para empresas en Ciudad Victoria. Primero te conozco, luego te propongo
+          algo útil.
+        </p>
+
+        {/* CTA */}
+        <a
+          href="#contacto"
+          className="group inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-bold text-[13px] tracking-[0.12em] uppercase rounded-full px-9 py-[18px] w-fit hover:scale-[1.02] transition-transform duration-300"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          Iniciar Proyecto
+          <ArrowRight
+            size={16}
+            className="transition-transform duration-300 group-hover:translate-x-1"
+          />
+        </a>
+      </div>
+    </div>
+  );
+}
+</file>
+
+<file path="skills-lock.json">
+{
+  "version": 1,
+  "skills": {
+    "playwright-cli": {
+      "source": "microsoft/playwright-cli",
+      "sourceType": "github",
+      "skillPath": "skills/playwright-cli/SKILL.md",
+      "computedHash": "32cf6cf8733ae75ae41f5241347bca74459629f90bcfbd4e25540ede5d4b8f95"
+    }
+  }
+}
+</file>
+
+<file path="tsconfig.json">
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+</file>
+
 <file path="public/sitemap.xml">
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -453,108 +3228,122 @@ export default function ContactForm() {
     }, 1000);
   };
 
+  const inputClasses = "bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-[--color-accent] focus-visible:border-[--color-accent] transition-all duration-300";
+
   return (
-    <section id="contacto" className="py-20 md:py-28 px-6 border-b border-border">
-      <div className="max-w-3xl mx-auto">
-        <div className="scroll-reveal max-w-xl mb-12">
-          <span className="tag block mb-5">Contacto</span>
-          <h2 className="section-title mb-4">
-            Cuéntame qué traes entre manos
-          </h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Sin presión. Me cuentas tu situación y vemos si puedo ayudarte.
-            Te responderé por WhatsApp para coordinar una plática.
-          </p>
-        </div>
+    <section id="contacto" className="py-24 md:py-32 px-6 relative">
+      {/* Background glow */}
+      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-full max-w-3xl h-64 bg-emerald-900/20 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none"></div>
 
-        <div className="scroll-reveal" style={{ transitionDelay: '150ms' }}>
-          <div className="card-border p-6 md:p-8">
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-1.5">
-                <Label htmlFor="nombre" className="text-foreground text-sm font-medium font-body">
-                  Tu nombre <span className="text-accent">*</span>
-                </Label>
-                <Input
-                  id="nombre"
-                  type="text"
-                  placeholder="Ej: Juan Pérez"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  required
-                  className="bg-transparent border-border text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-accent/40 focus:ring-1 focus:ring-accent/10 transition-all rounded-lg"
-                />
+      <div className="max-w-4xl mx-auto relative z-10">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="scroll-reveal">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 mb-6">
+              <span className="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
+              <span className="font-mono text-xs text-zinc-300 uppercase tracking-widest">Inicia tu proyecto</span>
+            </div>
+            
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
+              ¿Listo para <span className="text-gradient-accent">modernizar</span> tu negocio?
+            </h2>
+            <p className="text-lg text-zinc-400 leading-relaxed mb-8">
+              Cuéntame tus cuellos de botella. Agendaremos una asesoría gratuita de 30 minutos para analizar si la tecnología puede ayudarte a facturar más trabajando menos.
+            </p>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-4 text-zinc-300">
+                <div className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                </div>
+                <div>
+                  <p className="text-sm text-zinc-500 font-medium">Llamada directa</p>
+                  <p className="text-white">+52 834 255 0555</p>
+                </div>
               </div>
-
-              <div className="space-y-1.5">
-                <Label htmlFor="negocio" className="text-foreground text-sm font-medium font-body">
-                  Nombre de tu negocio <span className="text-muted-foreground/60 text-xs font-normal">(opcional)</span>
-                </Label>
-                <Input
-                  id="negocio"
-                  type="text"
-                  placeholder="Ej: Taquería El Compa, Ferretería Martínez..."
-                  value={negocio}
-                  onChange={(e) => setNegocio(e.target.value)}
-                  className="bg-transparent border-border text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-accent/40 focus:ring-1 focus:ring-accent/10 transition-all rounded-lg"
-                />
+              <div className="flex items-center gap-4 text-zinc-300">
+                <div className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                  <p className="text-sm text-zinc-500 font-medium">Ubicación</p>
+                  <p className="text-white">Ciudad Victoria, Tam.</p>
+                </div>
               </div>
+            </div>
+          </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="domicilio" className="text-foreground text-sm font-medium font-body">
-                  Dónde está tu negocio <span className="text-muted-foreground/60 text-xs font-normal">(opcional)</span>
-                </Label>
-                <Input
-                  id="domicilio"
-                  type="text"
-                  placeholder="Ej: Calle Hidalgo 123, Centro, Cd. Victoria"
-                  value={domicilio}
-                  onChange={(e) => setDomicilio(e.target.value)}
-                  className="bg-transparent border-border text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-accent/40 focus:ring-1 focus:ring-accent/10 transition-all rounded-lg"
-                />
-              </div>
+          <div className="scroll-reveal" style={{ transitionDelay: '150ms' }}>
+            <div className="glass-card p-8 md:p-10 rounded-3xl relative overflow-hidden group">
+              {/* Highlight effect on hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+              
+              <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+                <div className="space-y-2">
+                  <Label htmlFor="nombre" className="text-zinc-300 font-medium">Tu nombre <span className="text-[--color-accent]">*</span></Label>
+                  <Input
+                    id="nombre"
+                    type="text"
+                    placeholder="Ej: Juan Pérez"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    required
+                    className={inputClasses}
+                  />
+                </div>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="problema" className="text-foreground text-sm font-medium font-body">
-                  Qué necesitas <span className="text-accent">*</span>
-                </Label>
-                <Textarea
-                  id="problema"
-                  placeholder="Cuéntame cómo funciona tu negocio, qué te gustaría automatizar, qué sistema necesitas, o qué problema tienes."
-                  value={problema}
-                  onChange={(e) => setProblema(e.target.value)}
-                  required
-                  rows={5}
-                  className="bg-transparent border-border text-sm text-foreground placeholder:text-muted-foreground/40 focus:border-accent/40 focus:ring-1 focus:ring-accent/10 transition-all rounded-lg resize-none"
-                />
-              </div>
+                <div className="space-y-2">
+                  <Label htmlFor="negocio" className="text-zinc-300 font-medium">Nombre de tu negocio <span className="text-zinc-500 font-normal">(Opcional)</span></Label>
+                  <Input
+                    id="negocio"
+                    type="text"
+                    placeholder="Ej: Taquería El Compa"
+                    value={negocio}
+                    onChange={(e) => setNegocio(e.target.value)}
+                    className={inputClasses}
+                  />
+                </div>
 
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-accent text-accent-foreground hover:bg-[#a82a01] font-semibold py-3 text-sm transition-all duration-200 rounded-lg"
-              >
-                {isSubmitting ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Abriendo WhatsApp...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                    </svg>
-                    Enviar por WhatsApp
-                  </span>
-                )}
-              </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="problema" className="text-zinc-300 font-medium">¿En qué podemos ayudarte? <span className="text-[--color-accent]">*</span></Label>
+                  <Textarea
+                    id="problema"
+                    placeholder="Describe los procesos que te quitan más tiempo o el sistema que tienes en mente..."
+                    value={problema}
+                    onChange={(e) => setProblema(e.target.value)}
+                    required
+                    rows={4}
+                    className={`${inputClasses} resize-none`}
+                  />
+                </div>
 
-              <p className="text-center text-muted-foreground/50 text-xs">
-                Se abrirá WhatsApp con tu mensaje listo. No guardamos tus datos.
-              </p>
-            </form>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-white text-zinc-950 hover:bg-zinc-200 hover:scale-[1.02] transition-all duration-300 h-12 rounded-full font-semibold mt-4"
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Conectando...
+                    </span>
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                      </svg>
+                      Enviar mensaje por WhatsApp
+                    </span>
+                  )}
+                </Button>
+                
+                <p className="text-center text-zinc-500 text-xs mt-4 font-medium">
+                  Información 100% confidencial. No spam, garantizado.
+                </p>
+              </form>
+            </div>
           </div>
         </div>
       </div>
@@ -565,90 +3354,254 @@ export default function ContactForm() {
 
 <file path="src/components/Services.astro">
 ---
+import { LucideIcon } from 'lucide-react'; // Not using it directly here, we'll use SVGs directly for simplicity, but good to know we have lucide.
+
 const servicios = [
   {
-    icon: "smartphone",
-    titulo: "Apps para tu negocio",
-    texto: "Usas un sistema genérico que no termina de convencerte. Te construyo uno a tu medida: punto de venta, control de inventario, administración de clientes, o lo que tu negocio necesite.",
-    tags: ["Pago mensual", "Soporte incluido", "PC, tablet y celular"],
+    titulo: "Sistemas Inteligentes",
+    texto: "Software hecho a tu medida. Punto de venta, control de inventario o gestión integral. Olvídate de los sistemas lentos y genéricos.",
+    tags: ["Arquitectura escalable", "Soporte VIP"],
+    colSpan: "md:col-span-2",
+    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>'
   },
   {
-    icon: "globe",
-    titulo: "Páginas web",
-    texto: "Tu negocio merece estar en internet. Una página clara y sencilla donde tus clientes encuentren tus servicios, horarios y ubicación. Con WhatsApp incluido para que te contacten directo.",
-    tags: ["Pago único", "WhatsApp integrado"],
+    titulo: "Presencia Web",
+    texto: "Páginas súper rápidas, optimizadas y hermosas. Integradas con WhatsApp para capturar leads 24/7.",
+    tags: ["Pago único"],
+    colSpan: "md:col-span-1",
+    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="m9 21-3-9"/></svg>'
   },
   {
-    icon: "zap",
-    titulo: "Automatizaciones con IA",
-    texto: "Tareas que haces todos los días y te quitan tiempo: responder mensajes, organizar datos, generar reportes. Deja que la tecnología haga el trabajo pesado por ti.",
-    tags: ["Pago mensual", "Soporte continuo"],
+    titulo: "Automatización con IA",
+    texto: "La IA responde por ti, organiza tus datos y genera reportes. Delega el trabajo aburrido y enfócate en crecer tu negocio.",
+    tags: ["Bots 24/7", "Eficiencia total"],
+    colSpan: "md:col-span-1",
+    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>'
   },
   {
-    icon: "message",
-    titulo: "Entrevista para tu negocio",
-    texto: "Agendamos una plática sin compromiso. Me cuentas cómo trabajas y qué te quita tiempo. De ahí vemos si puedo ayudarte. Así de sencillo.",
-    tags: ["Sin costo", "Presencial o remoto"],
-  },
+    titulo: "Asesoría Premium",
+    texto: "Descubramos dónde pierdes tiempo y dinero. Diagnóstico completo sin costo para crear tu ruta de modernización.",
+    tags: ["Sin compromiso", "Remoto/Local"],
+    colSpan: "md:col-span-2",
+    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>'
+  }
 ];
-
-const iconMap: Record<string, string> = {
-  smartphone: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><line x1="12" x2="12.01" y1="18" y2="18"/></svg>',
-  globe: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
-  zap: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
-  message: '<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
-};
 ---
 
-<section id="servicios" class="py-20 md:py-28 px-6 border-b border-border">
-  <div class="max-w-5xl mx-auto">
-    <div class="scroll-reveal max-w-xl mb-14">
-      <span class="tag block mb-5">Servicios</span>
-      <h2 class="section-title mb-4">
-        Soluciones para los problemas más comunes de los negocios locales
+<section id="servicios" class="py-24 md:py-32 px-6 relative">
+  {/* Ambient background blur */}
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-[--color-accent] rounded-full mix-blend-screen opacity-[0.03] filter blur-[100px] pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="scroll-reveal max-w-2xl mb-16 md:mb-24">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 mb-6">
+        <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
+        <span class="font-mono text-xs text-zinc-300 uppercase tracking-widest">Nuestras Soluciones</span>
+      </div>
+      <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
+        Sistemas que <span class="text-gradient-accent">transforman</span> tu forma de trabajar
       </h2>
-      <p class="text-muted-foreground leading-relaxed">
-        Cada negocio es diferente, pero hay problemas que se repiten. Aquí te cuento cómo puedo ayudarte.
+      <p class="text-lg text-zinc-400 leading-relaxed">
+        Soluciones técnicas de alto nivel diseñadas específicamente para automatizar, vender más y perder menos tiempo.
       </p>
     </div>
 
-    <div class="grid md:grid-cols-2 gap-4">
+    {/* Bento Box Grid */}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
       {servicios.map((s, i) => (
-        <div
-          class="scroll-reveal card-border p-6 md:p-7"
-          style={`transition-delay: ${i * 100}ms`}
-        >
-          <div class="flex items-start gap-4">
-            <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0 text-accent" set:html={iconMap[s.icon]} />
-            <div class="flex-1 min-w-0">
-              <h3 class="font-display text-xl text-foreground mb-2">
-                {s.titulo}
-              </h3>
-              <p class="text-sm text-muted-foreground leading-relaxed">
-                {s.texto}
-              </p>
-              <div class="flex flex-wrap gap-2 mt-4">
-                {s.tags.map((tag) => (
-                  <span class="text-xs text-muted-foreground/80 border border-border px-2.5 py-1 rounded-full">
-                    {tag}
-                  </span>
-                ))}
-              </div>
+        <div class={`scroll-reveal glass-card rounded-3xl p-8 md:p-10 flex flex-col group relative overflow-hidden ${s.colSpan}`} style={`transition-delay: ${i * 100}ms`}>
+          {/* Hover gradient effect */}
+          <div class="absolute inset-0 bg-gradient-to-br from-[--color-accent]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          
+          <div class="relative z-10 flex-1">
+            <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[--color-accent] mb-8 group-hover:scale-110 group-hover:bg-[--color-accent]/10 transition-all duration-300">
+              <div set:html={s.icon} />
             </div>
+            
+            <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400 transition-all">{s.titulo}</h3>
+            <p class="text-zinc-400 leading-relaxed mb-8">{s.texto}</p>
+          </div>
+
+          <div class="relative z-10 flex flex-wrap gap-3 mt-auto">
+            {s.tags.map(tag => (
+              <span class="font-mono text-xs font-medium text-zinc-300 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm group-hover:border-white/20 transition-colors">
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
       ))}
     </div>
 
-    <div class="scroll-reveal mt-10 text-center">
-      <div class="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm text-muted-foreground">
-        <span class="text-accent font-semibold">No sabes qué necesitas?</span>
-        No pasa nada. Para eso está la entrevista sin costo.
-        <a href="#contacto" class="text-accent underline underline-offset-4 decoration-accent/30 font-semibold ml-1">Conversemos</a>
+    <div class="scroll-reveal mt-20 pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+      <div>
+        <h4 class="text-xl font-medium text-white mb-2">¿No estás seguro por dónde empezar?</h4>
+        <p class="text-zinc-400">Podemos hacer un diagnóstico de tus procesos sin ningún costo.</p>
       </div>
+      <a href="#contacto" class="inline-flex items-center gap-2 bg-white text-zinc-950 font-semibold px-6 py-3 rounded-full transition-transform hover:scale-105">
+        Agendar llamada
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </a>
     </div>
   </div>
 </section>
+</file>
+
+<file path="src/components/About.astro">
+---
+const pasos = [
+  {
+    titulo: "Diagnóstico sin costo",
+    texto: "Agendamos una videollamada o reunión presencial. Me cuentas cómo funciona tu negocio y qué procesos te gustaría optimizar.",
+  },
+  {
+    titulo: "Arquitectura de solución",
+    texto: "Te presento una propuesta clara. Tecnologías a utilizar, tiempos de entrega y costos exactos. Sin tecnicismos innecesarios.",
+  },
+  {
+    titulo: "Desarrollo y despliegue",
+    texto: "Construyo tu sistema utilizando las últimas tecnologías web. Te entrego un producto rápido, seguro y listo para escalar.",
+  },
+  {
+    titulo: "Soporte premium",
+    texto: "No te dejo solo. Ofrezco planes de soporte continuo para que tu tecnología siempre esté actualizada y funcionando al 100%.",
+  },
+];
+
+const stats = [
+  { valor: "100%", label: "Enfoque Local" },
+  { valor: "0", label: "Plantillas Genéricas" },
+  { valor: "24/7", label: "Disponibilidad de Sistemas" },
+];
+---
+
+<section id="about" class="py-24 md:py-32 px-6 relative overflow-hidden">
+  {/* Ambient background styling */}
+  <div class="absolute right-0 top-0 w-1/2 h-full bg-linear-to-l from-white/2 to-transparent pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-16 lg:gap-24 items-start">
+      
+      {/* Left Column: Context & Stats */}
+      <div class="scroll-reveal lg:sticky lg:top-32" style="transition-delay: 100ms">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 mb-6">
+          <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
+          <span class="font-mono text-xs text-zinc-300 uppercase tracking-widest">Nuestra Filosofía</span>
+        </div>
+        
+        <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
+          Primero te conozco, luego te propongo algo <span class="text-gradient-accent">útil.</span>
+        </h2>
+        
+        <p class="text-lg text-zinc-400 leading-relaxed mb-12">
+          Operando desde Cd. Victoria, Tamaulipas. Conozco las necesidades reales de los negocios locales. No te vendo tecnología por vender; construimos herramientas que generan impacto.
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
+          {stats.map(stat => (
+            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col items-center text-center group hover:border-white/10 transition-colors">
+              <span class="text-3xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">{stat.valor}</span>
+              <span class="text-xs text-zinc-500 uppercase tracking-wider font-medium">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+        
+        <div class="mt-12 p-6 rounded-2xl bg-linear-to-br from-[--color-accent]/10 to-transparent border border-[--color-accent]/20 flex items-start gap-4">
+          <div class="w-12 h-12 rounded-full bg-[--color-accent]/20 flex items-center justify-center shrink-0">
+            <svg class="w-6 h-6 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <h4 class="text-white font-medium mb-1">Garantía de calidad</h4>
+            <p class="text-sm text-zinc-400 leading-relaxed">Sistemas probados, seguros y diseñados específicamente para resolver los problemas de tu operativa diaria.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column: Timeline */}
+      <div class="scroll-reveal space-y-8 relative" style="transition-delay: 200ms">
+        {/* Timeline line */}
+        <div class="absolute left-6 md:left-8 top-8 bottom-8 w-px bg-linear-to-b from-[--color-accent] via-white/10 to-transparent"></div>
+
+        {pasos.map((p, i) => (
+          <div class="relative pl-16 md:pl-24 group">
+            <div class="absolute left-0 md:left-2 top-1.5 w-12 h-12 rounded-full glass border border-white/10 flex items-center justify-center z-10 group-hover:bg-[--color-accent]/20 group-hover:border-[--color-accent]/50 transition-colors shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+              <span class="font-mono text-sm font-bold text-[--color-accent]">0{i + 1}</span>
+            </div>
+            
+            <div class="glass-card p-6 md:p-8 rounded-3xl border border-white/5 group-hover:border-white/10 transition-colors">
+              <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-[--color-accent] transition-colors">{p.titulo}</h3>
+              <p class="text-zinc-400 leading-relaxed">{p.texto}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+    </div>
+  </div>
+</section>
+</file>
+
+<file path="src/components/Footer.astro">
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="border-t border-white/10 py-16 px-6 relative overflow-hidden">
+  {/* Ambient background styling */}
+  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-32 bg-[--color-accent] rounded-t-[100%] mix-blend-screen opacity-[0.02] filter blur-[64px] pointer-events-none"></div>
+
+  <div class="max-w-6xl mx-auto relative z-10">
+    <div class="grid md:grid-cols-4 gap-12 mb-16">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-gradient-to-br from-[--color-accent] to-emerald-700 flex items-center justify-center rounded-[--radius] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+            <span class="text-white font-bold text-sm">X</span>
+          </div>
+          <span class="text-2xl font-bold tracking-tight text-white">Xolventa</span>
+        </div>
+        <p class="text-zinc-400 leading-relaxed max-w-sm mb-6">
+          Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
+        </p>
+      </div>
+
+      <div class="md:col-span-1">
+        <span class="font-mono text-xs text-zinc-500 uppercase tracking-widest block mb-6">Navegación</span>
+        <nav class="space-y-4">
+          <a href="#servicios" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Soluciones</a>
+          <a href="#about" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Metodología</a>
+          <a href="#contacto" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Iniciar Proyecto</a>
+        </nav>
+      </div>
+
+      <div class="md:col-span-1">
+        <span class="font-mono text-xs text-zinc-500 uppercase tracking-widest block mb-6">Contacto Directo</span>
+        <a
+          href="https://wa.me/528342550555"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-sm text-zinc-300 glass border border-white/10 px-4 py-2 rounded-full hover:bg-white/5 hover:border-white/20 transition-all group"
+        >
+          <svg class="w-4 h-4 text-[--color-accent] group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          834 255 0555
+        </a>
+      </div>
+    </div>
+
+    <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8"></div>
+
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+      <p class="text-sm text-zinc-500">
+        &copy; {currentYear} Xolventa. Todos los derechos reservados.
+      </p>
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
+        <p class="text-sm text-zinc-500">
+          Sistemas operativos en Cd. Victoria, Tam.
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
 </file>
 
 <file path="src/styles/global.css">
@@ -659,52 +3612,61 @@ const iconMap: Record<string, string> = {
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-display: 'DM Serif Display', serif;
-    --font-body: 'DM Sans', sans-serif;
-    --color-border: var(--border);
-    --color-input: var(--input);
-    --color-ring: var(--ring);
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --color-primary: var(--primary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-secondary: var(--secondary);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-accent: var(--accent);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-destructive: var(--destructive);
-    --color-card: var(--card);
-    --color-card-foreground: var(--card-foreground);
-    --color-popover: var(--popover);
-    --color-popover-foreground: var(--popover-foreground);
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
+  --font-sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 2px;
+  --radius-md: 2px;
+  --radius-lg: 2px;
+  --radius-xl: 2px;
 }
 
 :root {
-    --background: #1c1917;
-    --foreground: #f5f0eb;
-    --card: #292524;
-    --card-foreground: #f5f0eb;
-    --popover: #292524;
-    --popover-foreground: #f5f0eb;
-    --primary: #292524;
-    --primary-foreground: #f5f0eb;
-    --secondary: #292524;
-    --secondary-foreground: #f5f0eb;
-    --muted: #292524;
-    --muted-foreground: #a8a29e;
-    --accent: #c03001;
-    --accent-foreground: #f5f0eb;
-    --destructive: #dc2626;
-    --border: #44403c;
-    --input: #44403c;
-    --ring: #c03001;
-    --radius: 8px;
+  --color-canvas: #09090b;
+  --color-ink: #fafafa;
+  --color-ink-2: #a1a1aa;
+  --color-ink-3: #71717a;
+  --color-accent: #10b981;
+  --color-accent-h: #059669;
+  --color-border: rgba(255, 255, 255, 0.1);
+
+  --background: var(--color-canvas);
+  --foreground: var(--color-ink);
+  --card: rgba(255, 255, 255, 0.03);
+  --card-foreground: var(--color-ink);
+  --popover: var(--color-canvas);
+  --popover-foreground: var(--color-ink);
+  --primary: var(--color-accent);
+  --primary-foreground: #09090b;
+  --secondary: rgba(255, 255, 255, 0.05);
+  --secondary-foreground: var(--color-ink);
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: var(--color-ink-2);
+  --accent: rgba(16, 185, 129, 0.1);
+  --accent-foreground: var(--color-accent);
+  --destructive: #ef4444;
+  --border: var(--color-border);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: var(--color-accent);
+  --radius: 16px;
 }
 
 @layer base {
@@ -712,33 +3674,27 @@ const iconMap: Record<string, string> = {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
   html {
     @apply scroll-smooth;
   }
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    font-weight: 400;
+    font-weight: 600;
     letter-spacing: -0.02em;
     text-wrap: balance;
     line-height: 1.15;
   }
   h1 {
-    font-weight: 400;
+    font-weight: 700;
     letter-spacing: -0.03em;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
-  }
-  h2 {
-    font-size: clamp(1.75rem, 5vw, 3rem);
   }
   p {
     text-wrap: pretty;
-    line-height: 1.7;
+    line-height: 1.6;
   }
   ::selection {
-    background: rgba(192, 48, 1, 0.2);
-    color: var(--foreground);
+    background: rgba(31, 92, 70, 0.2);
   }
 }
 
@@ -764,97 +3720,83 @@ const iconMap: Record<string, string> = {
   transform: translateY(0);
 }
 
-.tag {
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.step-number {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  color: var(--muted-foreground);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.8125rem;
-  flex-shrink: 0;
-}
-
-.card-border {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  background: var(--card);
-  transition: border-color 0.2s ease;
-}
-
-.card-border:hover {
-  border-color: rgba(192, 48, 1, 0.15);
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border-radius: var(--radius-md);
-  background: var(--accent);
-  color: var(--accent-foreground);
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 0.875rem;
-  padding: 0.75rem 1.75rem;
-  transition: all 0.2s ease;
-  border: none;
-}
-
-.btn-primary:hover {
-  background: #a82a01;
-}
-
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  color: var(--foreground);
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.875rem;
-  padding: 0.75rem 1.75rem;
-  transition: all 0.2s ease;
-}
-
-.btn-secondary:hover {
-  border-color: var(--muted-foreground);
-  background: var(--secondary);
-}
-
-.section-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.75rem, 5vw, 3rem);
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  color: var(--foreground);
-}
-
-.divider {
-  height: 1px;
-  background: var(--border);
-  width: 100%;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .scroll-reveal { opacity: 1; transform: none; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.1; transform: scale(1); }
+  50% { opacity: 0.2; transform: scale(1.05); }
+}
+
+@keyframes shine {
+  from { background-position: 200% center; }
+  to { background-position: -200% center; }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+}
+
+.glass-card:hover {
+  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, #fafafa, #a1a1aa);
+}
+
+.text-gradient-accent {
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: linear-gradient(to right, #34d399, #10b981);
+}
+
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  position: relative;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.4px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 </file>
 
@@ -875,6 +3817,27 @@ export default defineConfig({
     plugins: [tailwindcss()]
   }
 });
+</file>
+
+<file path="src/pages/index.astro">
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/HeroSection.tsx';
+import Services from '../components/Services.astro';
+import About from '../components/About.astro';
+import ContactForm from '../components/ContactForm.tsx';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout>
+  <main>
+    <HeroSection client:load />
+    <Services />
+    <About />
+    <ContactForm client:load />
+    <Footer />
+  </main>
+</Layout>
 </file>
 
 <file path="package.json">
@@ -899,10 +3862,12 @@ export default defineConfig({
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^1.3.1",
     "astro": "^6.4.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "esbuild": "0.25.2",
+    "hls.js": "^1.6.16",
     "lucide-react": "^1.18.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
@@ -912,203 +3877,6 @@ export default defineConfig({
     "tw-animate-css": "^1.4.0"
   }
 }
-</file>
-
-<file path="tsconfig.json">
-{
-  "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*"
-  ],
-  "exclude": [
-    "dist"
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-</file>
-
-<file path="src/components/About.astro">
----
-const pasos = [
-  {
-    titulo: "Agendamos una plática",
-    texto: "Sin costo, sin compromiso. Me cuentas cómo funciona tu negocio y qué te gustaría mejorar o qué tareas odias hacer.",
-  },
-  {
-    titulo: "Propongo una solución concreta",
-    texto: "Te explico qué puedo hacer, cuánto tiempo tomaría y qué costo tiene. Sin tecnicismos raros ni promesas falsas.",
-  },
-  {
-    titulo: "Construyo y entrego",
-    texto: "Desarrollo tu sistema, web o automatización. Te explico cómo usarlo y queda funcionando para ti.",
-  },
-  {
-    titulo: "Precios claros desde el inicio",
-    texto: "Cosas sencillas como una página web se pagan una sola vez. Sistemas más complejos o automatizaciones se manejan con pago mensual y soporte incluido.",
-  },
-];
-
-const puntos = [
-  "Desarrollado en Cd. Victoria para negocios de la región",
-  "Cada negocio es único — lo que construyo se adapta a ti",
-  "Pago único o mensual según el proyecto",
-  "Aunque no compres, te ayudo a elegir lo mejor para tu negocio",
-];
----
-
-<section id="about" class="py-20 md:py-28 px-6 border-b border-border">
-  <div class="max-w-5xl mx-auto">
-    <div class="scroll-reveal max-w-xl mb-14">
-      <span class="tag block mb-5">Cómo trabajo</span>
-      <h2 class="section-title mb-4">
-        Primero te conozco,<br />
-        luego te propongo algo útil
-      </h2>
-      <p class="text-muted-foreground leading-relaxed">
-        Vivo en Cd. Victoria y conozco el día a día de los negocios locales.
-        No te voy a vender tecnología que no necesitas.
-      </p>
-    </div>
-
-    <div class="grid lg:grid-cols-2 gap-12 md:gap-20 items-start">
-      <div class="scroll-reveal space-y-0" style="transition-delay: 100ms">
-        {pasos.map((p, i) => (
-          <div class="flex gap-4 group">
-            <div class="flex flex-col items-center">
-              <span class="step-number">{i + 1}</span>
-              {i < pasos.length - 1 && (
-                <div class="w-px flex-1 bg-border mt-2"></div>
-              )}
-            </div>
-            <div class={`pb-8 ${i === pasos.length - 1 ? 'pb-0' : ''}`}>
-              <h3 class="font-display text-lg text-foreground mb-1.5">
-                {p.titulo}
-              </h3>
-              <p class="text-sm text-muted-foreground leading-relaxed">
-                {p.texto}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div class="scroll-reveal lg:pt-6" style="transition-delay: 200ms">
-        <div class="card-border p-6 md:p-8">
-          <div class="flex items-center gap-3 mb-6">
-            <svg class="w-5 h-5 text-accent flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-            <p class="font-display text-lg text-foreground">Por qué Xolventa</p>
-          </div>
-
-          <div class="space-y-0">
-            {puntos.map((punto, i) => (
-              <div class="flex gap-3 py-4 first:pt-0 last:pb-0 border-b border-border/60 last:border-none">
-                <span class="text-muted-foreground font-body text-xs flex-shrink-0 pt-0.5 w-6">
-                  {String(i + 1).padStart(2, '0')}
-                </span>
-                <p class="text-sm text-foreground/80 leading-relaxed">{punto}</p>
-              </div>
-            ))}
-          </div>
-
-          <div class="mt-6 pt-6 border-t border-border flex items-center gap-3">
-            <span class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent font-display text-lg">CX</span>
-            <div>
-              <p class="text-sm text-foreground font-semibold font-body">Ciudad Victoria, Tamaulipas</p>
-              <p class="text-xs text-muted-foreground">Atención local, presencial o remota</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-6 card-border p-5 border-accent/15">
-          <p class="text-sm text-foreground/80 leading-relaxed font-body">
-            <span class="text-accent font-semibold">Dato real:</span> Si tu negocio está en Cd. Victoria,
-            probablemente ya conozco a alguien que trabaja cerca de ti.
-            Así de local es esto.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-</file>
-
-<file path="src/components/Footer.astro">
----
-const currentYear = new Date().getFullYear();
----
-
-<footer class="py-12 px-6 border-b border-border">
-  <div class="max-w-5xl mx-auto">
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-      <div>
-        <div class="font-display text-xl text-foreground mb-1">
-          Xolventa
-        </div>
-        <p class="text-sm text-muted-foreground">
-          Soluciones, webs y automatización para negocios locales
-        </p>
-        <p class="text-xs text-muted-foreground/50 mt-1">
-          Cd. Victoria, Tamaulipas
-        </p>
-      </div>
-
-      <nav class="text-sm text-muted-foreground flex items-center gap-6">
-        <a href="#servicios" class="hover:text-accent transition-colors">Servicios</a>
-        <a href="#about" class="hover:text-accent transition-colors">Cómo trabajo</a>
-        <a href="#contacto" class="hover:text-accent transition-colors">Contacto</a>
-      </nav>
-
-      <a
-        href="https://wa.me/528342550555"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="text-sm text-muted-foreground hover:text-accent transition-colors inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-1.5 hover:border-accent/30"
-      >
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-        834 255 0555
-      </a>
-    </div>
-
-    <div class="divider mt-8 mb-6"></div>
-
-    <div class="flex flex-col md:flex-row justify-between items-center gap-3 text-center md:text-left">
-      <p class="text-sm text-muted-foreground/40">
-        &copy; {currentYear} &mdash; Cd. Victoria, Tamaulipas
-      </p>
-      <p class="text-sm text-muted-foreground/30">
-        Hecho con café y dedicación para negocios locales
-      </p>
-    </div>
-  </div>
-</footer>
-</file>
-
-<file path="src/pages/index.astro">
----
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/Hero.astro';
-import Services from '../components/Services.astro';
-import About from '../components/About.astro';
-import ContactForm from '../components/ContactForm.tsx';
-import Footer from '../components/Footer.astro';
----
-
-<Layout>
-  <main>
-    <Hero />
-    <Services />
-    <About />
-    <ContactForm client:load />
-    <Footer />
-  </main>
-</Layout>
 </file>
 
 <file path="README.md">
@@ -1134,95 +3902,101 @@ Web: [xolventa.vercel.app](https://xolventa.vercel.app)
 
 <file path="src/components/Hero.astro">
 ---
-const features = [
-  "Asesoría inicial sin costo",
-  "Pago único o mensual",
-  "Sin tecnología que no necesitas",
-];
 ---
 
-<section class="relative overflow-hidden bg-background border-b border-border pt-12 pb-16 md:pb-28">
-  <div class="relative max-w-6xl mx-auto px-6">
-    <div class="scroll-reveal flex items-center gap-2 mb-8">
-      <span class="tag text-xs">Cd. Victoria, Tamaulipas</span>
-      <span class="text-muted-foreground/30 mx-2">/</span>
-      <span class="text-muted-foreground text-xs">Atención local</span>
+<section class="relative min-h-[90vh] flex items-center pt-24 pb-20 overflow-hidden">
+  {/* Background effects */}
+  <div class="absolute inset-0 z-0 pointer-events-none">
+    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-[--color-accent] rounded-full mix-blend-screen opacity-10 filter blur-[100px] animate-[float-slow_8s_ease-in-out_infinite]"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-emerald-800 rounded-full mix-blend-screen opacity-10 filter blur-[128px] animate-[float-slow_10s_ease-in-out_infinite_reverse]"></div>
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAuNWg0ME0wIDM5LjVoNDBNMC41IDB2NDBNMzkuNSAwdjQwIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')] [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-50"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+    <div class="scroll-reveal flex items-center gap-3 mb-12">
+      <div class="glass px-4 py-1.5 rounded-full flex items-center gap-2 border border-white/10">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-[--color-accent]"></span>
+        </span>
+        <span class="text-xs font-medium tracking-wide text-zinc-300 uppercase">
+          Operando en Cd. Victoria
+        </span>
+      </div>
     </div>
 
-    <div class="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-20 items-start">
-      <div class="scroll-reveal pt-4" style="transition-delay: 100ms">
-        <img src="/logo-xolventa.png" alt="Xolventa" class="h-12 w-auto mb-8 opacity-90" />
-
-        <h1 class="text-foreground mb-6" style="line-height: 1.08;">
-          Tecnología a la <span class="text-accent">medida</span> de tu negocio,<br />
-          no al revés
+    <div class="grid lg:grid-cols-[1.2fr_1fr] gap-16 lg:gap-20 items-center">
+      <div class="scroll-reveal" style="transition-delay: 100ms">
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8" style="line-height: 1.1;">
+          <span class="text-gradient">Tecnología premium</span><br/>
+          <span class="text-zinc-500">para tu negocio.</span>
         </h1>
 
-        <p class="text-muted-foreground text-lg leading-relaxed max-w-lg mb-10">
-          Apps, páginas web y automatizaciones para negocios como el tuyo.
-          Sin cosas raras. Sin tecnología que no necesitas. Solo lo que
-          te ayuda de verdad.
+        <p class="text-lg md:text-xl text-[--color-ink-2] leading-relaxed max-w-xl mb-12">
+          Sistemas web, punto de venta y automatizaciones con IA que escalan contigo.
+          Diseño exclusivo, sin plantillas, hecho a la medida.
         </p>
 
-        <div class="flex flex-wrap gap-3 mb-12">
-          <a href="#contacto" class="btn-primary">
-            Cuéntame tu proyecto
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        <div class="flex flex-wrap gap-4 mb-16">
+          <a href="#contacto"
+             class="group relative inline-flex items-center justify-center gap-2 bg-white text-zinc-950 font-semibold px-8 py-4 rounded-full overflow-hidden transition-transform hover:scale-105"
+          >
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <span class="relative z-10 flex items-center gap-2 group-hover:text-zinc-900">
+              Iniciar Proyecto
+              <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </span>
           </a>
-          <a href="#servicios" class="btn-secondary">
-            Ver servicios
+          <a href="#servicios"
+             class="inline-flex items-center justify-center gap-2 glass text-[--color-ink] font-medium px-8 py-4 rounded-full transition-colors hover:bg-white/10 border border-white/10"
+          >
+            Explorar soluciones
           </a>
         </div>
 
-        <div class="flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-          {features.map((f) => (
-            <span class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-              {f}
-            </span>
-          ))}
+        <div class="flex flex-wrap items-center gap-6 text-sm text-[--color-ink-2]">
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Soporte Premium
+          </span>
+          <span class="flex items-center gap-2">
+            <svg class="w-4 h-4 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Soluciones a la medida
+          </span>
         </div>
       </div>
 
-      <div class="scroll-reveal lg:pt-16" style="transition-delay: 250ms">
-        <div class="card-border p-6 md:p-8">
-          <div class="flex items-center gap-3 mb-6 pb-6 border-b border-border">
-            <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
-              <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-            <div>
-              <p class="font-display text-lg text-foreground">Hola, soy Esdras</p>
-              <p class="text-sm text-muted-foreground">Xolventa — Cd. Victoria</p>
-            </div>
-          </div>
-
-          <div class="space-y-5">
-            <div class="flex gap-4">
-              <span class="step-number" style="width: 2rem; height: 2rem; font-size: 0.8125rem;">1</span>
+      <div class="scroll-reveal relative" style="transition-delay: 250ms">
+        <div class="absolute inset-0 bg-gradient-to-tr from-[--color-accent] to-transparent opacity-10 rounded-3xl blur-2xl"></div>
+        <div class="glass-card rounded-3xl p-8 md:p-10 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-32 h-32 bg-[--color-accent] rounded-full mix-blend-screen opacity-10 filter blur-[32px]"></div>
+          
+          <span class="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-[--color-accent] font-mono mb-8">
+            PROCESO SIMPLE
+          </span>
+          
+          <div class="space-y-8 relative z-10">
+            <div class="flex gap-5 group">
+              <div class="flex-shrink-0 w-12 h-12 rounded-2xl glass flex items-center justify-center text-sm font-mono text-[--color-accent] border border-white/10 group-hover:scale-110 transition-transform">01</div>
               <div>
-                <p class="font-body font-semibold text-foreground text-sm mb-1">Me cuentas tu situación</p>
-                <p class="text-sm text-muted-foreground leading-relaxed">Sin presión. Me dices qué necesitas y te escucho. Así de simple.</p>
+                <h4 class="text-lg font-medium text-white mb-1">Diagnóstico</h4>
+                <p class="text-sm text-zinc-400 leading-relaxed">Analizamos tus cuellos de botella sin compromiso ni costo.</p>
               </div>
             </div>
-            <div class="flex gap-4">
-              <span class="step-number" style="width: 2rem; height: 2rem; font-size: 0.8125rem;">2</span>
+            <div class="flex gap-5 group">
+              <div class="flex-shrink-0 w-12 h-12 rounded-2xl glass flex items-center justify-center text-sm font-mono text-[--color-accent] border border-white/10 group-hover:scale-110 transition-transform">02</div>
               <div>
-                <p class="font-body font-semibold text-foreground text-sm mb-1">Te propongo algo concreto</p>
-                <p class="text-sm text-muted-foreground leading-relaxed">Tiempo, costo y cómo lo voy a hacer. Clarito desde el principio.</p>
+                <h4 class="text-lg font-medium text-white mb-1">Propuesta</h4>
+                <p class="text-sm text-zinc-400 leading-relaxed">Arquitectura clara, presupuestos transparentes y tiempos definidos.</p>
               </div>
             </div>
-            <div class="flex gap-4">
-              <span class="step-number" style="width: 2rem; height: 2rem; font-size: 0.8125rem;">3</span>
+            <div class="flex gap-5 group">
+              <div class="flex-shrink-0 w-12 h-12 rounded-2xl glass flex items-center justify-center text-sm font-mono text-[--color-accent] border border-white/10 group-hover:scale-110 transition-transform">03</div>
               <div>
-                <p class="font-body font-semibold text-foreground text-sm mb-1">Lo construyo y te lo entrego</p>
-                <p class="text-sm text-muted-foreground leading-relaxed">Te explico cómo usarlo y te quedas con algo que sí sirve.</p>
+                <h4 class="text-lg font-medium text-white mb-1">Ejecución</h4>
+                <p class="text-sm text-zinc-400 leading-relaxed">Despliegue rápido, capacitación y soporte continuo.</p>
               </div>
             </div>
-          </div>
-
-          <div class="mt-6 pt-5 border-t border-border flex items-center gap-3 text-sm text-muted-foreground">
-            <svg class="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            <span>Entrevista inicial sin costo</span>
           </div>
         </div>
       </div>
@@ -1234,6 +4008,7 @@ const features = [
 <file path="src/layouts/Layout.astro">
 ---
 import Analytics from '@vercel/analytics/astro';
+import SpeedInsights from '@vercel/speed-insights/astro';
 import '../styles/global.css';
 
 interface Props {
@@ -1254,6 +4029,7 @@ const ogImage = `${domain}/og-image.webp`;
 <html lang="es">
   <head>
     <meta charset="utf-8" />
+    <meta name="google-site-verification" content="P6C-d4yLexwK-M28UC0et8q49T-JIXKEHltzIs4nnOM" />
     <link rel="icon" type="image/png" href="/robot.png" />
     <link rel="apple-touch-icon" href="/robot.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -1302,10 +4078,11 @@ const ogImage = `${domain}/og-image.webp`;
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
 
     <title>{title}</title>
     <Analytics />
+    <SpeedInsights />
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
@@ -1318,13 +4095,10 @@ const ogImage = `${domain}/og-image.webp`;
         }, { threshold: 0.1 });
 
         document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
-
-        const year = new Date().getFullYear();
-        document.querySelectorAll('.current-year').forEach(el => { el.textContent = year });
       });
     </script>
   </head>
-  <body class="min-h-screen bg-background text-foreground font-body antialiased">
+  <body>
     <slot />
   </body>
 </html>

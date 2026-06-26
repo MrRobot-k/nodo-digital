@@ -1,0 +1,11 @@
+{
+  "space": "projects/landing-page",
+  "name": "checkpoint-20260625-145131",
+  "goal": "Setup local mind system",
+  "pending": "Add initial project memories, document key decisions",
+  "notes": "Created .mind/ directory structure, CLAUDE.md updated with project context, mind.sh helper script added",
+  "linked_memories": ["local-mind-setup"],
+  "created": "2026-06-25T14:51:31Z",
+  "updated": "2026-06-25T14:51:31Z",
+  "status": "active"
+}

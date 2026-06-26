@@ -1,0 +1,10 @@
+{
+  "space": "projects/landing-page",
+  "name": "local-mind-setup",
+  "content": "**What**: Configured local mind system for persistent context\\n**Why**: MCP mind server not available in this environment\\n**Where**: .mind/ directory with memories/, checkpoints/, links.json\\n**Learned**: Local JSON files provide ~80% of MCP value (persistence, search, linking) without server dependency\n",
+  "tags": ["cat:config","cat:decision"],
+  "links_to": [],
+  "created": "2026-06-25T14:51:16Z",
+  "updated": "2026-06-25T14:51:16Z",
+  "tier": "T2"
+}

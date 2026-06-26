@@ -26,9 +26,7 @@ export default function HeroSection() {
         hlsInstance = new Hls({ enableWorker: false });
         hlsInstance.loadSource(HLS_SRC);
         hlsInstance.attachMedia(video);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = HLS_SRC;
-      }
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = HLS_SRC;
     })();
 
     return () => {
@@ -55,8 +53,8 @@ export default function HeroSection() {
           playsInline
           className="w-full h-full object-cover opacity-60"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#070b0a] via-[#070b0a]/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070b0a] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#070b0a] via-[#070b0a]/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#070b0a] via-transparent to-transparent" />
 
         {/* Grid Lines */}
         <div className="hidden lg:block absolute inset-0 pointer-events-none">
@@ -77,7 +75,7 @@ export default function HeroSection() {
         </div>
 
         {/* Central Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none w-full max-w-[1200px]">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none w-full max-w-300">
           <svg
             viewBox="0 0 1200 400"
             className="w-full h-auto"
@@ -156,12 +154,12 @@ export default function HeroSection() {
       {/* ── Hero Content ── */}
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-36 pb-20 min-h-screen flex flex-col justify-center">
         {/* Liquid Glass Card */}
-        <div className="liquid-glass w-[200px] h-[200px] p-5 -translate-y-10 lg:-translate-y-12 mb-8">
+        <div className="liquid-glass w-50 h-50 p-5 -translate-y-10 lg:-translate-y-12 mb-8">
           <span className="block text-white/40 text-[13px] font-mono tracking-wider mb-3">
             [ 2025 ]
           </span>
           <h3
-            className="text-[18px] text-white/90 leading-[1.25] mb-2 font-semibold"
+            className="text-[18px] text-white/90 leading-tight mb-2 font-semibold"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Primero te{' '}
@@ -176,7 +174,7 @@ export default function HeroSection() {
         </div>
 
         {/* Eyebrow */}
-        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-white/[0.08] bg-white/[0.03] mb-8 w-fit">
+        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-white/8 bg-white/8 mb-8 w-fit">
           <span className="w-1.5 h-1.5 rounded-full bg-[#5ed29c] animate-pulse" />
           <span
             className="text-[11px] font-bold tracking-[0.18em] text-[#5ed29c] uppercase leading-none"
@@ -208,7 +206,7 @@ export default function HeroSection() {
         {/* CTA */}
         <a
           href="#contacto"
-          className="group inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-bold text-[13px] tracking-[0.12em] uppercase rounded-full px-9 py-[18px] w-fit hover:scale-[1.02] transition-transform duration-300"
+          className="group inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-bold text-[13px] tracking-[0.12em] uppercase rounded-full px-9 py-4.5 w-fit hover:scale-[1.02] transition-transform duration-300"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           Iniciar Proyecto

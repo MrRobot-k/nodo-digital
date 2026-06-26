@@ -27,7 +27,7 @@ const stats = [
 
 <section id="about" class="py-24 md:py-32 px-6 relative overflow-hidden">
   {/* Ambient background styling */}
-  <div class="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-white/[0.02] to-transparent pointer-events-none"></div>
+  <div class="absolute right-0 top-0 w-1/2 h-full bg-linear-to-l from-white/2 to-transparent pointer-events-none"></div>
 
   <div class="max-w-6xl mx-auto relative z-10">
     <div class="grid lg:grid-cols-[1fr_1.2fr] gap-16 lg:gap-24 items-start">
@@ -56,8 +56,8 @@ const stats = [
           ))}
         </div>
         
-        <div class="mt-12 p-6 rounded-2xl bg-gradient-to-br from-[--color-accent]/10 to-transparent border border-[--color-accent]/20 flex items-start gap-4">
-          <div class="w-12 h-12 rounded-full bg-[--color-accent]/20 flex items-center justify-center flex-shrink-0">
+        <div class="mt-12 p-6 rounded-2xl bg-linear-to-br from-[--color-accent]/10 to-transparent border border-[--color-accent]/20 flex items-start gap-4">
+          <div class="w-12 h-12 rounded-full bg-[--color-accent]/20 flex items-center justify-center shrink-0">
             <svg class="w-6 h-6 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <div>
@@ -70,7 +70,7 @@ const stats = [
       {/* Right Column: Timeline */}
       <div class="scroll-reveal space-y-8 relative" style="transition-delay: 200ms">
         {/* Timeline line */}
-        <div class="absolute left-6 md:left-8 top-8 bottom-8 w-px bg-gradient-to-b from-[--color-accent] via-white/10 to-transparent"></div>
+        <div class="absolute left-6 md:left-8 top-8 bottom-8 w-px bg-linear-to-b from-[--color-accent] via-white/10 to-transparent"></div>
 
         {pasos.map((p, i) => (
           <div class="relative pl-16 md:pl-24 group">
