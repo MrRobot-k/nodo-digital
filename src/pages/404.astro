@@ -1,0 +1,21 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 — Página no encontrada | Xolventa" description="La página que buscas no existe.">
+  <main class="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center">
+    <span class="font-mono text-[11px] text-zinc-500 uppercase tracking-[0.2em] mb-6">Error 404</span>
+    <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+      Página no encontrada
+    </h1>
+    <p class="text-zinc-400 max-w-md mb-10">
+      La página que buscas no existe o fue movida. Vuelve al inicio para encontrar lo que necesitas.
+    </p>
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 bg-[--color-accent] text-[#070b0a] font-bold text-[13px] tracking-[0.12em] uppercase px-8 py-3.5 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+    >
+      Volver al inicio
+    </a>
+  </main>
+</Layout>
