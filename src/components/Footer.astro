@@ -2,59 +2,53 @@
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="border-t border-white/10 py-16 px-6 relative overflow-hidden">
-  {/* Ambient background styling */}
-  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-32 bg-[--color-accent] rounded-t-[100%] mix-blend-screen opacity-[0.02] filter blur-3x1 pointer-events-none"></div>
-
-  <div class="max-w-6xl mx-auto relative z-10">
+<footer class="border-t border-white/[0.06] py-20 px-6 relative">
+  <div class="max-w-7xl mx-auto">
     <div class="grid md:grid-cols-4 gap-12 mb-16">
       <div class="md:col-span-2">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 bg-linear-to-br from-[--color-accent] to-emerald-700 flex items-center justify-center rounded-[--radius] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-            <span class="text-white font-bold text-sm">X</span>
+        <a href="/" class="flex items-center gap-3 mb-6 w-fit">
+          <div class="w-9 h-9 bg-[#5ed29c] flex items-center justify-center">
+            <span class="text-[#070b0a] font-bold text-sm">X</span>
           </div>
-          <span class="text-2xl font-bold tracking-tight text-white">Xolventa</span>
-        </div>
-        <p class="text-zinc-400 leading-relaxed max-w-sm mb-6">
+          <span class="text-xl font-bold tracking-tight text-white">Xolventa</span>
+        </a>
+        <p class="text-zinc-500 leading-relaxed max-w-sm text-sm">
           Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
         </p>
       </div>
 
-      <div class="md:col-span-1">
-        <span class="font-mono text-xs text-zinc-500 uppercase tracking-widest block mb-6">Navegación</span>
-        <nav class="space-y-4">
-          <a href="#servicios" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Soluciones</a>
-          <a href="#about" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Metodología</a>
-          <a href="#contacto" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Iniciar Proyecto</a>
+      <div>
+        <span class="font-mono text-[10px] text-zinc-600 uppercase tracking-[0.2em] block mb-5">Navegación</span>
+        <nav class="space-y-3">
+          <a href="#servicios" class="block text-sm text-zinc-500 hover:text-white transition-colors duration-200 w-fit">Servicios</a>
+          <a href="#about" class="block text-sm text-zinc-500 hover:text-white transition-colors duration-200 w-fit">Metodología</a>
+          <a href="#contacto" class="block text-sm text-zinc-500 hover:text-white transition-colors duration-200 w-fit">Contacto</a>
         </nav>
       </div>
 
-      <div class="md:col-span-1">
-        <span class="font-mono text-xs text-zinc-500 uppercase tracking-widest block mb-6">Contacto Directo</span>
+      <div>
+        <span class="font-mono text-[10px] text-zinc-600 uppercase tracking-[0.2em] block mb-5">Contacto</span>
         <a
           href="https://wa.me/528342550555"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-sm text-zinc-300 glass border border-white/10 px-4 py-2 rounded-full hover:bg-white/5 hover:border-white/20 transition-all group"
+          class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors duration-200 group"
         >
-          <svg class="w-4 h-4 text-[--color-accent] group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <svg class="w-4 h-4 transition-colors duration-200 group-hover:text-[#5ed29c]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
           834 255 0555
         </a>
       </div>
     </div>
 
-    <div class="h-px bg-linear-to-r from-transparent via-white/10 to-transparent mb-8"></div>
+    <div class="h-px bg-linear-to-r from-transparent via-white/[0.06] to-transparent mb-8" />
 
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-      <p class="text-sm text-zinc-500">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-zinc-600">
         &copy; {currentYear} Xolventa. Todos los derechos reservados.
       </p>
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
-        <p class="text-sm text-zinc-500">
-          Sistemas operativos en Cd. Victoria, Tam.
-        </p>
-      </div>
+      <p class="text-sm text-zinc-600">
+        Cd. Victoria, Tamaulipas
+      </p>
     </div>
   </div>
 </footer>

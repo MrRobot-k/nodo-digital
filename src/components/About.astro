@@ -5,66 +5,80 @@ const pasos = [
     texto: "Agendamos una videollamada o reunión presencial. Me cuentas cómo funciona tu negocio y qué procesos te gustaría optimizar.",
   },
   {
-    titulo: "Arquitectura de solución",
-    texto: "Te presento una propuesta clara. Tecnologías a utilizar, tiempos de entrega y costos exactos. Sin tecnicismos innecesarios.",
+    titulo: "Propuesta clara",
+    texto: "Recibes una propuesta con tecnologías, tiempos y costos exactos. Sin tecnicismos ni letras chiquitas.",
   },
   {
-    titulo: "Desarrollo y despliegue",
-    texto: "Construyo tu sistema utilizando las últimas tecnologías web. Te entrego un producto rápido, seguro y listo para escalar.",
+    titulo: "Construcción y entrega",
+    texto: "Desarrollo el sistema con tecnologías web estables y lo pongo en producción. Incluye pruebas y documentación.",
   },
   {
-    titulo: "Soporte premium",
-    texto: "No te dejo solo. Ofrezco planes de soporte continuo para que tu tecnología siempre esté actualizada y funcionando al 100%.",
+    titulo: "Acompañamiento continuo",
+    texto: "Soporte técnico después de la entrega. Actualizaciones, ajustes y mejoras conforme tu negocio crece.",
   },
 ];
 
 const stats = [
   { valor: "100%", label: "Enfoque Local" },
-  { valor: "0", label: "Plantillas Genéricas" },
-  { valor: "24/7", label: "Disponibilidad de Sistemas" },
+  { valor: "+10", label: "Años de Experiencia" },
+  { valor: "24/7", label: "Soporte Técnico" },
 ];
 ---
 
-<section id="about" class="py-24 md:py-32 px-6 relative">
-  <div class="max-w-6xl mx-auto">
-    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-16 lg:gap-24 items-start">
+<section id="about" class="py-32 md:py-44 px-6 relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-[1.1fr_1.3fr] gap-16 lg:gap-28 items-start">
 
-      <div class="scroll-reveal lg:sticky lg:top-32">
-        <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
-          Primero te conozco, luego te propongo algo útil.
+      <!-- Left: Sticky intro -->
+      <div class="lg:sticky lg:top-32 scroll-reveal">
+        <h2 class="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-white leading-[0.92] mb-6">
+          Primero te <span class="text-[#5ed29c]">conozco</span>,<br />
+          luego te propongo<br />
+          <span class="text-[#5ed29c]">algo útil</span>
         </h2>
 
-        <p class="text-lg text-zinc-400 leading-relaxed mb-12">
-          Operando desde Cd. Victoria, Tamaulipas. Conozco las necesidades reales de los negocios locales. No te vendo tecnología por vender; construimos herramientas que generan impacto.
+        <p class="text-base md:text-lg text-zinc-500 leading-relaxed mb-14 max-w-md">
+          Opero desde Cd. Victoria, Tamaulipas. Conozco los retos diarios de los negocios locales porque trabajo con ellos.
         </p>
 
-        <div class="grid grid-cols-3 gap-8 mb-12">
+        <div class="grid grid-cols-3 gap-6 mb-12">
           {stats.map(stat => (
             <div>
-              <span class="text-3xl font-bold text-white block mb-1">{stat.valor}</span>
-              <span class="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">{stat.label}</span>
+              <span class="text-3xl md:text-4xl font-bold text-white block mb-1">{stat.valor}</span>
+              <span class="text-[10px] text-zinc-600 uppercase tracking-wider font-medium">{stat.label}</span>
             </div>
           ))}
         </div>
 
-        <p class="text-sm text-zinc-500 leading-relaxed border-t border-white/[.06] pt-6">
-          <span class="text-white font-medium">Garantía de calidad</span><br>
-          Sistemas probados, seguros y diseñados específicamente para resolver los problemas de tu operativa diaria.
-        </p>
+        <div class="border-t border-white/[0.06] pt-6">
+          <p class="text-sm text-zinc-500 leading-relaxed">
+            <span class="text-white font-medium">Garantía de calidad</span><br />
+            Todo el código se prueba antes de entregarse. Sin sorpresas, sin deuda técnica heredada.
+          </p>
+        </div>
       </div>
 
-      <div class="scroll-reveal">
+      <!-- Right: Accordion steps -->
+      <div class="space-y-0">
         {pasos.map((p, i) => (
-          <div class={i > 0 ? "border-t border-white/[.06] pt-10 mt-10" : ""}>
-            <div class="flex items-start gap-6">
-              <span class="font-mono text-[11px] text-zinc-600 font-bold tracking-wider shrink-0 mt-0.5">
-                {(i + 1).toString().padStart(2, "0")}
-              </span>
-              <div>
-                <h3 class="text-xl font-semibold text-white mb-3">{p.titulo}</h3>
+          <div class={i > 0 ? "border-t border-white/[0.06]" : ""}>
+            <details class="group" open={i === 0}>
+              <summary class="flex items-center gap-5 py-8 cursor-pointer list-none">
+                <span class="font-mono text-[11px] text-zinc-600 font-bold tracking-wider shrink-0">
+                  {`0${i + 1}`}
+                </span>
+                <h3 class="text-lg md:text-xl font-medium text-white flex-1">{p.titulo}</h3>
+                <div class="w-8 h-8 border border-white/[0.06] flex items-center justify-center transition-[border-color,background-color] duration-300 group-open:border-[#5ed29c]/30 group-open:bg-[#5ed29c]/[0.05]">
+                  <svg class="w-3.5 h-3.5 text-zinc-500 transition-transform duration-300 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                  </svg>
+                </div>
+              </summary>
+              <div class="pb-8 pl-[3.25rem]">
                 <p class="text-zinc-400 leading-relaxed">{p.texto}</p>
               </div>
-            </div>
+            </details>
           </div>
         ))}
       </div>

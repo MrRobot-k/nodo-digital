@@ -1,4 +1,5 @@
 ---
+import '@fontsource-variable/geist';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
 import '../styles/global.css';
@@ -9,8 +10,8 @@ interface Props {
 }
 
 const {
-  title = 'Xolventa | Software, Webs y Automatización con IA — Cd. Victoria',
-  description = 'Ayudo a negocios locales de Cd. Victoria a automatizar procesos, crear sistemas de venta e inventario, y dar a conocer sus servicios con páginas web profesionales. Pago único o mensual según el proyecto.'
+  title = 'Xolventa | Software a la medida con IA — Cd. Victoria',
+  description = 'Software a la medida para tu negocio en Cd. Victoria. Automatización con IA, desarrollo web profesional y consultoría tecnológica. Primero te conozco, luego te propongo algo útil.'
 } = Astro.props;
 
 const domain = 'https://xolventa.vercel.app';
@@ -27,8 +28,9 @@ const ogImage = `${domain}/og-image.webp`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="keywords" content="software Cd. Victoria, sistemas de venta, inventario, páginas web, automatización IA, desarrollo web Tamaulipas, punto de venta, negocio local" />
+    <meta name="keywords" content="software a la medida Cd. Victoria, desarrollo web Tamaulipas, automatización IA, sistemas de venta, inventario, negocio local, páginas web" />
     <link rel="canonical" href={domain} />
+    <meta name="theme-color" content="#070b0a" />
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -42,6 +44,10 @@ const ogImage = `${domain}/og-image.webp`;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
@@ -50,7 +56,6 @@ const ogImage = `${domain}/og-image.webp`;
       "url": domain,
       "image": ogImage,
       "telephone": "+528342550555",
-      "email": "",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "Ciudad Victoria",
@@ -68,10 +73,6 @@ const ogImage = `${domain}/og-image.webp`;
       "sameAs": ["https://wa.me/528342550555"]
     })} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
-
     <title>{title}</title>
     <Analytics />
     <SpeedInsights />
@@ -84,16 +85,19 @@ const ogImage = `${domain}/og-image.webp`;
               entry.target.classList.add('revealed');
             }
           });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.1, rootMargin: '-40px' });
 
-        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+        document.querySelectorAll(
+          '.scroll-reveal, .clip-reveal, .clip-reveal-right, .clip-reveal-top, .stagger-children'
+        ).forEach(el => observer.observe(el));
       });
     </script>
   </head>
   <body>
-    <a href="#main-content" class="fixed -top-full left-4 z-[60] p-3 bg-white text-zinc-950 text-sm font-medium transition-all focus:top-4 outline-ring">
+    <a href="#main-content" class="fixed -top-full left-4 z-[60] p-3 bg-white text-zinc-950 text-sm font-medium transition-[top] duration-200 focus:top-4 outline-ring">
       Ir al contenido principal
     </a>
+    <div class="grain-overlay" aria-hidden="true" />
     <div id="main-content">
       <slot />
     </div>

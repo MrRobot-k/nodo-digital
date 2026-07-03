@@ -1,74 +1,127 @@
 ---
 const servicios = [
   {
-    titulo: "Sistemas Inteligentes",
-    texto: "Software hecho a tu medida. Punto de venta, control de inventario o gestión integral. Olvídate de los sistemas lentos y genéricos.",
-    tags: ["Arquitectura escalable", "Soporte VIP"],
+    titulo: "Software a la medida",
+    texto: "Sistemas diseñados específicamente para la operación y los procesos de tu negocio.",
+    tags: ["Arquitectura escalable", "Soporte continuo"],
   },
   {
-    titulo: "Presencia Web",
-    texto: "Páginas súper rápidas, optimizadas y hermosas. Integradas con WhatsApp para capturar leads 24/7.",
-    tags: ["Pago único"],
+    titulo: "Presencia web profesional",
+    texto: "Páginas rápidas, optimizadas y conectadas con WhatsApp para capturar clientes 24/7.",
+    tags: ["Pago único", "Rendimiento premium"],
   },
   {
     titulo: "Automatización con IA",
-    texto: "La IA responde por ti, organiza tus datos y genera reportes. Delega el trabajo aburrido y enfócate en crecer tu negocio.",
-    tags: ["Bots 24/7", "Eficiencia total"],
+    texto: "Chatbots inteligentes que responden a tus clientes, organizan datos y generan reportes automáticos.",
+    tags: ["Bots 24/7", "Sin intervención"],
   },
   {
-    titulo: "Asesoría Premium",
-    texto: "Descubramos dónde pierdes tiempo y dinero. Diagnóstico completo sin costo para crear tu ruta de modernización.",
-    tags: ["Sin compromiso", "Remoto/Local"],
-  }
+    titulo: "Consultoría tecnológica",
+    texto: "Diagnóstico de procesos operativos. Identificamos áreas de mejora en tiempo y costo.",
+    tags: ["Sin costo", "Sin compromiso"],
+  },
 ];
 ---
 
-<section id="servicios" class="py-24 md:py-32 px-6 relative">
-  <div class="max-w-6xl mx-auto">
-    <div class="scroll-reveal mb-24">
-      <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[0.95] mb-6 max-w-4xl">
-        Sistemas que transforman tu forma de trabajar
-      </h2>
-      <p class="text-lg text-zinc-400 leading-relaxed max-w-2xl">
-        Soluciones técnicas de alto nivel diseñadas específicamente para automatizar, vender más y perder menos tiempo.
+<section id="servicios" class="py-32 md:py-44 px-6 relative">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-20 md:mb-28">
+      <div class="clip-reveal">
+        <h2 class="text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-white leading-[0.92] max-w-4xl">
+          Soluciones que se adaptan<br />
+          <span class="text-[#5ed29c]">a tu negocio</span>
+        </h2>
+      </div>
+      <p class="text-base md:text-lg text-zinc-500 leading-relaxed max-w-xl mt-6">
+        Herramientas digitales diseñadas para resolver problemas reales de tu operación diaria.
       </p>
     </div>
 
-    <div class="scroll-reveal">
-      {servicios.map((s, i) => (
-        <div class={i > 0 ? "border-t border-white/[.06] pt-10 mt-10" : ""}>
-          <div class="flex items-start gap-6">
-            <span class="font-mono text-[11px] text-zinc-600 font-bold tracking-wider shrink-0 mt-1.5">
-              {(i + 1).toString().padStart(2, "0")}
-            </span>
-            <div class={i === 0 ? "flex-1" : ""}>
-              <h3 class={i === 0 ? "text-2xl md:text-3xl font-bold text-white mb-3" : "text-xl font-semibold text-white mb-2"}>
-                {s.titulo}
-              </h3>
-              <p class="text-zinc-400 leading-relaxed max-w-2xl mb-3">{s.texto}</p>
-              <div class="flex flex-wrap gap-x-4 gap-y-1">
-                {s.tags.map(tag => (
-                  <span class="font-mono text-xs text-zinc-500">{tag}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+    <!-- Bento Grid -->
+    <div class="grid md:grid-cols-12 gap-5">
+      <!-- Card 01: Featured -->
+      <div class="hover-card md:col-span-7 border border-white/[0.06] bg-white/[0.02] p-8 md:p-12 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
+        <div class="absolute top-0 right-0 w-80 h-80 bg-[#5ed29c]/[0.04] rounded-full blur-3xl pointer-events-none" />
+        <div class="relative z-10">
+          <h3 class="text-2xl md:text-3xl font-semibold text-white mb-4 leading-tight">
+            {servicios[0].titulo}
+          </h3>
+          <p class="text-zinc-400 leading-relaxed max-w-lg mb-8">
+            {servicios[0].texto}
+          </p>
         </div>
-      ))}
-    </div>
-
-    <div class="scroll-reveal mt-24 pt-12 border-t border-white/[.06] flex flex-col md:flex-row items-center justify-between gap-6">
-      <div>
-        <h4 class="text-xl font-medium text-white mb-2">¿No estás seguro por dónde empezar?</h4>
-        <p class="text-zinc-400">Podemos hacer un diagnóstico de tus procesos sin ningún costo.</p>
+        <div class="relative z-10 flex flex-wrap gap-2">
+          {servicios[0].tags.map(tag => (
+            <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
+          ))}
+        </div>
+        <div class="absolute inset-0 bg-linear-to-tr from-[#5ed29c]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
-      <a
-        href="#contacto"
-        class="inline-flex items-center gap-2 bg-white text-zinc-950 font-semibold px-6 py-3 transition-transform hover:scale-[1.02] active:scale-[0.98]"
-      >
-        Agendar llamada
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-      </a>
+
+      <!-- Card 02 -->
+      <div class="hover-card md:col-span-5 border border-white/[0.06] bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
+        <div class="relative z-10">
+          <h3 class="text-xl md:text-2xl font-semibold text-white mb-3 leading-tight">
+            {servicios[1].titulo}
+          </h3>
+          <p class="text-zinc-400 leading-relaxed mb-8">
+            {servicios[1].texto}
+          </p>
+        </div>
+        <div class="relative z-10 flex flex-wrap gap-2">
+          {servicios[1].tags.map(tag => (
+            <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
+          ))}
+        </div>
+        <div class="absolute inset-0 bg-linear-to-tr from-[#5ed29c]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      </div>
+
+      <!-- Card 03 -->
+      <div class="hover-card md:col-span-5 border border-white/[0.06] bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
+        <div class="absolute inset-0 bg-[linear-gradient(135deg,rgba(94,210,156,0.02),transparent_50%)] pointer-events-none" />
+        <div class="relative z-10">
+          <h3 class="text-xl md:text-2xl font-semibold text-white mb-3 leading-tight">
+            {servicios[2].titulo}
+          </h3>
+          <p class="text-zinc-400 leading-relaxed mb-8">
+            {servicios[2].texto}
+          </p>
+        </div>
+        <div class="relative z-10 flex flex-wrap gap-2">
+          {servicios[2].tags.map(tag => (
+            <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
+          ))}
+        </div>
+        <div class="absolute inset-0 bg-linear-to-tr from-[#5ed29c]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      </div>
+
+      <!-- Card 04: CTA -->
+      <div class="hover-card md:col-span-7 border border-[#5ed29c]/[0.08] bg-[#5ed29c]/[0.02] p-8 md:p-12 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
+        <div class="relative z-10">
+          <h3 class="text-xl md:text-2xl font-semibold text-white mb-3 leading-tight">
+            {servicios[3].titulo}
+          </h3>
+          <p class="text-zinc-400 leading-relaxed mb-10">
+            {servicios[3].texto}
+          </p>
+        </div>
+        <div class="relative z-10">
+          <div class="flex flex-wrap gap-2 mb-8">
+            {servicios[3].tags.map(tag => (
+              <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
+            ))}
+          </div>
+          <a
+            href="#contacto"
+            class="group/btn inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-medium text-sm px-7 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[#4cbf87] hover:shadow-[0_0_25px_rgba(94,210,156,0.12)] active:scale-[0.96]"
+          >
+            Iniciar proyecto
+            <svg class="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
+        <div class="absolute inset-0 bg-[#5ed29c]/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      </div>
     </div>
   </div>
 </section>
