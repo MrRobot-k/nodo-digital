@@ -55,6 +55,10 @@ The content is organized as follows:
         tracing.md
         video-recording.md
       SKILL.md
+.astro/
+  content.d.ts
+  settings.json
+  types.d.ts
 .mind/
   checkpoints/
     checkpoint-20260625-145131.json
@@ -84,7 +88,6 @@ src/
     About.astro
     ContactForm.tsx
     Footer.astro
-    Hero.astro
     HeroSection.tsx
     Services.astro
   layouts/
@@ -92,7 +95,9 @@ src/
   lib/
     utils.ts
   pages/
+    404.astro
     index.astro
+    privacidad.astro
   styles/
     global.css
 .gitignore
@@ -108,6 +113,239 @@ tsconfig.json
 
 <files>
 This section contains the contents of the repository's files.
+
+<file path=".astro/content.d.ts">
+declare module 'astro:content' {
+	export interface RenderResult {
+		Content: import('astro/runtime/server/index.js').AstroComponentFactory;
+		headings: import('astro').MarkdownHeading[];
+		remarkPluginFrontmatter: Record<string, any>;
+	}
+	interface Render {
+		'.md': Promise<RenderResult>;
+	}
+
+	export interface RenderedContent {
+		html: string;
+		metadata?: {
+			imagePaths: Array<string>;
+			[key: string]: unknown;
+		};
+	}
+
+	type Flatten<T> = T extends { [K: string]: infer U } ? U : never;
+
+	export type CollectionKey = keyof DataEntryMap;
+	export type CollectionEntry<C extends CollectionKey> = Flatten<DataEntryMap[C]>;
+
+	type AllValuesOf<T> = T extends any ? T[keyof T] : never;
+
+	export type ReferenceDataEntry<
+		C extends CollectionKey,
+		E extends keyof DataEntryMap[C] = string,
+	> = {
+		collection: C;
+		id: E;
+	};
+
+	export type ReferenceLiveEntry<C extends keyof LiveContentConfig['collections']> = {
+		collection: C;
+		id: string;
+	};
+
+	export function getCollection<C extends keyof DataEntryMap, E extends CollectionEntry<C>>(
+		collection: C,
+		filter?: (entry: CollectionEntry<C>) => entry is E,
+	): Promise<E[]>;
+	export function getCollection<C extends keyof DataEntryMap>(
+		collection: C,
+		filter?: (entry: CollectionEntry<C>) => unknown,
+	): Promise<CollectionEntry<C>[]>;
+
+	export function getLiveCollection<C extends keyof LiveContentConfig['collections']>(
+		collection: C,
+		filter?: LiveLoaderCollectionFilterType<C>,
+	): Promise<
+		import('astro').LiveDataCollectionResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>
+	>;
+
+	export function getEntry<
+		C extends keyof DataEntryMap,
+		E extends keyof DataEntryMap[C] | (string & {}),
+	>(
+		entry: ReferenceDataEntry<C, E>,
+	): E extends keyof DataEntryMap[C]
+		? Promise<DataEntryMap[C][E]>
+		: Promise<CollectionEntry<C> | undefined>;
+	export function getEntry<
+		C extends keyof DataEntryMap,
+		E extends keyof DataEntryMap[C] | (string & {}),
+	>(
+		collection: C,
+		id: E,
+	): E extends keyof DataEntryMap[C]
+		? string extends keyof DataEntryMap[C]
+			? Promise<DataEntryMap[C][E]> | undefined
+			: Promise<DataEntryMap[C][E]>
+		: Promise<CollectionEntry<C> | undefined>;
+	export function getLiveEntry<C extends keyof LiveContentConfig['collections']>(
+		collection: C,
+		filter: string | LiveLoaderEntryFilterType<C>,
+	): Promise<import('astro').LiveDataEntryResult<LiveLoaderDataType<C>, LiveLoaderErrorType<C>>>;
+
+	/** Resolve an array of entry references from the same collection */
+	export function getEntries<C extends keyof DataEntryMap>(
+		entries: ReferenceDataEntry<C, keyof DataEntryMap[C]>[],
+	): Promise<CollectionEntry<C>[]>;
+
+	export function render<C extends keyof DataEntryMap>(
+		entry: DataEntryMap[C][string],
+	): Promise<RenderResult>;
+
+	export function reference<
+		C extends
+			| keyof DataEntryMap
+			// Allow generic `string` to avoid excessive type errors in the config
+			// if `dev` is not running to update as you edit.
+			// Invalid collection names will be caught at build time.
+			| (string & {}),
+	>(
+		collection: C,
+	): import('astro/zod').ZodPipe<
+		import('astro/zod').ZodString,
+		import('astro/zod').ZodTransform<
+			C extends keyof DataEntryMap
+				? {
+						collection: C;
+						id: string;
+					}
+				: never,
+			string
+		>
+	>;
+
+	type ReturnTypeOrOriginal<T> = T extends (...args: any[]) => infer R ? R : T;
+	type InferEntrySchema<C extends keyof DataEntryMap> = import('astro/zod').infer<
+		ReturnTypeOrOriginal<Required<ContentConfig['collections'][C]>['schema']>
+	>;
+	type ExtractLoaderConfig<T> = T extends { loader: infer L } ? L : never;
+	type InferLoaderSchema<
+		C extends keyof DataEntryMap,
+		L = ExtractLoaderConfig<ContentConfig['collections'][C]>,
+	> = L extends { schema: import('astro/zod').ZodSchema }
+		? import('astro/zod').infer<L['schema']>
+		: any;
+
+	type DataEntryMap = {
+		
+	};
+
+	type ExtractLoaderTypes<T> = T extends import('astro/loaders').LiveLoader<
+		infer TData,
+		infer TEntryFilter,
+		infer TCollectionFilter,
+		infer TError
+	>
+		? { data: TData; entryFilter: TEntryFilter; collectionFilter: TCollectionFilter; error: TError }
+		: { data: never; entryFilter: never; collectionFilter: never; error: never };
+	type ExtractEntryFilterType<T> = ExtractLoaderTypes<T>['entryFilter'];
+	type ExtractCollectionFilterType<T> = ExtractLoaderTypes<T>['collectionFilter'];
+	type ExtractErrorType<T> = ExtractLoaderTypes<T>['error'];
+	type ExtractDataType<T> = ExtractLoaderTypes<T>['data'];
+
+	type LiveLoaderDataType<C extends keyof LiveContentConfig['collections']> =
+		LiveContentConfig['collections'][C]['schema'] extends undefined
+			? ExtractDataType<LiveContentConfig['collections'][C]['loader']>
+			: import('astro/zod').infer<
+					Exclude<LiveContentConfig['collections'][C]['schema'], undefined>
+				>;
+	type LiveLoaderEntryFilterType<C extends keyof LiveContentConfig['collections']> =
+		ExtractEntryFilterType<LiveContentConfig['collections'][C]['loader']>;
+	type LiveLoaderCollectionFilterType<C extends keyof LiveContentConfig['collections']> =
+		ExtractCollectionFilterType<LiveContentConfig['collections'][C]['loader']>;
+	type LiveLoaderErrorType<C extends keyof LiveContentConfig['collections']> = ExtractErrorType<
+		LiveContentConfig['collections'][C]['loader']
+	>;
+
+	export type ContentConfig = never;
+	export type LiveContentConfig = never;
+}
+</file>
+
+<file path=".astro/settings.json">
+{
+	"_variables": {
+		"lastUpdateCheck": 1782147942527
+	}
+}
+</file>
+
+<file path=".astro/types.d.ts">
+/// <reference types="astro/client" />
+/// <reference path="content.d.ts" />
+</file>
+
+<file path="src/pages/404.astro">
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="404 — Página no encontrada | Xolventa" description="La página que buscas no existe.">
+  <main class="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center">
+    <span class="font-mono text-[11px] text-zinc-500 uppercase tracking-[0.2em] mb-6">Error 404</span>
+    <h1 class="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+      Página no encontrada
+    </h1>
+    <p class="text-zinc-400 max-w-md mb-10">
+      La página que buscas no existe o fue movida. Vuelve al inicio para encontrar lo que necesitas.
+    </p>
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 bg-[--color-accent] text-[#070b0a] font-bold text-[13px] tracking-[0.12em] uppercase px-8 py-3.5 hover:scale-[1.02] active:scale-[0.98] transition-transform"
+    >
+      Volver al inicio
+    </a>
+  </main>
+</Layout>
+</file>
+
+<file path="src/pages/privacidad.astro">
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Aviso de Privacidad | Xolventa">
+  <main class="min-h-[100dvh] py-32 px-6 max-w-3xl mx-auto">
+    <span class="font-mono text-[11px] text-zinc-500 uppercase tracking-[0.2em] block mb-6">— Legal</span>
+    <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-10 leading-tight">Aviso de Privacidad</h1>
+
+    <div class="text-zinc-400 leading-relaxed space-y-6">
+      <p>
+        Xolventa (&quot;nosotros&quot;, &quot;nuestro&quot;) opera el sitio web xolventa.vercel.app. Esta página informa sobre nuestras políticas de recolección, uso y divulgación de datos personales.
+      </p>
+
+      <h2 class="text-xl font-semibold text-white mt-10 mb-4">Información que recopilamos</h2>
+      <p>Recopilamos la información que nos proporcionas voluntariamente a través del formulario de diagnóstico de Google Forms: nombre, negocio, teléfono y descripción del proyecto.</p>
+
+      <h2 class="text-xl font-semibold text-white mt-10 mb-4">Uso de la información</h2>
+      <p>Usamos tu información únicamente para contactarte respecto a tu solicitud de diagnóstico o propuesta de servicios. No compartimos tus datos con terceros.</p>
+
+      <h2 class="text-xl font-semibold text-white mt-10 mb-4">Cookies</h2>
+      <p>Este sitio utiliza Vercel Analytics para medición de audiencia. No usamos cookies de rastreo publicitario ni compartimos datos con redes de anuncios.</p>
+
+      <h2 class="text-xl font-semibold text-white mt-10 mb-4">Contacto</h2>
+      <p>Si tienes preguntas sobre este aviso, contáctanos al <a href="https://wa.me/528342550555" class="text-[--color-accent] hover:underline">834 255 0555</a>.</p>
+
+      <p class="text-zinc-500 text-sm pt-10 border-t border-white/[.06]">Última actualización: enero 2025.</p>
+    </div>
+
+    <a href="/" class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors mt-16">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      Volver al inicio
+    </a>
+  </main>
+</Layout>
+</file>
 
 <file path=".agents/skills/playwright-cli/references/element-attributes.md">
 # Inspecting Element Attributes
@@ -2546,61 +2784,6 @@ esac
       - paragraph [ref=e216]: Sistemas operativos en Cd. Victoria, Tam.
 </file>
 
-<file path="CLAUDE.md">
-# Landing Page - Xolventa
-
-## Project Overview
-- **Framework**: Astro 6.4.6 + React 19 (islands)
-- **Styling**: Tailwind CSS 4.3 + shadcn/ui components
-- **Fonts**: Geist (via @fontsource-variable/geist)
-- **Deployment**: Vercel (analytics + speed insights)
-- **Node**: >=22.12.0
-
-## Commands
-```bash
-pnpm dev      # Development server
-pnpm build    # Production build
-pnpm preview  # Preview production build
-```
-
-## Structure
-```
-src/
-├── components/
-│   ├── Hero.astro / HeroSection.tsx      # Hero section (React island)
-│   ├── Services.astro                    # Services section
-│   ├── About.astro                       # About section
-│   ├── ContactForm.tsx                   # Contact form (React island)
-│   ├── Footer.astro                      # Footer
-│   └── ui/                               # shadcn/ui components (button, input, label, textarea, card)
-├── layouts/Layout.astro                  # Main layout
-├── pages/index.astro                     # Home page
-├── styles/global.css                     # Global styles + Tailwind
-└── lib/utils.ts                          # Utility functions (cn, etc.)
-```
-
-## Key Decisions (memories in .mind/)
-- **Astro + React islands**: Interactive components (Hero, ContactForm) use React; static sections use Astro
-- **Tailwind 4 + Vite plugin**: Modern Tailwind with @tailwindcss/vite
-- **shadcn/ui**: Component library for consistent UI
-- **Geist font**: Variable font for performance
-- **Vercel analytics**: Built-in analytics + speed insights
-
-## Current State
-- Project initialized with Astro + React + Tailwind + shadcn/ui
-- Basic landing page structure exists (Hero, Services, About, Contact, Footer)
-- Build output in `dist/`
-
-## Memory System
-Local mind system in `.mind/`:
-- `space.json` - Project metadata
-- `memories/` - Individual memories (JSON)
-- `checkpoints/` - Session checkpoints
-- `links.json` - Memory relationships
-
-Use `memory_add`, `checkpoint_save`, `checkpoint_load` patterns manually via file operations.
-</file>
-
 <file path="src/components/ui/card.tsx">
 import * as React from "react"
 
@@ -2781,31 +2964,59 @@ export function cn(...inputs: ClassValue[]) {
 }
 </file>
 
-<file path=".gitignore">
-# build output
-dist/
-# generated types
-.astro/
+<file path="CLAUDE.md">
+# Landing Page - Xolventa
 
-# dependencies
-node_modules/
+## Project Overview
+- **Framework**: Astro 6.4.6 + React 19 (islands)
+- **Styling**: Tailwind CSS 4.3 + shadcn/ui components
+- **Fonts**: Geist (via @fontsource-variable/geist)
+- **Deployment**: Vercel (analytics + speed insights)
+- **Node**: >=22.12.0
 
-# logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+## Commands
+```bash
+pnpm dev      # Development server
+pnpm build    # Production build
+pnpm preview  # Preview production build
+```
 
+## Structure
+```
+src/
+├── components/
+│   ├── Hero.astro / HeroSection.tsx      # Hero section (React island)
+│   ├── Services.astro                    # Services section
+│   ├── About.astro                       # About section
+│   ├── ContactForm.tsx                   # Contact form (React island)
+│   ├── Footer.astro                      # Footer
+│   └── ui/                               # shadcn/ui components (button, input, label, textarea, card)
+├── layouts/Layout.astro                  # Main layout
+├── pages/index.astro                     # Home page
+├── styles/global.css                     # Global styles + Tailwind
+└── lib/utils.ts                          # Utility functions (cn, etc.)
+```
 
-# environment variables
-.env
-.env.production
+## Key Decisions (memories in .mind/)
+- **Astro + React islands**: Interactive components (Hero, ContactForm) use React; static sections use Astro
+- **Tailwind 4 + Vite plugin**: Modern Tailwind with @tailwindcss/vite
+- **shadcn/ui**: Component library for consistent UI
+- **Geist font**: Variable font for performance
+- **Vercel analytics**: Built-in analytics + speed insights
 
-# macOS-specific files
-.DS_Store
+## Current State
+- Project initialized with Astro + React + Tailwind + shadcn/ui
+- Basic landing page structure exists (Hero, Services, About, Contact, Footer)
+- Build output in `dist/`
 
-# jetbrains setting folder
-.idea/
+## Memory System
+Local mind system in `.mind/`:
+- `space.json` - Project metadata
+- `memories/` - Individual memories (JSON)
+- `checkpoints/` - Session checkpoints
+- `links.json` - Memory relationships
+
+Use `memory_add`, `checkpoint_save`, `checkpoint_load` patterns manually via file operations.
 </file>
 
 <file path="components.json">
@@ -2910,6 +3121,135 @@ function Button({
 export { Button, buttonVariants }
 </file>
 
+<file path=".gitignore">
+# Node.js
+*.log
+*.local
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.love
+coverage/
+lib-coverage/
+.nyc_output/
+.hrserver/
+.yarn/
+.pnp/
+.pnp.js
+
+# Distribution / packaging
+/dist/
+*.egg-info
+*.egg
+.eggs/
+dist/
+build/
+extdist/
+.npmrc
+yarn.lock
+
+# Astro
+dist/
+.cache/
+.astro/
+debug/
+
+# Dependencies
+composer.lock
+vendor/
+
+# Database / data
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE / editor
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+.project
+.classpath
+*.launch
+!
+
+# OS / system
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+hs_quarantine/
+
+# Misc
+tmp/
+*.swp
+*.swo
+*~
+
+# Log files
+*.log
+logs/
+*.log.*
+
+# Cache files
+*.cache
+.cache/
+*.lru_cache
+.cache-lru
+
+# Environment variables
+.env*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Temporary files
+*.tmp
+*.temp
+
+# Filesystem operations logs
+.fslog
+
+# Editor backups
+*~
+</file>
+
+<file path="tsconfig.json">
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+</file>
+
+<file path="public/sitemap.xml">
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://xolventa.vercel.app/</loc>
+    <lastmod>2026-06-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>
+</file>
+
 <file path="src/components/HeroSection.tsx">
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, Menu, X } from 'lucide-react';
@@ -2925,8 +3265,12 @@ const HLS_SRC =
 
 export default function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const heroRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
+  const [heroVisible, setHeroVisible] = useState(true);
 
+  // Cargar video HLS
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -2939,9 +3283,7 @@ export default function HeroSection() {
         hlsInstance = new Hls({ enableWorker: false });
         hlsInstance.loadSource(HLS_SRC);
         hlsInstance.attachMedia(video);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = HLS_SRC;
-      }
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = HLS_SRC;
     })();
 
     return () => {
@@ -2949,6 +3291,7 @@ export default function HeroSection() {
     };
   }, []);
 
+  // Bloquear scroll cuando menú móvil está abierto
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => {
@@ -2956,10 +3299,40 @@ export default function HeroSection() {
     };
   }, [menuOpen]);
 
+  // Highlight de nav según sección activa
+  useEffect(() => {
+    const sections = NAV_LINKS.map(l => document.getElementById(l.href.slice(1))).filter(Boolean);
+    const obs = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          setActiveSection(`#${entry.target.id}`);
+        }
+      }
+    }, { threshold: 0.3, rootMargin: '-80px 0px 0px 0px' });
+    sections.forEach(s => s && obs.observe(s));
+    return () => obs.disconnect();
+  }, []);
+
+  // Ocultar video fixed cuando el hero sale del viewport
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => setHeroVisible(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    obs.observe(hero);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <div className="relative min-h-screen bg-[#070b0a]">
-      {/* ── Fixed Video Background ── */}
-      <div className="fixed inset-0 z-0">
+    <div ref={heroRef} className="relative min-h-screen bg-[#070b0a]">
+
+      {/* ── Video Background (fixed, se apaga al salir del hero) ── */}
+      <div
+        className="fixed inset-0 z-0 transition-opacity duration-500"
+        style={{ opacity: heroVisible ? 1 : 0, pointerEvents: 'none' }}
+      >
         <video
           ref={videoRef}
           autoPlay
@@ -2968,55 +3341,13 @@ export default function HeroSection() {
           playsInline
           className="w-full h-full object-cover opacity-60"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#070b0a] via-[#070b0a]/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070b0a] via-transparent to-transparent" />
-
-        {/* Grid Lines */}
-        <div className="hidden lg:block absolute inset-0 pointer-events-none">
-          <div className="relative w-full h-full max-w-7xl mx-auto px-6">
-            <div
-              className="absolute top-0 bottom-0 w-px bg-white/[0.07]"
-              style={{ left: '25%' }}
-            />
-            <div
-              className="absolute top-0 bottom-0 w-px bg-white/[0.07]"
-              style={{ left: '50%' }}
-            />
-            <div
-              className="absolute top-0 bottom-0 w-px bg-white/[0.07]"
-              style={{ left: '75%' }}
-            />
-          </div>
-        </div>
-
-        {/* Central Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none w-full max-w-[1200px]">
-          <svg
-            viewBox="0 0 1200 400"
-            className="w-full h-auto"
-            preserveAspectRatio="xMidYMid meet"
-          >
-            <defs>
-              <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="25" />
-              </filter>
-            </defs>
-            <ellipse
-              cx="600"
-              cy="200"
-              rx="500"
-              ry="120"
-              fill="#5ed29c"
-              opacity="0.10"
-              filter="url(#glow)"
-            />
-          </svg>
-        </div>
+        <div className="absolute inset-0 bg-linear-to-r from-[#070b0a] via-[#070b0a]/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#070b0a] via-transparent to-transparent" />
       </div>
 
       {/* ── Navigation ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#070b0a]/60 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+      <header className="fixed top-0 left-0 right-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <span className="text-white text-lg font-bold tracking-[0.15em]">
             XOLVENTA
           </span>
@@ -3026,7 +3357,11 @@ export default function HeroSection() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-white/60 hover:text-[#5ed29c] text-xs font-semibold tracking-[0.12em] transition-colors duration-300"
+                className={`text-xs font-semibold tracking-[0.12em] transition-colors duration-300 ${
+                  activeSection === link.href
+                    ? 'text-[#5ed29c]'
+                    : 'text-white/60 hover:text-[#5ed29c]'
+                }`}
               >
                 {link.label}
               </a>
@@ -3067,70 +3402,42 @@ export default function HeroSection() {
       )}
 
       {/* ── Hero Content ── */}
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-36 pb-20 min-h-screen flex flex-col justify-center">
-        {/* Liquid Glass Card */}
-        <div className="liquid-glass w-[200px] h-[200px] p-5 -translate-y-10 lg:-translate-y-12 mb-8">
-          <span className="block text-white/40 text-[13px] font-mono tracking-wider mb-3">
-            [ 2025 ]
-          </span>
-          <h3
-            className="text-[18px] text-white/90 leading-[1.25] mb-2 font-semibold"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
-            Primero te{' '}
-            <em className="font-[Instrument_Serif] italic font-normal text-white">
-              conozco
-            </em>
-            ,
-          </h3>
-          <p className="text-[11px] text-white/50 leading-relaxed">
-            Consulta gratuita. Analizamos tu negocio y te proponemos la solución ideal.
+      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-40 pb-20 min-h-screen flex flex-col justify-end md:justify-center">
+        <div className="max-w-4xl">
+          <h1 className="text-[42px] md:text-[72px] lg:text-[88px] font-extrabold uppercase tracking-tight text-white leading-[0.85] mb-6">
+            Tecnología premium para tu negocio
+            <span className="text-[#5ed29c]">.</span>
+          </h1>
+
+          <p className="text-[15px] text-white/70 max-w-lg leading-relaxed mb-14">
+            Automatización con IA, software a la medida y páginas web profesionales
+            para empresas en Ciudad Victoria. Primero te conozco, luego te propongo
+            algo útil.
           </p>
+
+          <a
+            href="#contacto"
+            className="group inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-bold text-[13px] tracking-[0.12em] uppercase px-9 py-4 w-fit hover:scale-[1.02] active:scale-[0.98] transition-transform duration-300"
+          >
+            Iniciar Proyecto
+            <ArrowRight
+              size={16}
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            />
+          </a>
         </div>
 
-        {/* Eyebrow */}
-        <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-white/[0.08] bg-white/[0.03] mb-8 w-fit">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#5ed29c] animate-pulse" />
-          <span
-            className="text-[11px] font-bold tracking-[0.18em] text-[#5ed29c] uppercase leading-none"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
+        <div className="flex items-center gap-4 mt-20 md:mt-16">
+          <span className="font-mono text-[11px] text-zinc-600 uppercase tracking-[0.2em]">
             Cd. Victoria, Tamaulipas
           </span>
+          <span className="w-8 h-px bg-white/[.08]" />
+          <span className="text-[13px] text-zinc-500">
+            Consulta gratuita
+          </span>
         </div>
-
-        {/* Main Headline */}
-        <h1
-          className="text-[40px] md:text-[64px] lg:text-[72px] font-extrabold uppercase tracking-tight text-white leading-[0.92] max-w-4xl mb-6"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          Tecnología premium para tu negocio
-          <span className="text-[#5ed29c]">.</span>
-        </h1>
-
-        {/* Description */}
-        <p
-          className="text-[14px] text-white/70 max-w-lg leading-relaxed mb-12"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          Automatización con IA, software a la medida y páginas web profesionales
-          para empresas en Ciudad Victoria. Primero te conozco, luego te propongo
-          algo útil.
-        </p>
-
-        {/* CTA */}
-        <a
-          href="#contacto"
-          className="group inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-bold text-[13px] tracking-[0.12em] uppercase rounded-full px-9 py-[18px] w-fit hover:scale-[1.02] transition-transform duration-300"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          Iniciar Proyecto
-          <ArrowRight
-            size={16}
-            className="transition-transform duration-300 group-hover:translate-x-1"
-          />
-        </a>
       </div>
+
     </div>
   );
 }
@@ -3150,122 +3457,32 @@ export default function HeroSection() {
 }
 </file>
 
-<file path="tsconfig.json">
-{
-  "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*"
-  ],
-  "exclude": [
-    "dist"
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-</file>
-
-<file path="public/sitemap.xml">
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://xolventa.vercel.app/</loc>
-    <lastmod>2026-06-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-</file>
-
 <file path="src/components/ContactForm.tsx">
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-
-const WHATSAPP_NUMBER = '528342550555';
-
 export default function ContactForm() {
-  const [nombre, setNombre] = useState('');
-  const [negocio, setNegocio] = useState('');
-  const [domicilio, setDomicilio] = useState('');
-  const [problema, setProblema] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    let mensaje = `Hola, soy ${nombre}.`;
-
-    if (negocio.trim()) {
-      mensaje += ` Tengo un negocio llamado "${negocio}".`;
-    }
-
-    if (domicilio.trim()) {
-      mensaje += ` Está ubicado en: ${domicilio}.`;
-    }
-
-    mensaje += `\n\nTe cuento mi situación:\n${problema}`;
-
-    const mensajeCodificado = encodeURIComponent(mensaje);
-    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${mensajeCodificado}`;
-
-    window.open(whatsappUrl, '_blank');
-
-    setTimeout(() => {
-      setNombre('');
-      setNegocio('');
-      setDomicilio('');
-      setProblema('');
-      setIsSubmitting(false);
-    }, 1000);
-  };
-
-  const inputClasses = "bg-white/5 border-white/10 text-white placeholder:text-zinc-500 focus-visible:ring-[--color-accent] focus-visible:border-[--color-accent] transition-all duration-300";
-
   return (
     <section id="contacto" className="py-24 md:py-32 px-6 relative">
-      {/* Background glow */}
-      <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-full max-w-3xl h-64 bg-emerald-900/20 rounded-full mix-blend-screen filter blur-[120px] pointer-events-none"></div>
-
-      <div className="max-w-4xl mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           <div className="scroll-reveal">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 mb-6">
-              <span className="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
-              <span className="font-mono text-xs text-zinc-300 uppercase tracking-widest">Inicia tu proyecto</span>
-            </div>
-            
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
-              ¿Listo para <span className="text-gradient-accent">modernizar</span> tu negocio?
+              ¿Listo para modernizar tu negocio?
             </h2>
-            <p className="text-lg text-zinc-400 leading-relaxed mb-8">
+            <p className="text-lg text-zinc-400 leading-relaxed mb-12">
               Cuéntame tus cuellos de botella. Agendaremos una asesoría gratuita de 30 minutos para analizar si la tecnología puede ayudarte a facturar más trabajando menos.
             </p>
 
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 text-zinc-300">
-                <div className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                </div>
+            <div className="space-y-6">
+              <div className="flex items-center gap-4">
+                <svg className="w-5 h-5 text-zinc-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 <div>
-                  <p className="text-sm text-zinc-500 font-medium">Llamada directa</p>
+                  <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Llamada directa</p>
                   <p className="text-white">+52 834 255 0555</p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 text-zinc-300">
-                <div className="w-10 h-10 rounded-full glass border border-white/10 flex items-center justify-center flex-shrink-0">
-                  <svg className="w-5 h-5 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>
+              <div className="flex items-center gap-4">
+                <svg className="w-5 h-5 text-zinc-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 <div>
-                  <p className="text-sm text-zinc-500 font-medium">Ubicación</p>
+                  <p className="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">Ubicación</p>
                   <p className="text-white">Ciudad Victoria, Tam.</p>
                 </div>
               </div>
@@ -3273,76 +3490,31 @@ export default function ContactForm() {
           </div>
 
           <div className="scroll-reveal" style={{ transitionDelay: '150ms' }}>
-            <div className="glass-card p-8 md:p-10 rounded-3xl relative overflow-hidden group">
-              {/* Highlight effect on hover */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
-              
-              <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
+            <div className="border border-white/[.06] p-8 md:p-10">
+              <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="nombre" className="text-zinc-300 font-medium">Tu nombre <span className="text-[--color-accent]">*</span></Label>
-                  <Input
-                    id="nombre"
-                    type="text"
-                    placeholder="Ej: Juan Pérez"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    required
-                    className={inputClasses}
-                  />
+                  <h3 className="text-white font-semibold text-xl">Cuéntame sobre tu negocio</h3>
+                  <p className="text-zinc-400 leading-relaxed text-sm">
+                    Antes de agendar una reunión, llena este formulario rápido de diagnóstico. No te toma más de 10 minutos y me ayuda a preparar una propuesta real para ti.
+                  </p>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="negocio" className="text-zinc-300 font-medium">Nombre de tu negocio <span className="text-zinc-500 font-normal">(Opcional)</span></Label>
-                  <Input
-                    id="negocio"
-                    type="text"
-                    placeholder="Ej: Taquería El Compa"
-                    value={negocio}
-                    onChange={(e) => setNegocio(e.target.value)}
-                    className={inputClasses}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="problema" className="text-zinc-300 font-medium">¿En qué podemos ayudarte? <span className="text-[--color-accent]">*</span></Label>
-                  <Textarea
-                    id="problema"
-                    placeholder="Describe los procesos que te quitan más tiempo o el sistema que tienes en mente..."
-                    value={problema}
-                    onChange={(e) => setProblema(e.target.value)}
-                    required
-                    rows={4}
-                    className={`${inputClasses} resize-none`}
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-white text-zinc-950 hover:bg-zinc-200 hover:scale-[1.02] transition-all duration-300 h-12 rounded-full font-semibold mt-4"
+                <a
+                  href="https://forms.gle/sDkykwkQc9MqcBFj6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-3 bg-white text-zinc-950 hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 h-12 px-6 font-semibold"
                 >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                      Conectando...
-                    </span>
-                  ) : (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                      </svg>
-                      Enviar mensaje por WhatsApp
-                    </span>
-                  )}
-                </Button>
-                
-                <p className="text-center text-zinc-500 text-xs mt-4 font-medium">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                  </svg>
+                  Llenar formulario de diagnóstico
+                </a>
+
+                <p className="text-center text-zinc-500 text-xs font-medium">
                   Información 100% confidencial. No spam, garantizado.
                 </p>
-              </form>
+              </div>
             </div>
           </div>
         </div>
@@ -3354,254 +3526,79 @@ export default function ContactForm() {
 
 <file path="src/components/Services.astro">
 ---
-import { LucideIcon } from 'lucide-react'; // Not using it directly here, we'll use SVGs directly for simplicity, but good to know we have lucide.
-
 const servicios = [
   {
     titulo: "Sistemas Inteligentes",
     texto: "Software hecho a tu medida. Punto de venta, control de inventario o gestión integral. Olvídate de los sistemas lentos y genéricos.",
     tags: ["Arquitectura escalable", "Soporte VIP"],
-    colSpan: "md:col-span-2",
-    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/></svg>'
   },
   {
     titulo: "Presencia Web",
     texto: "Páginas súper rápidas, optimizadas y hermosas. Integradas con WhatsApp para capturar leads 24/7.",
     tags: ["Pago único"],
-    colSpan: "md:col-span-1",
-    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="m9 21-3-9"/></svg>'
   },
   {
     titulo: "Automatización con IA",
     texto: "La IA responde por ti, organiza tus datos y genera reportes. Delega el trabajo aburrido y enfócate en crecer tu negocio.",
     tags: ["Bots 24/7", "Eficiencia total"],
-    colSpan: "md:col-span-1",
-    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="m17 5-5-3-5 3"/><path d="m17 19-5 3-5-3"/></svg>'
   },
   {
     titulo: "Asesoría Premium",
     texto: "Descubramos dónde pierdes tiempo y dinero. Diagnóstico completo sin costo para crear tu ruta de modernización.",
     tags: ["Sin compromiso", "Remoto/Local"],
-    colSpan: "md:col-span-2",
-    icon: '<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>'
   }
 ];
 ---
 
 <section id="servicios" class="py-24 md:py-32 px-6 relative">
-  {/* Ambient background blur */}
-  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-[--color-accent] rounded-full mix-blend-screen opacity-[0.03] filter blur-[100px] pointer-events-none"></div>
-
-  <div class="max-w-6xl mx-auto relative z-10">
-    <div class="scroll-reveal max-w-2xl mb-16 md:mb-24">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 mb-6">
-        <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
-        <span class="font-mono text-xs text-zinc-300 uppercase tracking-widest">Nuestras Soluciones</span>
-      </div>
-      <h2 class="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
-        Sistemas que <span class="text-gradient-accent">transforman</span> tu forma de trabajar
+  <div class="max-w-6xl mx-auto">
+    <div class="scroll-reveal mb-24">
+      <h2 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[0.95] mb-6 max-w-4xl">
+        Sistemas que transforman tu forma de trabajar
       </h2>
-      <p class="text-lg text-zinc-400 leading-relaxed">
+      <p class="text-lg text-zinc-400 leading-relaxed max-w-2xl">
         Soluciones técnicas de alto nivel diseñadas específicamente para automatizar, vender más y perder menos tiempo.
       </p>
     </div>
 
-    {/* Bento Box Grid */}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="scroll-reveal">
       {servicios.map((s, i) => (
-        <div class={`scroll-reveal glass-card rounded-3xl p-8 md:p-10 flex flex-col group relative overflow-hidden ${s.colSpan}`} style={`transition-delay: ${i * 100}ms`}>
-          {/* Hover gradient effect */}
-          <div class="absolute inset-0 bg-gradient-to-br from-[--color-accent]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
-          <div class="relative z-10 flex-1">
-            <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[--color-accent] mb-8 group-hover:scale-110 group-hover:bg-[--color-accent]/10 transition-all duration-300">
-              <div set:html={s.icon} />
+        <div class={i > 0 ? "border-t border-white/[.06] pt-10 mt-10" : ""}>
+          <div class="flex items-start gap-6">
+            <span class="font-mono text-[11px] text-zinc-600 font-bold tracking-wider shrink-0 mt-1.5">
+              {(i + 1).toString().padStart(2, "0")}
+            </span>
+            <div class={i === 0 ? "flex-1" : ""}>
+              <h3 class={i === 0 ? "text-2xl md:text-3xl font-bold text-white mb-3" : "text-xl font-semibold text-white mb-2"}>
+                {s.titulo}
+              </h3>
+              <p class="text-zinc-400 leading-relaxed max-w-2xl mb-3">{s.texto}</p>
+              <div class="flex flex-wrap gap-x-4 gap-y-1">
+                {s.tags.map(tag => (
+                  <span class="font-mono text-xs text-zinc-500">{tag}</span>
+                ))}
+              </div>
             </div>
-            
-            <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-zinc-400 transition-all">{s.titulo}</h3>
-            <p class="text-zinc-400 leading-relaxed mb-8">{s.texto}</p>
-          </div>
-
-          <div class="relative z-10 flex flex-wrap gap-3 mt-auto">
-            {s.tags.map(tag => (
-              <span class="font-mono text-xs font-medium text-zinc-300 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur-sm group-hover:border-white/20 transition-colors">
-                {tag}
-              </span>
-            ))}
           </div>
         </div>
       ))}
     </div>
 
-    <div class="scroll-reveal mt-20 pt-10 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+    <div class="scroll-reveal mt-24 pt-12 border-t border-white/[.06] flex flex-col md:flex-row items-center justify-between gap-6">
       <div>
         <h4 class="text-xl font-medium text-white mb-2">¿No estás seguro por dónde empezar?</h4>
         <p class="text-zinc-400">Podemos hacer un diagnóstico de tus procesos sin ningún costo.</p>
       </div>
-      <a href="#contacto" class="inline-flex items-center gap-2 bg-white text-zinc-950 font-semibold px-6 py-3 rounded-full transition-transform hover:scale-105">
+      <a
+        href="#contacto"
+        class="inline-flex items-center gap-2 bg-white text-zinc-950 font-semibold px-6 py-3 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+      >
         Agendar llamada
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </a>
     </div>
   </div>
 </section>
-</file>
-
-<file path="src/components/About.astro">
----
-const pasos = [
-  {
-    titulo: "Diagnóstico sin costo",
-    texto: "Agendamos una videollamada o reunión presencial. Me cuentas cómo funciona tu negocio y qué procesos te gustaría optimizar.",
-  },
-  {
-    titulo: "Arquitectura de solución",
-    texto: "Te presento una propuesta clara. Tecnologías a utilizar, tiempos de entrega y costos exactos. Sin tecnicismos innecesarios.",
-  },
-  {
-    titulo: "Desarrollo y despliegue",
-    texto: "Construyo tu sistema utilizando las últimas tecnologías web. Te entrego un producto rápido, seguro y listo para escalar.",
-  },
-  {
-    titulo: "Soporte premium",
-    texto: "No te dejo solo. Ofrezco planes de soporte continuo para que tu tecnología siempre esté actualizada y funcionando al 100%.",
-  },
-];
-
-const stats = [
-  { valor: "100%", label: "Enfoque Local" },
-  { valor: "0", label: "Plantillas Genéricas" },
-  { valor: "24/7", label: "Disponibilidad de Sistemas" },
-];
----
-
-<section id="about" class="py-24 md:py-32 px-6 relative overflow-hidden">
-  {/* Ambient background styling */}
-  <div class="absolute right-0 top-0 w-1/2 h-full bg-linear-to-l from-white/2 to-transparent pointer-events-none"></div>
-
-  <div class="max-w-6xl mx-auto relative z-10">
-    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-16 lg:gap-24 items-start">
-      
-      {/* Left Column: Context & Stats */}
-      <div class="scroll-reveal lg:sticky lg:top-32" style="transition-delay: 100ms">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 mb-6">
-          <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
-          <span class="font-mono text-xs text-zinc-300 uppercase tracking-widest">Nuestra Filosofía</span>
-        </div>
-        
-        <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
-          Primero te conozco, luego te propongo algo <span class="text-gradient-accent">útil.</span>
-        </h2>
-        
-        <p class="text-lg text-zinc-400 leading-relaxed mb-12">
-          Operando desde Cd. Victoria, Tamaulipas. Conozco las necesidades reales de los negocios locales. No te vendo tecnología por vender; construimos herramientas que generan impacto.
-        </p>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {stats.map(stat => (
-            <div class="glass-card p-6 rounded-2xl border border-white/5 flex flex-col items-center text-center group hover:border-white/10 transition-colors">
-              <span class="text-3xl font-bold text-white mb-2 group-hover:scale-110 transition-transform">{stat.valor}</span>
-              <span class="text-xs text-zinc-500 uppercase tracking-wider font-medium">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-        
-        <div class="mt-12 p-6 rounded-2xl bg-linear-to-br from-[--color-accent]/10 to-transparent border border-[--color-accent]/20 flex items-start gap-4">
-          <div class="w-12 h-12 rounded-full bg-[--color-accent]/20 flex items-center justify-center shrink-0">
-            <svg class="w-6 h-6 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <div>
-            <h4 class="text-white font-medium mb-1">Garantía de calidad</h4>
-            <p class="text-sm text-zinc-400 leading-relaxed">Sistemas probados, seguros y diseñados específicamente para resolver los problemas de tu operativa diaria.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Column: Timeline */}
-      <div class="scroll-reveal space-y-8 relative" style="transition-delay: 200ms">
-        {/* Timeline line */}
-        <div class="absolute left-6 md:left-8 top-8 bottom-8 w-px bg-linear-to-b from-[--color-accent] via-white/10 to-transparent"></div>
-
-        {pasos.map((p, i) => (
-          <div class="relative pl-16 md:pl-24 group">
-            <div class="absolute left-0 md:left-2 top-1.5 w-12 h-12 rounded-full glass border border-white/10 flex items-center justify-center z-10 group-hover:bg-[--color-accent]/20 group-hover:border-[--color-accent]/50 transition-colors shadow-[0_0_15px_rgba(0,0,0,0.5)]">
-              <span class="font-mono text-sm font-bold text-[--color-accent]">0{i + 1}</span>
-            </div>
-            
-            <div class="glass-card p-6 md:p-8 rounded-3xl border border-white/5 group-hover:border-white/10 transition-colors">
-              <h3 class="text-xl font-semibold text-white mb-3 group-hover:text-[--color-accent] transition-colors">{p.titulo}</h3>
-              <p class="text-zinc-400 leading-relaxed">{p.texto}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-      
-    </div>
-  </div>
-</section>
-</file>
-
-<file path="src/components/Footer.astro">
----
-const currentYear = new Date().getFullYear();
----
-
-<footer class="border-t border-white/10 py-16 px-6 relative overflow-hidden">
-  {/* Ambient background styling */}
-  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-32 bg-[--color-accent] rounded-t-[100%] mix-blend-screen opacity-[0.02] filter blur-[64px] pointer-events-none"></div>
-
-  <div class="max-w-6xl mx-auto relative z-10">
-    <div class="grid md:grid-cols-4 gap-12 mb-16">
-      <div class="md:col-span-2">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="w-10 h-10 bg-gradient-to-br from-[--color-accent] to-emerald-700 flex items-center justify-center rounded-[--radius] shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-            <span class="text-white font-bold text-sm">X</span>
-          </div>
-          <span class="text-2xl font-bold tracking-tight text-white">Xolventa</span>
-        </div>
-        <p class="text-zinc-400 leading-relaxed max-w-sm mb-6">
-          Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
-        </p>
-      </div>
-
-      <div class="md:col-span-1">
-        <span class="font-mono text-xs text-zinc-500 uppercase tracking-widest block mb-6">Navegación</span>
-        <nav class="space-y-4">
-          <a href="#servicios" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Soluciones</a>
-          <a href="#about" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Metodología</a>
-          <a href="#contacto" class="block text-sm text-zinc-400 hover:text-[--color-accent] transition-colors w-fit">Iniciar Proyecto</a>
-        </nav>
-      </div>
-
-      <div class="md:col-span-1">
-        <span class="font-mono text-xs text-zinc-500 uppercase tracking-widest block mb-6">Contacto Directo</span>
-        <a
-          href="https://wa.me/528342550555"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-sm text-zinc-300 glass border border-white/10 px-4 py-2 rounded-full hover:bg-white/5 hover:border-white/20 transition-all group"
-        >
-          <svg class="w-4 h-4 text-[--color-accent] group-hover:scale-110 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          834 255 0555
-        </a>
-      </div>
-    </div>
-
-    <div class="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent mb-8"></div>
-
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-      <p class="text-sm text-zinc-500">
-        &copy; {currentYear} Xolventa. Todos los derechos reservados.
-      </p>
-      <div class="flex items-center gap-2">
-        <span class="w-2 h-2 rounded-full bg-[--color-accent] animate-pulse"></span>
-        <p class="text-sm text-zinc-500">
-          Sistemas operativos en Cd. Victoria, Tam.
-        </p>
-      </div>
-    </div>
-  </div>
-</footer>
 </file>
 
 <file path="src/styles/global.css">
@@ -3640,12 +3637,12 @@ const currentYear = new Date().getFullYear();
 }
 
 :root {
-  --color-canvas: #09090b;
+  --color-canvas: #070b0a;
   --color-ink: #fafafa;
   --color-ink-2: #a1a1aa;
   --color-ink-3: #71717a;
-  --color-accent: #10b981;
-  --color-accent-h: #059669;
+  --color-accent: #5ed29c;
+  --color-accent-h: #4cbf87;
   --color-border: rgba(255, 255, 255, 0.1);
 
   --background: var(--color-canvas);
@@ -3675,6 +3672,8 @@ const currentYear = new Date().getFullYear();
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+    position: relative;
+    z-index: 1;
   }
   html {
     @apply scroll-smooth;
@@ -3698,14 +3697,11 @@ const currentYear = new Date().getFullYear();
   }
 }
 
-@keyframes fade-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
+/* Todas las secciones después del hero tapan el video fixed */
+main > *:not(:first-child) {
+  position: relative;
+  z-index: 1;
+  background-color: #070b0a;
 }
 
 .scroll-reveal {
@@ -3722,81 +3718,6 @@ const currentYear = new Date().getFullYear();
 
 @media (prefers-reduced-motion: reduce) {
   .scroll-reveal { opacity: 1; transform: none; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) scale(1); }
-  50% { transform: translateY(-20px) scale(1.05); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.1; transform: scale(1); }
-  50% { opacity: 0.2; transform: scale(1.05); }
-}
-
-@keyframes shine {
-  from { background-position: 200% center; }
-  to { background-position: -200% center; }
-}
-
-.glass {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.glass-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
-}
-
-.glass-card:hover {
-  background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(to right, #fafafa, #a1a1aa);
-}
-
-.text-gradient-accent {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(to right, #34d399, #10b981);
-}
-
-.liquid-glass {
-  background: rgba(255, 255, 255, 0.01);
-  background-blend-mode: luminosity;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  position: relative;
-}
-
-.liquid-glass::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  padding: 1.4px;
-  border-radius: inherit;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
 }
 </file>
 
@@ -3817,6 +3738,149 @@ export default defineConfig({
     plugins: [tailwindcss()]
   }
 });
+</file>
+
+<file path="src/components/About.astro">
+---
+const pasos = [
+  {
+    titulo: "Diagnóstico sin costo",
+    texto: "Agendamos una videollamada o reunión presencial. Me cuentas cómo funciona tu negocio y qué procesos te gustaría optimizar.",
+  },
+  {
+    titulo: "Arquitectura de solución",
+    texto: "Te presento una propuesta clara. Tecnologías a utilizar, tiempos de entrega y costos exactos. Sin tecnicismos innecesarios.",
+  },
+  {
+    titulo: "Desarrollo y despliegue",
+    texto: "Construyo tu sistema utilizando las últimas tecnologías web. Te entrego un producto rápido, seguro y listo para escalar.",
+  },
+  {
+    titulo: "Soporte premium",
+    texto: "No te dejo solo. Ofrezco planes de soporte continuo para que tu tecnología siempre esté actualizada y funcionando al 100%.",
+  },
+];
+
+const stats = [
+  { valor: "100%", label: "Enfoque Local" },
+  { valor: "0", label: "Plantillas Genéricas" },
+  { valor: "24/7", label: "Disponibilidad de Sistemas" },
+];
+---
+
+<section id="about" class="py-24 md:py-32 px-6 relative">
+  <div class="max-w-6xl mx-auto">
+    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-16 lg:gap-24 items-start">
+
+      <div class="scroll-reveal lg:sticky lg:top-32">
+        <h2 class="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6 leading-tight">
+          Primero te conozco, luego te propongo algo útil.
+        </h2>
+
+        <p class="text-lg text-zinc-400 leading-relaxed mb-12">
+          Operando desde Cd. Victoria, Tamaulipas. Conozco las necesidades reales de los negocios locales. No te vendo tecnología por vender; construimos herramientas que generan impacto.
+        </p>
+
+        <div class="grid grid-cols-3 gap-8 mb-12">
+          {stats.map(stat => (
+            <div>
+              <span class="text-3xl font-bold text-white block mb-1">{stat.valor}</span>
+              <span class="text-[11px] text-zinc-500 uppercase tracking-wider font-medium">{stat.label}</span>
+            </div>
+          ))}
+        </div>
+
+        <p class="text-sm text-zinc-500 leading-relaxed border-t border-white/[.06] pt-6">
+          <span class="text-white font-medium">Garantía de calidad</span><br>
+          Sistemas probados, seguros y diseñados específicamente para resolver los problemas de tu operativa diaria.
+        </p>
+      </div>
+
+      <div class="scroll-reveal">
+        {pasos.map((p, i) => (
+          <div class={i > 0 ? "border-t border-white/[.06] pt-10 mt-10" : ""}>
+            <div class="flex items-start gap-6">
+              <span class="font-mono text-[11px] text-zinc-600 font-bold tracking-wider shrink-0 mt-0.5">
+                {(i + 1).toString().padStart(2, "0")}
+              </span>
+              <div>
+                <h3 class="text-xl font-semibold text-white mb-3">{p.titulo}</h3>
+                <p class="text-zinc-400 leading-relaxed">{p.texto}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+    </div>
+  </div>
+</section>
+</file>
+
+<file path="src/components/Footer.astro">
+---
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="bg-[#070b0a] border-t border-[#5ed29c]/20 py-20 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between gap-16 mb-20">
+      <div class="max-w-sm">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-[#5ed29c] flex items-center justify-center">
+            <span class="text-[#070b0a] font-bold text-sm">X</span>
+          </div>
+          <span class="text-2xl font-bold tracking-tight text-white">Xolventa</span>
+        </div>
+        <p class="text-zinc-300 leading-relaxed text-sm">
+          Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
+        </p>
+      </div>
+
+      <div class="flex flex-col md:flex-row gap-16">
+        <div>
+          <span class="text-[11px] text-[#5ed29c] font-semibold uppercase tracking-[0.18em] block mb-6">Navegación</span>
+          <div class="space-y-3">
+            <a href="#servicios" class="block text-sm text-zinc-300 hover:text-white transition-colors">Soluciones</a>
+            <a href="#about" class="block text-sm text-zinc-300 hover:text-white transition-colors">Metodología</a>
+            <a href="#contacto" class="block text-sm text-zinc-300 hover:text-white transition-colors">Iniciar Proyecto</a>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-[11px] text-[#5ed29c] font-semibold uppercase tracking-[0.18em] block mb-6">Contacto</span>
+          <div class="space-y-3">
+            <a
+              href="https://wa.me/528342550555"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-2 text-sm text-zinc-300 hover:text-white transition-colors"
+            >
+              <svg class="w-4 h-4 shrink-0 text-[#5ed29c]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              +52 834 255 0555
+            </a>
+            <p class="flex items-center gap-2 text-sm text-zinc-300">
+              <svg class="w-4 h-4 shrink-0 text-[#5ed29c]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Ciudad Victoria, Tam.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+      <div class="flex items-center gap-6">
+        <p class="text-sm text-zinc-400">
+          &copy; {currentYear} Xolventa.
+        </p>
+        <a href="/privacidad" class="text-sm text-zinc-400 hover:text-white transition-colors">Aviso de privacidad</a>
+      </div>
+      <p class="text-sm text-zinc-400">
+        Sistemas operativos en Cd. Victoria, Tam.
+      </p>
+    </div>
+  </div>
+</footer>
 </file>
 
 <file path="src/pages/index.astro">
@@ -3880,10 +3944,11 @@ import Footer from '../components/Footer.astro';
 </file>
 
 <file path="README.md">
-# Xolventa
+# Xolventa Landing Page
 
-**Soluciones técnicas para negocios de Cd. Victoria.**  
-[🌐 xolventa.vercel.app](https://xolventa.vercel.app)
+**Soluciones técnicas para negocios de Cd. Victoria.**
+
+🌐 [xolventa.vercel.app](https://xolventa.vercel.app)
 
 Desarrollo sistemas de venta e inventario, páginas web profesionales y automatizaciones con IA para negocios locales. Sin plantillas genéricas, todo a la medida de cada cliente.
 
@@ -3898,111 +3963,6 @@ Desarrollo sistemas de venta e inventario, páginas web profesionales y automati
 
 WhatsApp: [834 255 0555](https://wa.me/528342550555)  
 Web: [xolventa.vercel.app](https://xolventa.vercel.app)
-</file>
-
-<file path="src/components/Hero.astro">
----
----
-
-<section class="relative min-h-[90vh] flex items-center pt-24 pb-20 overflow-hidden">
-  {/* Background effects */}
-  <div class="absolute inset-0 z-0 pointer-events-none">
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-[--color-accent] rounded-full mix-blend-screen opacity-10 filter blur-[100px] animate-[float-slow_8s_ease-in-out_infinite]"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-emerald-800 rounded-full mix-blend-screen opacity-10 filter blur-[128px] animate-[float-slow_10s_ease-in-out_infinite_reverse]"></div>
-    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDAuNWg0ME0wIDM5LjVoNDBNMC41IDB2NDBNMzkuNSAwdjQwIiBzdHJva2U9InJnYmEoMjU1LDI1NSwyNTUsMC4wMykiLz48L3N2Zz4=')] [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-50"></div>
-  </div>
-
-  <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
-    <div class="scroll-reveal flex items-center gap-3 mb-12">
-      <div class="glass px-4 py-1.5 rounded-full flex items-center gap-2 border border-white/10">
-        <span class="relative flex h-2 w-2">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[--color-accent] opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2 w-2 bg-[--color-accent]"></span>
-        </span>
-        <span class="text-xs font-medium tracking-wide text-zinc-300 uppercase">
-          Operando en Cd. Victoria
-        </span>
-      </div>
-    </div>
-
-    <div class="grid lg:grid-cols-[1.2fr_1fr] gap-16 lg:gap-20 items-center">
-      <div class="scroll-reveal" style="transition-delay: 100ms">
-        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8" style="line-height: 1.1;">
-          <span class="text-gradient">Tecnología premium</span><br/>
-          <span class="text-zinc-500">para tu negocio.</span>
-        </h1>
-
-        <p class="text-lg md:text-xl text-[--color-ink-2] leading-relaxed max-w-xl mb-12">
-          Sistemas web, punto de venta y automatizaciones con IA que escalan contigo.
-          Diseño exclusivo, sin plantillas, hecho a la medida.
-        </p>
-
-        <div class="flex flex-wrap gap-4 mb-16">
-          <a href="#contacto"
-             class="group relative inline-flex items-center justify-center gap-2 bg-white text-zinc-950 font-semibold px-8 py-4 rounded-full overflow-hidden transition-transform hover:scale-105"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <span class="relative z-10 flex items-center gap-2 group-hover:text-zinc-900">
-              Iniciar Proyecto
-              <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-            </span>
-          </a>
-          <a href="#servicios"
-             class="inline-flex items-center justify-center gap-2 glass text-[--color-ink] font-medium px-8 py-4 rounded-full transition-colors hover:bg-white/10 border border-white/10"
-          >
-            Explorar soluciones
-          </a>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-6 text-sm text-[--color-ink-2]">
-          <span class="flex items-center gap-2">
-            <svg class="w-4 h-4 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Soporte Premium
-          </span>
-          <span class="flex items-center gap-2">
-            <svg class="w-4 h-4 text-[--color-accent]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            Soluciones a la medida
-          </span>
-        </div>
-      </div>
-
-      <div class="scroll-reveal relative" style="transition-delay: 250ms">
-        <div class="absolute inset-0 bg-gradient-to-tr from-[--color-accent] to-transparent opacity-10 rounded-3xl blur-2xl"></div>
-        <div class="glass-card rounded-3xl p-8 md:p-10 relative overflow-hidden">
-          <div class="absolute top-0 right-0 w-32 h-32 bg-[--color-accent] rounded-full mix-blend-screen opacity-10 filter blur-[32px]"></div>
-          
-          <span class="inline-block px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-[--color-accent] font-mono mb-8">
-            PROCESO SIMPLE
-          </span>
-          
-          <div class="space-y-8 relative z-10">
-            <div class="flex gap-5 group">
-              <div class="flex-shrink-0 w-12 h-12 rounded-2xl glass flex items-center justify-center text-sm font-mono text-[--color-accent] border border-white/10 group-hover:scale-110 transition-transform">01</div>
-              <div>
-                <h4 class="text-lg font-medium text-white mb-1">Diagnóstico</h4>
-                <p class="text-sm text-zinc-400 leading-relaxed">Analizamos tus cuellos de botella sin compromiso ni costo.</p>
-              </div>
-            </div>
-            <div class="flex gap-5 group">
-              <div class="flex-shrink-0 w-12 h-12 rounded-2xl glass flex items-center justify-center text-sm font-mono text-[--color-accent] border border-white/10 group-hover:scale-110 transition-transform">02</div>
-              <div>
-                <h4 class="text-lg font-medium text-white mb-1">Propuesta</h4>
-                <p class="text-sm text-zinc-400 leading-relaxed">Arquitectura clara, presupuestos transparentes y tiempos definidos.</p>
-              </div>
-            </div>
-            <div class="flex gap-5 group">
-              <div class="flex-shrink-0 w-12 h-12 rounded-2xl glass flex items-center justify-center text-sm font-mono text-[--color-accent] border border-white/10 group-hover:scale-110 transition-transform">03</div>
-              <div>
-                <h4 class="text-lg font-medium text-white mb-1">Ejecución</h4>
-                <p class="text-sm text-zinc-400 leading-relaxed">Despliegue rápido, capacitación y soporte continuo.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
 </file>
 
 <file path="src/layouts/Layout.astro">
@@ -4099,7 +4059,12 @@ const ogImage = `${domain}/og-image.webp`;
     </script>
   </head>
   <body>
-    <slot />
+    <a href="#main-content" class="fixed -top-full left-4 z-[60] p-3 bg-white text-zinc-950 text-sm font-medium transition-all focus:top-4 outline-ring">
+      Ir al contenido principal
+    </a>
+    <div id="main-content">
+      <slot />
+    </div>
   </body>
 </html>
 </file>

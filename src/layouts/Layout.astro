@@ -83,13 +83,22 @@ const ogImage = `${domain}/og-image.webp`;
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
             }
           });
-        }, { threshold: 0.1, rootMargin: '-40px' });
+        }, { threshold: 0.05 });
 
         document.querySelectorAll(
           '.scroll-reveal, .clip-reveal, .clip-reveal-right, .clip-reveal-top, .stagger-children'
-        ).forEach(el => observer.observe(el));
+        ).forEach(el => {
+          el.classList.add('is-hidden');
+          observer.observe(el);
+          setTimeout(() => {
+            if (!el.classList.contains('revealed')) {
+              el.classList.add('revealed');
+            }
+          }, 4000);
+        });
       });
     </script>
   </head>
