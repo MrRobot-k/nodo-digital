@@ -10,11 +10,11 @@ interface Props {
 }
 
 const {
-  title = 'Xolventa | Software a la medida con IA — Cd. Victoria',
+  title = 'Nodo Digital | Software a la medida con IA — Cd. Victoria',
   description = 'Software a la medida para tu negocio en Cd. Victoria. Automatización con IA, desarrollo web profesional y consultoría tecnológica. Primero te conozco, luego te propongo algo útil.'
 } = Astro.props;
 
-const domain = 'https://xolventa.vercel.app';
+const domain = 'https://nodo-digital.vercel.app';
 const ogImage = `${domain}/og-image.webp`;
 ---
 
@@ -51,7 +51,7 @@ const ogImage = `${domain}/og-image.webp`;
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
-      "name": "Xolventa",
+      "name": "Nodo Digital",
       "description": description,
       "url": domain,
       "image": ogImage,

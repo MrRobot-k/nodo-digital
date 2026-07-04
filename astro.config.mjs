@@ -7,7 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://xolventa.vercel.app',
+  site: 'https://nodo-digital.vercel.app',
   integrations: [react()],
 
   vite: {
