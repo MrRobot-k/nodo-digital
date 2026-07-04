@@ -1,4 +1,4 @@
-# Xolventa Landing Page
+# Nodo Digital Landing Page
 
 **Soluciones técnicas para negocios de Cd. Victoria.**
 
