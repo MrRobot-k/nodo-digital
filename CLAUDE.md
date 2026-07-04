@@ -1,4 +1,4 @@
-# Landing Page - Xolventa
+# Landing Page - Nodo Digital
 
 ## Project Overview
 - **Framework**: Astro 6.4.6 + React 19 (islands)

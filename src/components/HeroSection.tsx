@@ -125,7 +125,7 @@ export default function HeroSection() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
           >
-            XOLVENTA
+            NODO DIGITAL
           </motion.a>
 
           <div className="hidden lg:flex items-center gap-8">

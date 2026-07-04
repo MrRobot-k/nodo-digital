@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://xolventa.vercel.app/sitemap.xml
+Sitemap: https://nodo-digital.vercel.app/sitemap.xml
