@@ -23,17 +23,17 @@ function ContactItem({ icon, label, value, href }: {
       transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
     >
       <motion.div
-        className="w-12 h-12 border border-white/[0.08] flex items-center justify-center transition-colors duration-200 group-hover:border-[#5ed29c]/30"
+        className="w-12 h-12 border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.2 }}
       >
-        <span className="text-zinc-400 transition-colors duration-200 group-hover:text-[#5ed29c]">
+        <span className="text-ink-3 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]">
           {icon}
         </span>
       </motion.div>
       <div>
-        <p className="text-[11px] text-zinc-600 uppercase tracking-wider font-medium">{label}</p>
-        <p className="text-white text-lg font-medium">{value}</p>
+        <p className="text-[11px] text-ink-3 uppercase tracking-wider font-medium">{label}</p>
+        <p className="text-foreground text-lg font-medium">{value}</p>
       </div>
     </Tag>
   );
@@ -45,17 +45,17 @@ export default function ContactForm() {
 
   return (
     <section id="contacto" className="py-32 md:py-44 px-6 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto relative">        
+      <div className="max-w-7xl mx-auto relative">
         <motion.div
           {...anim}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-2xl mb-20"
         >
-          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-white leading-[0.92] mb-5">
+          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
             ¿Listo para modernizar<br />
-            <span className="text-[#5ed29c]">tu negocio</span>?
+            <span className="text-[var(--color-accent-val)]">tu negocio</span>?
           </h2>
-          <p className="text-base md:text-lg text-zinc-500 leading-relaxed">
+          <p className="text-base md:text-lg text-ink-2 leading-relaxed">
             Cuéntame qué procesos de tu negocio te gustaría optimizar. Te ofrezco una asesoría gratuita de 30 minutos para identificar oportunidades con tecnología real.
           </p>
         </motion.div>
@@ -103,11 +103,11 @@ export default function ContactForm() {
           <motion.div
             {...anim}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-white/[0.08] p-8 md:p-12 bg-white/[0.02] relative overflow-hidden rounded-2xl"
+            className="border border-border p-8 md:p-12 bg-surface relative overflow-hidden"
           >
-            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#5ed29c]/20 to-transparent" />
-            <h3 className="text-white font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
-            <p className="text-zinc-400 leading-relaxed text-sm mb-8">
+            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-accent-val)]/20 to-transparent" />
+            <h3 className="text-foreground font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
+            <p className="text-ink-2 leading-relaxed text-sm mb-8">
               Antes de agendar una videollamada, llena este formulario de diagnóstico para que llegue con contexto de tu negocio.
             </p>
 
@@ -115,7 +115,7 @@ export default function ContactForm() {
               href="https://forms.gle/sDkykwkQc9MqcBFj6"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-3 bg-[#5ed29c] text-[#070b0a] font-medium text-sm h-12 px-6 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[#4cbf87] hover:shadow-[0_0_25px_rgba(94,210,156,0.12)] relative overflow-hidden"
+              className="w-full inline-flex items-center justify-center gap-3 bg-primary text-primary-foreground font-medium text-sm h-12 px-6 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] relative overflow-hidden"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.96 }}
             >
@@ -125,7 +125,7 @@ export default function ContactForm() {
               Llenar formulario de diagnóstico
             </motion.a>
 
-            <p className="text-center text-zinc-600 text-xs font-medium mt-6">
+            <p className="text-center text-ink-3 text-xs font-medium mt-6">
               Sin compromiso. Solo conversamos si ves valor en lo que propongo.
             </p>
           </motion.div>

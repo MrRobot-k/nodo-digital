@@ -17,12 +17,6 @@ const pasos = [
     texto: "Soporte técnico después de la entrega. Actualizaciones, ajustes y mejoras conforme tu negocio crece.",
   },
 ];
-
-const stats = [
-  { valor: "100%", label: "Enfoque Local" },
-  { valor: "+10", label: "Años de Experiencia" },
-  { valor: "24/7", label: "Soporte Técnico" },
-];
 ---
 
 <section id="about" class="py-32 md:py-44 px-6 relative">
@@ -31,56 +25,51 @@ const stats = [
 
       <!-- Left: Sticky intro -->
       <div class="lg:sticky lg:top-32 scroll-reveal">
-        <h2 class="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-white leading-[0.92] mb-6">
-          Primero te <span class="text-[#5ed29c]">conozco</span>,<br />
+        <h2 class="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-6">
+          Primero te <span class="text-accent-val">conozco</span>,<br />
           luego te propongo<br />
-          <span class="text-[#5ed29c]">algo útil</span>
+          <span class="text-accent-val">algo útil</span>
         </h2>
 
-        <p class="text-base md:text-lg text-zinc-500 leading-relaxed mb-14 max-w-md">
+        <p class="text-base md:text-lg text-ink-2 leading-relaxed mb-14 max-w-md">
           Opero desde Cd. Victoria, Tamaulipas. Conozco los retos diarios de los negocios locales porque trabajo con ellos.
         </p>
 
-        <div class="grid grid-cols-3 gap-6 mb-12">
-          {stats.map(stat => (
-            <div>
-              <span class="text-3xl md:text-4xl font-bold text-white block mb-1">{stat.valor}</span>
-              <span class="text-[10px] text-zinc-600 uppercase tracking-wider font-medium">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <div class="border-t border-white/[0.06] pt-6">
-          <p class="text-sm text-zinc-500 leading-relaxed">
-            <span class="text-white font-medium">Garantía de calidad</span><br />
+        <div class="border-t border-border pt-6">
+          <p class="text-sm text-ink-3 leading-relaxed">
+            <span class="text-foreground font-medium">Garantía de calidad</span><br />
             Todo el código se prueba antes de entregarse. Sin sorpresas, sin deuda técnica heredada.
           </p>
         </div>
       </div>
 
-      <!-- Right: Accordion steps -->
-      <div class="space-y-0">
-        {pasos.map((p, i) => (
-          <div class={i > 0 ? "border-t border-white/[0.06]" : ""}>
-            <details class="group" open={i === 0}>
-              <summary class="flex items-center gap-5 py-8 cursor-pointer list-none">
-                <span class="font-mono text-[11px] text-zinc-600 font-bold tracking-wider shrink-0">
+      <!-- Right: Visual timeline -->
+      <div class="relative">
+        <!-- Vertical line -->
+        <div class="absolute left-[11px] top-3 bottom-3 w-px bg-border hidden md:block" />
+
+        <div class="space-y-16 md:space-y-20">
+          {pasos.map((p, i) => (
+            <div class="relative pl-0 md:pl-10">
+              <div class="hidden md:flex absolute left-0 top-0.5 w-[23px] h-[23px] rounded-full border-2 border-[var(--color-accent-val)] bg-background items-center justify-center z-10">
+                <div class="w-2 h-2 rounded-full bg-[var(--color-accent-val)]" />
+              </div>
+              <div class="md:hidden flex items-center gap-3 mb-3">
+                <span class="font-mono text-[11px] text-ink-3 font-bold tracking-wider">
                   {`0${i + 1}`}
                 </span>
-                <h3 class="text-lg md:text-xl font-medium text-white flex-1">{p.titulo}</h3>
-                <div class="w-8 h-8 border border-white/[0.06] flex items-center justify-center transition-[border-color,background-color] duration-300 group-open:border-[#5ed29c]/30 group-open:bg-[#5ed29c]/[0.05]">
-                  <svg class="w-3.5 h-3.5 text-zinc-500 transition-transform duration-300 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 5v14" />
-                    <path d="M5 12h14" />
-                  </svg>
-                </div>
-              </summary>
-              <div class="pb-8 pl-[3.25rem]">
-                <p class="text-zinc-400 leading-relaxed">{p.texto}</p>
+                <div class="h-px flex-1 bg-border" />
               </div>
-            </details>
-          </div>
-        ))}
+              <div>
+                <span class="hidden md:block font-mono text-[11px] text-ink-3 font-bold tracking-wider mb-2">
+                  {`Paso ${i + 1}`}
+                </span>
+                <h3 class="text-lg md:text-xl font-medium text-foreground mb-3">{p.titulo}</h3>
+                <p class="text-ink-2 leading-relaxed">{p.texto}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
     </div>

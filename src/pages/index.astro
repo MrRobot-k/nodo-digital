@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import HeroSection from '../components/HeroSection.tsx';
 import Services from '../components/Services.astro';
 import About from '../components/About.astro';
+import Faq from '../components/Faq.astro';
 import ContactForm from '../components/ContactForm.tsx';
 import Footer from '../components/Footer.astro';
 ---
@@ -12,6 +13,7 @@ import Footer from '../components/Footer.astro';
     <HeroSection client:load />
     <Services />
     <About />
+    <Faq />
     <ContactForm client:load />
     <Footer />
   </main>

@@ -1,0 +1,64 @@
+---
+const preguntas = [
+  {
+    q: "¿Cuánto cuesta desarrollar un sistema a la medida?",
+    r: "Depende de la complejidad y el alcance. Por eso empezamos con un diagnóstico gratuito donde entendemos tus necesidades y te damos una cotización exacta. No hay costos ocultos ni sorpresas.",
+  },
+  {
+    q: "¿Cuánto tiempo toma hacer una página web profesional?",
+    r: "Una página web optimizada con rendimiento premium puede estar lista en 2 a 4 semanas, dependiendo de las funcionalidades que necesites. Te entrego un sitio rápido, conectado con WhatsApp y listo para captar clientes.",
+  },
+  {
+    q: "¿Necesito conocimientos técnicos para trabajar contigo?",
+    r: "Para nada. Yo me encargo de toda la parte técnica. Solo necesitas saber qué procesos de tu negocio te gustaría mejorar o automatizar. El resto lo hacemos juntos paso a paso.",
+  },
+  {
+    q: "¿Dan mantenimiento después de entregar el proyecto?",
+    r: "Sí, incluyo soporte técnico continuo después de la entrega. Además, podemos acordar actualizaciones y mejoras periódicas conforme tu negocio crezca o cambien tus necesidades.",
+  },
+  {
+    q: "¿Qué tecnologías utilizan?",
+    r: "Trabajo con tecnologías web modernas y estables: React, Node.js, Python, bases de datos relacionales, e integración con APIs. Todo el código se prueba antes de entregarse para garantizar calidad y rendimiento.",
+  },
+  {
+    q: "¿Solo trabajas con negocios locales o también remoto?",
+    r: "Estoy basado en Cd. Victoria, Tamaulipas, pero trabajo con clientes de todo México. Las reuniones pueden ser presenciales (si estás en la ciudad) o por videollamada. El servicio es el mismo.",
+  },
+];
+---
+
+<section id="faq" class="py-32 md:py-44 px-6 relative">
+  <div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="scroll-reveal mb-16 md:mb-20">
+      <h2 class="text-[clamp(28px,5vw,44px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
+        Preguntas <span class="text-accent-val">frecuentes</span>
+      </h2>
+      <p class="text-ink-2 leading-relaxed max-w-lg">
+        Respuestas claras sobre cómo trabajamos, sin rodeos.
+      </p>
+    </div>
+
+    <!-- FAQ items -->
+    <div class="space-y-0">
+      {preguntas.map((item, i) => (
+        <div class={i > 0 ? "border-t border-border" : ""}>
+          <details class="group">
+            <summary class="flex items-center justify-between gap-4 py-6 cursor-pointer list-none">
+              <h3 class="text-base md:text-lg font-medium text-foreground leading-snug">{item.q}</h3>
+              <div class="w-8 h-8 shrink-0 border border-border flex items-center justify-center transition-[border-color,background-color] duration-300 group-open:[border-color:var(--color-accent-val)] group-open:[background-color:var(--color-accent-subtle-val)]">
+                <svg class="w-3.5 h-3.5 text-ink-3 transition-transform duration-300 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14" />
+                  <path d="M5 12h14" />
+                </svg>
+              </div>
+            </summary>
+            <div class="pb-8 pr-12">
+              <p class="text-ink-2 leading-relaxed">{item.r}</p>
+            </div>
+          </details>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

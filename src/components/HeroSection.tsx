@@ -5,6 +5,7 @@ import { Menu, X } from 'lucide-react';
 const NAV_LINKS = [
   { label: 'Servicios', href: '#servicios' },
   { label: 'Proceso', href: '#about' },
+  { label: 'FAQ', href: '#faq' },
   { label: 'Contacto', href: '#contacto' },
 ];
 
@@ -44,7 +45,7 @@ function MagneticButton({ children, href }: { children: React.ReactNode; href: s
       ref={ref}
       href={href}
       style={{ x, y }}
-      className="group inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-semibold text-sm px-8 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out will-change-transform hover:bg-[#4cbf87] hover:shadow-[0_0_30px_rgba(94,210,156,0.15)]"
+      className="group inline-flex items-center gap-3 bg-primary text-primary-foreground font-semibold text-sm px-8 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out will-change-transform hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_30px_var(--color-accent-subtle-val)]"
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.96 }}
     >
@@ -89,7 +90,7 @@ export default function HeroSection() {
   };
 
   return (
-    <div className="relative min-h-[100dvh] bg-[#070b0a] overflow-hidden">
+    <div className="relative min-h-[100dvh] bg-background overflow-hidden">
       {/* ── Fixed Video Background ── */}
       <div className="fixed inset-0 z-0">
         <video
@@ -100,8 +101,8 @@ export default function HeroSection() {
           playsInline
           className="w-full h-[120%] object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-[#070b0a] via-[#070b0a]/80 to-transparent" />
-        <div className="absolute inset-0 bg-linear-to-t from-[#070b0a] via-[#070b0a]/30 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-background via-background/80 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
 
         {/* Ambient glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px]">
@@ -111,53 +112,55 @@ export default function HeroSection() {
                 <feGaussianBlur stdDeviation="40" />
               </filter>
             </defs>
-            <ellipse cx="400" cy="200" rx="350" ry="120" fill="#5ed29c" opacity="0.06" filter="url(#h-glow)" />
+            <ellipse cx="400" cy="200" rx="350" ry="120" fill="var(--color-accent-val)" opacity="0.06" filter="url(#h-glow)" />
           </svg>
         </div>
       </div>
 
       {/* ── Navigation ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#070b0a]/60 backdrop-blur-md">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-md">
         <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <motion.a
             href="/"
-            className="text-white text-lg font-bold tracking-[0.15em]"
+            className="text-foreground text-lg font-bold tracking-[0.15em]"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
           >
             NODO DIGITAL
           </motion.a>
 
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm text-white/50 hover:text-white transition-colors duration-150"
+                className="text-sm text-ink-2 hover:text-foreground transition-colors duration-150"
               >
                 {link.label}
               </a>
             ))}
             <a
               href="#contacto"
-              className="ml-4 text-sm font-medium text-[#070b0a] bg-[#5ed29c] px-5 py-2 rounded-full transition-colors duration-200 ease-out hover:bg-[#4cbf87] hover:shadow-[0_0_20px_rgba(94,210,156,0.12)] active:scale-[0.96]"
+              className="text-sm font-medium text-primary-foreground bg-primary px-5 py-2 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] active:scale-[0.96]"
             >
               Iniciar proyecto
             </a>
           </div>
 
-          <button
-            className="lg:hidden text-white"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-          >
-            <motion.div
-              animate={menuOpen ? { rotate: 90 } : { rotate: 0 }}
-              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+          <div className="flex lg:hidden">
+            <button
+              className="text-foreground"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </motion.div>
-          </button>
+              <motion.div
+                animate={menuOpen ? { rotate: 90 } : { rotate: 0 }}
+                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+              >
+                {menuOpen ? <X size={22} /> : <Menu size={22} />}
+              </motion.div>
+            </button>
+          </div>
         </nav>
       </header>
 
@@ -167,10 +170,10 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 bg-[#070b0a]/95 flex flex-col items-center justify-center gap-10"
+          className="fixed inset-0 z-40 bg-background/95 flex flex-col items-center justify-center gap-10"
         >
           <button
-            className="absolute top-6 right-6 text-white"
+            className="absolute top-6 right-6 text-foreground"
             onClick={() => setMenuOpen(false)}
             aria-label="Cerrar menú"
           >
@@ -181,7 +184,7 @@ export default function HeroSection() {
               key={link.label}
               href={link.href}
               onClick={() => setMenuOpen(false)}
-              className="text-white text-2xl font-medium hover:text-[#5ed29c] transition-colors duration-200"
+              className="text-foreground text-2xl font-medium hover:text-[var(--color-accent-val)] transition-colors duration-200"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -192,7 +195,7 @@ export default function HeroSection() {
           <motion.a
             href="#contacto"
             onClick={() => setMenuOpen(false)}
-            className="text-[#070b0a] bg-[#5ed29c] px-8 py-3 font-medium text-sm rounded-full"
+            className="text-primary-foreground bg-primary px-8 py-3 font-medium text-sm rounded-full"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             whileTap={{ scale: 0.96 }}
@@ -210,9 +213,9 @@ export default function HeroSection() {
           {...fadeUp}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 border border-white/[0.06] rounded-full mb-12">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#5ed29c]" />
-            <span className="text-xs text-zinc-400">
+          <div className="inline-flex items-center gap-2 px-3 py-1 border border-border rounded-full mb-12">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-val)]" />
+            <span className="text-xs text-ink-2">
               Cd. Victoria, Tamaulipas
             </span>
           </div>
@@ -224,10 +227,10 @@ export default function HeroSection() {
           animate={reduce ? {} : { clipPath: 'inset(0 0 0 0)' }}
           transition={{ duration: 1, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
         >
-          <h1 className="text-[clamp(40px,9vw,88px)] font-bold tracking-tight text-white leading-[0.88] max-w-5xl mb-6">
-            Software a la medida
+          <h1 className="text-[clamp(40px,9vw,88px)] font-bold tracking-tight text-foreground leading-[0.88] max-w-5xl mb-6">
+            Apps que se adaptan
             <br />
-            <span className="text-[#5ed29c]">de tu negocio</span>
+            <span className="text-[var(--color-accent-val)]">a tu negocio, no al revés</span>
           </h1>
         </motion.div>
 
@@ -235,9 +238,9 @@ export default function HeroSection() {
         <motion.p
           {...fadeUp}
           transition={{ duration: 0.6, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="text-base md:text-lg text-white/50 max-w-xl leading-relaxed mb-12"
+          className="text-base md:text-lg text-ink-2 max-w-xl leading-relaxed mb-12"
         >
-          Automatización con IA, desarrollo web y sistemas diseñados para tu forma de trabajar.
+          Desarrollamos apps nativas para Mac, Windows, iOS, Android y Linux — además de web. Tu negocio dicta las reglas, no el software.
         </motion.p>
 
         {/* CTAs */}
@@ -263,7 +266,7 @@ export default function HeroSection() {
           </MagneticButton>
           <a
             href="#servicios"
-            className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors duration-200 py-3.5 px-2"
+            className="inline-flex items-center gap-2 text-sm text-ink-3 hover:text-foreground transition-colors duration-200 py-3.5 px-2"
           >
             Ver servicios
           </a>
