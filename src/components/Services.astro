@@ -1,4 +1,6 @@
 ---
+import { Badge } from './ui/badge';
+
 const servicios = [
   {
     id: "01",
@@ -63,7 +65,9 @@ const servicios = [
             </p>
             <div class="flex flex-wrap gap-2 mb-8">
               {svc.tags.map(tag => (
-                <span class="text-xs text-ink-3 border border-border px-3 py-1.5 transition-colors duration-200">{tag}</span>
+                <Badge variant="secondary" className="text-[11px] px-3 py-1 font-medium tracking-wide border border-[var(--color-border-val)]">
+                  {tag}
+                </Badge>
               ))}
             </div>
             {i === servicios.length - 1 && (

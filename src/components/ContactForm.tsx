@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'motion/react';
+import { Button } from '@/components/ui/button';
 
 const fadeUp = (reduce: boolean) => reduce ? {} : {
   initial: { opacity: 0, y: 24 },
@@ -103,7 +104,7 @@ export default function ContactForm() {
           <motion.div
             {...anim}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-border p-8 md:p-12 bg-surface relative overflow-hidden"
+            className="border border-border p-8 md:p-12 bg-surface relative overflow-hidden rounded-xl"
           >
             <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-accent-val)]/20 to-transparent" />
             <h3 className="text-foreground font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
@@ -111,19 +112,23 @@ export default function ContactForm() {
               Antes de agendar una videollamada, llena este formulario de diagnóstico para que llegue con contexto de tu negocio.
             </p>
 
-            <motion.a
-              href="https://forms.gle/sDkykwkQc9MqcBFj6"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-3 bg-primary text-primary-foreground font-medium text-sm h-12 px-6 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] relative overflow-hidden"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
+            <Button
+              asChild
+              variant="default"
+              className="w-full h-12 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
             >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
-              </svg>
-              Llenar formulario de diagnóstico
-            </motion.a>
+              <a
+                href="https://forms.gle/sDkykwkQc9MqcBFj6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-3"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
+                </svg>
+                Llenar formulario de diagnóstico
+              </a>
+            </Button>
 
             <p className="text-center text-ink-3 text-xs font-medium mt-6">
               Sin compromiso. Solo conversamos si ves valor en lo que propongo.

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useSpring, useReducedMotion } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const NAV_LINKS = [
   { label: 'Servicios', href: '#servicios' },
@@ -139,12 +140,13 @@ export default function HeroSection() {
                 {link.label}
               </a>
             ))}
-            <a
-              href="#contacto"
-              className="text-sm font-medium text-primary-foreground bg-primary px-5 py-2 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] active:scale-[0.96]"
+            <Button
+              asChild
+              variant="default"
+              className="rounded-full px-5 h-9 text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
             >
-              Iniciar proyecto
-            </a>
+              <a href="#contacto">Iniciar proyecto</a>
+            </Button>
           </div>
 
           <div className="flex lg:hidden">
@@ -195,7 +197,7 @@ export default function HeroSection() {
           <motion.a
             href="#contacto"
             onClick={() => setMenuOpen(false)}
-            className="text-primary-foreground bg-primary px-8 py-3 font-medium text-sm rounded-full"
+            className="text-primary-foreground bg-primary px-8 py-3 font-medium text-sm rounded-full inline-flex items-center justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             whileTap={{ scale: 0.96 }}
@@ -266,9 +268,10 @@ export default function HeroSection() {
           </MagneticButton>
           <a
             href="#servicios"
-            className="inline-flex items-center gap-2 text-sm text-ink-3 hover:text-foreground transition-colors duration-200 py-3.5 px-2"
+            className="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground transition-colors duration-200 py-3.5 px-2 group/secondary"
           >
             Ver servicios
+            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/secondary:translate-x-0.5" />
           </a>
         </motion.div>
 
