@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useSpring, useReducedMotion } from 'motion/react';
 import { Menu, X, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 
 const NAV_LINKS = [
   { label: 'Servicios', href: '#servicios' },
@@ -140,13 +140,15 @@ export default function HeroSection() {
                 {link.label}
               </a>
             ))}
-            <Button
-              asChild
-              variant="default"
-              className="rounded-full px-5 h-9 text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
+            <a
+              href="#contacto"
+              className={buttonVariants({
+                variant: 'default',
+                className: "rounded-full px-5 h-9 text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
+              })}
             >
-              <a href="#contacto">Iniciar proyecto</a>
-            </Button>
+              Iniciar proyecto
+            </a>
           </div>
 
           <div className="flex lg:hidden">
