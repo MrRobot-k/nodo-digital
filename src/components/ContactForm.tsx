@@ -21,12 +21,14 @@ function ContactItem({ icon, label, value, href }: {
       {...props}
       className="flex items-center gap-5 group cursor-pointer"
       whileHover={{ x: 4 }}
-      transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
     >
       <motion.div
-        className="w-12 h-12 border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
+        className="w-12 h-12 rounded-xl border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
         whileHover={{ scale: 1.05 }}
-        transition={{ duration: 0.2 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
       >
         <span className="text-ink-3 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]">
           {icon}
@@ -104,7 +106,7 @@ export default function ContactForm() {
           <motion.div
             {...anim}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-border p-8 md:p-12 bg-surface relative overflow-hidden rounded-xl"
+            className="material-panel border border-border p-8 md:p-12 relative overflow-hidden rounded-xl"
           >
             <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-accent-val)]/20 to-transparent" />
             <h3 className="text-foreground font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
@@ -118,7 +120,7 @@ export default function ContactForm() {
               rel="noopener noreferrer"
               className={buttonVariants({
                 variant: 'default',
-                className: "inline-flex items-center justify-center gap-3 w-full h-12 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
+                className: "inline-flex items-center justify-center gap-3 w-full h-12 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow,transform] duration-150 active:scale-[0.97]"
               })}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">

@@ -66,6 +66,8 @@ The content is organized as follows:
   content.d.ts
   settings.json
   types.d.ts
+.codegraph/
+  .gitignore
 .mind/
   checkpoints/
     checkpoint-20260625-145131.json
@@ -76,24 +78,45 @@ The content is organized as follows:
   space.json
 .playwright-cli/
   page-2026-06-25T15-12-23-571Z.yml
+docs/
+  superpowers/
+    specs/
+      2026-07-07-landing-refactor-design.md
 icons/
   logo-xolventa.png
 public/
+  images/
+    ai-automation.jpg
+    consulting.jpg
+    hero-coding.jpg
+    software-dev.jpg
+    web-presence.jpg
   favicon.png
   logo-xolventa.png
   robot.png
   robots.txt
   sitemap.xml
+referencias/
+  01-digital-agency-trexa-lab.png
+  02-software-agency-ronas-it.png
+  03-design-agency-dark-shafad.png
+  04-business-growth-analytics.jpg
+  05-futuristic-web-agency.png
 src/
   components/
     ui/
+      accordion.tsx
+      badge.tsx
       button.tsx
       card.tsx
       input.tsx
       label.tsx
+      separator.tsx
       textarea.tsx
     About.astro
     ContactForm.tsx
+    Faq.astro
+    FaqAccordion.tsx
     Footer.astro
     HeroSection.tsx
     Services.astro
@@ -116,6 +139,7 @@ pnpm-workspace.yaml
 README.md
 skills-lock.json
 tsconfig.json
+vercel.json
 </directory_structure>
 
 <files>
@@ -282,14 +306,21 @@ declare module 'astro:content' {
 <file path=".astro/settings.json">
 {
 	"_variables": {
-		"lastUpdateCheck": 1782147942527
+		"lastUpdateCheck": 1785214071899
 	}
 }
 </file>
 
 <file path=".astro/types.d.ts">
 /// <reference types="astro/client" />
-/// <reference path="content.d.ts" />
+</file>
+
+<file path=".codegraph/.gitignore">
+# CodeGraph data files — local to each machine, not for committing.
+# Ignore everything in .codegraph/ except this file itself, so transient
+# files (the database, daemon.pid, sockets, logs) never show up in git.
+*
+!.gitignore
 </file>
 
 <file path=".agents/skills/animation-vocabulary/SKILL.md">
@@ -3893,6 +3924,258 @@ esac
       - paragraph [ref=e216]: Sistemas operativos en Cd. Victoria, Tam.
 </file>
 
+<file path="docs/superpowers/specs/2026-07-07-landing-refactor-design.md">
+# Landing Page Refactor — Nodo Digital
+
+## Overview
+Refactor the Nodo Digital landing page to match premium design quality (Ronas IT reference) with a numbered service narrative, real images, visual process timeline, FAQ, and dark/light mode — without requiring client testimonials or social proof stats.
+
+## Sections
+
+### 1. Global Design System (`global.css`)
+- CSS custom properties for all colors → replace every hardcoded `#5ed29c`, `#070b0a`, etc.
+- Light color scheme (`.light` class on `<html>`) with `color-scheme: light`
+- Toggle `dark` class on `<html>` via a small JS toggle in the nav
+- `:root` defaults to dark; `.light` overrides with lighter palette
+- No changes to animation / scroll-reveal / grain classes
+
+### 2. Hero Section (`HeroSection.tsx`)
+- Keep the video background + ambient glow
+- Replace hardcoded `#5ed29c` and `#070b0a` with CSS variables (`var(--color-accent)`, `var(--color-canvas)`)
+- Replace hardcoded `#5ed29c` in hover shadows and MagneticButton with `var(--color-accent)`
+- Add `<html>` dark/light toggle button in nav (small icon button)
+
+### 3. Services (`Services.astro`)
+- Change from bento grid to numbered narrative layout (01–04)
+- Each service card displays:
+  - Number badge (`01`, `02`, `03`, `04`) in mono font
+  - Image from `public/images/` (right-aligned or as background)
+  - Title, description, tags
+  - Hover effects
+- Layout: vertical stack with alternating image-left / image-right on desktop
+- Replace `#5ed29c` and `#070b0a` with CSS variables
+- Image mapping:
+  - 01 Software → `software-dev.jpg`
+  - 02 Web → `web-presence.jpg`
+  - 03 IA → `ai-automation.jpg`
+  - 04 Consultoría → `consulting.jpg`
+
+### 4. Process Timeline (`About.astro`)
+- Convert accordion to a vertical timeline
+- Left: sticky intro (keep as-is, update colors to variables)
+- Right: 4 steps in a visual timeline with:
+  - Vertical line connecting dots
+  - Numbered circles (`01`–`04`)
+  - Step title + description
+- Replace hardcoded colors with CSS variables
+- Remove "stats" section (no client data)
+- Keep "Garantía de calidad" blurb but repurpose
+
+### 5. FAQ (new component `Faq.astro`)
+- 4–6 common questions about software development for local businesses
+- Simple accordion-style (use `<details>`)
+- Questions:
+  - ¿Cuánto cuesta desarrollar un sistema a la medida?
+  - ¿Cuánto tiempo toma hacer una página web?
+  - ¿Necesito conocimientos técnicos para trabajar contigo?
+  - ¿Dan mantenimiento después de entregar el proyecto?
+  - ¿Trabajas solo con negocios locales o también remoto?
+  - ¿Qué tecnologías utilizan?
+- Link from nav
+
+### 6. Contact (`ContactForm.tsx`)
+- Replace hardcoded accent colors with CSS variables
+- Keep existing structure
+
+### 7. Footer (`Footer.astro`)
+- Replace hardcoded colors with CSS variables
+- Keep existing structure
+
+### 8. Nav (`Layout.astro`)
+- Keep skip-to-content, analytics, speed insights
+- Add link to FAQ in nav items
+
+## Design Tokens (CSS Variables)
+
+### Dark (default)
+```
+--color-canvas: #070b0a
+--color-ink: #fafafa
+--color-ink-2: #a1a1aa
+--color-ink-3: #71717a
+--color-accent: #5ed29c
+--color-accent-h: #4cbf87
+--color-accent-subtle: rgba(94, 210, 156, 0.08)
+--color-border: rgba(255, 255, 255, 0.06)
+--color-surface: rgba(255, 255, 255, 0.03)
+--color-surface-hover: rgba(255, 255, 255, 0.05)
+```
+
+### Light (`.light` override)
+```
+--color-canvas: #f5f5f0
+--color-ink: #0a0a0a
+--color-ink-2: #525252
+--color-ink-3: #737373
+--color-accent: #059669
+--color-accent-h: #047857
+--color-accent-subtle: rgba(5, 150, 105, 0.08)
+--color-border: rgba(0, 0, 0, 0.08)
+--color-surface: rgba(0, 0, 0, 0.02)
+--color-surface-hover: rgba(0, 0, 0, 0.04)
+```
+
+## File Changes
+| File | Action |
+|------|--------|
+| `src/styles/global.css` | Add light mode vars, replace hardcoded `#5ed29c`/`#070b0a` with var() |
+| `src/components/HeroSection.tsx` | Replace colors with vars, add theme toggle button |
+| `src/components/Services.astro` | Rewrite to numbered narrative + images |
+| `src/components/About.astro` | Rewrite accordion to timeline, remove stats |
+| `src/components/Faq.astro` | **NEW** — FAQ accordion component |
+| `src/components/ContactForm.tsx` | Replace colors with vars |
+| `src/components/Footer.astro` | Replace colors with vars |
+| `src/pages/index.astro` | Add Faq import + section |
+| `src/layouts/Layout.astro` | Add FAQ link to nav items, light-mode JS |
+
+## Non-goals
+- No testimonials section
+- No portfolio/case studies
+- No stats/metrics
+- No changes to animation system or scroll-reveals
+- No changes to contact form logic
+</file>
+
+<file path="src/components/ui/accordion.tsx">
+import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion"
+
+import { cn } from "@/lib/utils"
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
+
+function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
+  return (
+    <AccordionPrimitive.Root
+      data-slot="accordion"
+      className={cn("flex w-full flex-col", className)}
+      {...props}
+    />
+  )
+}
+
+function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
+  return (
+    <AccordionPrimitive.Item
+      data-slot="accordion-item"
+      className={cn("not-last:border-b", className)}
+      {...props}
+    />
+  )
+}
+
+function AccordionTrigger({
+  className,
+  children,
+  ...props
+}: AccordionPrimitive.Trigger.Props) {
+  return (
+    <AccordionPrimitive.Header className="flex">
+      <AccordionPrimitive.Trigger
+        data-slot="accordion-trigger"
+        className={cn(
+          "group/accordion-trigger relative flex flex-1 items-start justify-between rounded-lg border border-transparent py-2.5 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:after:border-ring aria-disabled:pointer-events-none aria-disabled:opacity-50 **:data-[slot=accordion-trigger-icon]:ml-auto **:data-[slot=accordion-trigger-icon]:size-4 **:data-[slot=accordion-trigger-icon]:text-muted-foreground",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <ChevronDownIcon data-slot="accordion-trigger-icon" className="pointer-events-none shrink-0 group-aria-expanded/accordion-trigger:hidden" />
+        <ChevronUpIcon data-slot="accordion-trigger-icon" className="pointer-events-none hidden shrink-0 group-aria-expanded/accordion-trigger:inline" />
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
+  )
+}
+
+function AccordionContent({
+  className,
+  children,
+  ...props
+}: AccordionPrimitive.Panel.Props) {
+  return (
+    <AccordionPrimitive.Panel
+      data-slot="accordion-content"
+      className="overflow-hidden text-sm data-open:animate-accordion-down data-closed:animate-accordion-up"
+      {...props}
+    >
+      <div
+        className={cn(
+          "h-(--accordion-panel-height) pt-0 pb-2.5 data-ending-style:h-0 data-starting-style:h-0 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          className
+        )}
+      >
+        {children}
+      </div>
+    </AccordionPrimitive.Panel>
+  )
+}
+
+export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }
+</file>
+
+<file path="src/components/ui/badge.tsx">
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        secondary:
+          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        destructive:
+          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+        outline:
+          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        ghost:
+          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function Badge({
+  className,
+  variant = "default",
+  render,
+  ...props
+}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+  return useRender({
+    defaultTagName: "span",
+    props: mergeProps<"span">(
+      {
+        className: cn(badgeVariants({ variant }), className),
+      },
+      props
+    ),
+    render,
+    state: {
+      slot: "badge",
+      variant,
+    },
+  })
+}
+
+export { Badge, badgeVariants }
+</file>
+
 <file path="src/components/ui/card.tsx">
 import * as React from "react"
 
@@ -4043,6 +4326,32 @@ function Label({ className, ...props }: React.ComponentProps<"label">) {
 export { Label }
 </file>
 
+<file path="src/components/ui/separator.tsx">
+import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
+
+import { cn } from "@/lib/utils"
+
+function Separator({
+  className,
+  orientation = "horizontal",
+  ...props
+}: SeparatorPrimitive.Props) {
+  return (
+    <SeparatorPrimitive
+      data-slot="separator"
+      orientation={orientation}
+      className={cn(
+        "shrink-0 bg-border data-horizontal:h-px data-horizontal:w-full data-vertical:w-px data-vertical:self-stretch",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Separator }
+</file>
+
 <file path="src/components/ui/textarea.tsx">
 import * as React from "react"
 
@@ -4064,6 +4373,63 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
 export { Textarea }
 </file>
 
+<file path="src/components/FaqAccordion.tsx">
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
+
+const preguntas = [
+  {
+    q: "¿Cuánto cuesta desarrollar un sistema a la medida?",
+    r: "Depende de la complejidad y el alcance. Por eso empezamos con un diagnóstico gratuito donde entendemos tus necesidades y te damos una cotización exacta. No hay costos ocultos ni sorpresas.",
+  },
+  {
+    q: "¿Cuánto tiempo toma hacer una página web profesional?",
+    r: "Una página web optimizada con rendimiento premium puede estar lista en 2 a 4 semanas, dependiendo de las funcionalidades que necesites. Te entrego un sitio rápido, conectado con WhatsApp y listo para captar clientes.",
+  },
+  {
+    q: "¿Necesito conocimientos técnicos para trabajar contigo?",
+    r: "Para nada. Yo me encargo de toda la parte técnica. Solo necesitas saber qué procesos de tu negocio te gustaría mejorar o automatizar. El resto lo hacemos juntos paso a paso.",
+  },
+  {
+    q: "¿Dan mantenimiento después de entregar el proyecto?",
+    r: "Sí, incluyo soporte técnico continuo después de la entrega. Además, podemos acordar actualizaciones y mejoras periódicas conforme tu negocio crezca o cambien tus necesidades.",
+  },
+  {
+    q: "¿Qué tecnologías utilizan?",
+    r: "Trabajo con tecnologías web modernas y estables: React, Node.js, Python, bases de datos relacionales, e integración con APIs. Todo el código se prueba antes de entregarse para garantizar calidad y rendimiento.",
+  },
+  {
+    q: "¿Solo trabajas con negocios locales o también remoto?",
+    r: "Estoy basado en Cd. Victoria, Tamaulipas, pero trabajo con clientes de todo México. Las reuniones pueden ser presenciales (si estás en la ciudad) o por videollamada. El servicio es el mismo.",
+  },
+];
+
+export default function FaqAccordion() {
+  return (
+    <Accordion className="w-full">
+      {preguntas.map((item, i) => (
+        <AccordionItem
+          key={i}
+          value={`faq-${i}`}
+          className="border-border py-1"
+        >
+          <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-[var(--color-accent-val)] transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
+            {item.q}
+          </AccordionTrigger>
+          <AccordionContent className="text-ink-2 leading-relaxed pb-5 [&>div]:pt-0">
+            {item.r}
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+</file>
+
 <file path="src/lib/utils.ts">
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -4071,61 +4437,6 @@ import { twMerge } from "tailwind-merge"
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
-</file>
-
-<file path="CLAUDE.md">
-# Landing Page - Xolventa
-
-## Project Overview
-- **Framework**: Astro 6.4.6 + React 19 (islands)
-- **Styling**: Tailwind CSS 4.3 + shadcn/ui components
-- **Fonts**: Geist (via @fontsource-variable/geist)
-- **Deployment**: Vercel (analytics + speed insights)
-- **Node**: >=22.12.0
-
-## Commands
-```bash
-pnpm dev      # Development server
-pnpm build    # Production build
-pnpm preview  # Preview production build
-```
-
-## Structure
-```
-src/
-├── components/
-│   ├── Hero.astro / HeroSection.tsx      # Hero section (React island)
-│   ├── Services.astro                    # Services section
-│   ├── About.astro                       # About section
-│   ├── ContactForm.tsx                   # Contact form (React island)
-│   ├── Footer.astro                      # Footer
-│   └── ui/                               # shadcn/ui components (button, input, label, textarea, card)
-├── layouts/Layout.astro                  # Main layout
-├── pages/index.astro                     # Home page
-├── styles/global.css                     # Global styles + Tailwind
-└── lib/utils.ts                          # Utility functions (cn, etc.)
-```
-
-## Key Decisions (memories in .mind/)
-- **Astro + React islands**: Interactive components (Hero, ContactForm) use React; static sections use Astro
-- **Tailwind 4 + Vite plugin**: Modern Tailwind with @tailwindcss/vite
-- **shadcn/ui**: Component library for consistent UI
-- **Geist font**: Variable font for performance
-- **Vercel analytics**: Built-in analytics + speed insights
-
-## Current State
-- Project initialized with Astro + React + Tailwind + shadcn/ui
-- Basic landing page structure exists (Hero, Services, About, Contact, Footer)
-- Build output in `dist/`
-
-## Memory System
-Local mind system in `.mind/`:
-- `space.json` - Project metadata
-- `memories/` - Individual memories (JSON)
-- `checkpoints/` - Session checkpoints
-- `links.json` - Memory relationships
-
-Use `memory_add`, `checkpoint_save`, `checkpoint_load` patterns manually via file operations.
 </file>
 
 <file path="components.json">
@@ -4162,11 +4473,10 @@ allowBuilds:
   sharp: true
 </file>
 
-<file path="public/robots.txt">
-User-agent: *
-Allow: /
-
-Sitemap: https://xolventa.vercel.app/sitemap.xml
+<file path="vercel.json">
+{
+  "alias": ["nodo-digital.vercel.app"]
+}
 </file>
 
 <file path="src/components/ui/button.tsx">
@@ -4230,12 +4540,117 @@ function Button({
 export { Button, buttonVariants }
 </file>
 
+<file path="src/components/Faq.astro">
+---
+import FaqAccordion from './FaqAccordion';
+---
+
+<section id="faq" class="py-32 md:py-44 px-6 relative">
+  <div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="scroll-reveal mb-16 md:mb-20">
+      <h2 class="text-[clamp(28px,5vw,44px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
+        Preguntas <span class="text-accent-val">frecuentes</span>
+      </h2>
+      <p class="text-ink-2 leading-relaxed max-w-lg">
+        Respuestas claras sobre cómo trabajamos, sin rodeos.
+      </p>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <FaqAccordion client:load />
+  </div>
+</section>
+</file>
+
+<file path="CLAUDE.md">
+# Landing Page - Nodo Digital
+
+## Project Overview
+- **Framework**: Astro 6.4.6 + React 19 (islands)
+- **Styling**: Tailwind CSS 4.3 + shadcn/ui components
+- **Fonts**: Geist (via @fontsource-variable/geist)
+- **Deployment**: Vercel (analytics + speed insights)
+- **Node**: >=22.12.0
+
+## Commands
+```bash
+pnpm dev      # Development server
+pnpm build    # Production build
+pnpm preview  # Preview production build
+```
+
+## Structure
+```
+src/
+├── components/
+│   ├── Hero.astro / HeroSection.tsx      # Hero section (React island)
+│   ├── Services.astro                    # Services section
+│   ├── About.astro                       # About section
+│   ├── ContactForm.tsx                   # Contact form (React island)
+│   ├── Footer.astro                      # Footer
+│   └── ui/                               # shadcn/ui components (button, input, label, textarea, card)
+├── layouts/Layout.astro                  # Main layout
+├── pages/index.astro                     # Home page
+├── styles/global.css                     # Global styles + Tailwind
+└── lib/utils.ts                          # Utility functions (cn, etc.)
+```
+
+## Key Decisions (memories in .mind/)
+- **Astro + React islands**: Interactive components (Hero, ContactForm) use React; static sections use Astro
+- **Tailwind 4 + Vite plugin**: Modern Tailwind with @tailwindcss/vite
+- **shadcn/ui**: Component library for consistent UI
+- **Geist font**: Variable font for performance
+- **Vercel analytics**: Built-in analytics + speed insights
+
+## Current State
+- Project initialized with Astro + React + Tailwind + shadcn/ui
+- Basic landing page structure exists (Hero, Services, About, Contact, Footer)
+- Build output in `dist/`
+
+## Memory System
+Local mind system in `.mind/`:
+- `space.json` - Project metadata
+- `memories/` - Individual memories (JSON)
+- `checkpoints/` - Session checkpoints
+- `links.json` - Memory relationships
+
+Use `memory_add`, `checkpoint_save`, `checkpoint_load` patterns manually via file operations.
+</file>
+
+<file path="tsconfig.json">
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [
+    ".astro/types.d.ts",
+    "**/*"
+  ],
+  "exclude": [
+    "dist"
+  ],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+</file>
+
+<file path="public/robots.txt">
+User-agent: *
+Allow: /
+
+Sitemap: https://nodo-digital.vercel.app/sitemap.xml
+</file>
+
 <file path="src/pages/404.astro">
 ---
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="404 — Página no encontrada | Xolventa" description="La página que buscas no existe.">
+<Layout title="404 — Página no encontrada | Nodo Digital" description="La página que buscas no existe.">
   <main class="min-h-[100dvh] flex flex-col items-center justify-center px-6 text-center">
     <span class="font-mono text-[11px] text-zinc-600 uppercase tracking-[0.2em] mb-6">Error 404</span>
     <h1 class="text-5xl md:text-7xl font-bold text-white tracking-tight mb-4 leading-tight">
@@ -4259,14 +4674,14 @@ import Layout from '../layouts/Layout.astro';
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Aviso de Privacidad | Xolventa">
+<Layout title="Aviso de Privacidad | Nodo Digital">
   <main class="min-h-[100dvh] py-32 px-6 max-w-3xl mx-auto">
     <span class="font-mono text-[11px] text-zinc-600 uppercase tracking-[0.2em] block mb-6">Legal</span>
     <h1 class="text-4xl md:text-5xl font-bold text-white tracking-tight mb-10 leading-tight">Aviso de Privacidad</h1>
 
     <div class="text-zinc-400 leading-relaxed space-y-6">
       <p>
-        Xolventa (&quot;nosotros&quot;, &quot;nuestro&quot;) opera el sitio web xolventa.vercel.app. Esta página informa sobre nuestras políticas de recolección, uso y divulgación de datos personales.
+        Nodo Digital (&quot;nosotros&quot;, &quot;nuestro&quot;) opera el sitio web nodo-digital.vercel.app. Esta página informa sobre nuestras políticas de recolección, uso y divulgación de datos personales.
       </p>
 
       <h2 class="text-xl font-semibold text-white mt-10 mb-4">Información que recopilamos</h2>
@@ -4292,31 +4707,11 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 </file>
 
-<file path="tsconfig.json">
-{
-  "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "**/*"
-  ],
-  "exclude": [
-    "dist"
-  ],
-  "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
-}
-</file>
-
 <file path="public/sitemap.xml">
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://xolventa.vercel.app/</loc>
+    <loc>https://nodo-digital.vercel.app/</loc>
     <lastmod>2026-06-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
@@ -4422,25 +4817,7 @@ repomix-output.xml
 
 # Editor backups
 *~
-</file>
-
-<file path="astro.config.mjs">
-// @ts-check
-import { defineConfig } from 'astro/config';
-
-import react from '@astrojs/react';
-
-import tailwindcss from '@tailwindcss/vite';
-
-// https://astro.build/config
-export default defineConfig({
-  site: 'https://xolventa.vercel.app',
-  integrations: [react()],
-
-  vite: {
-    plugins: [tailwindcss()]
-  }
-});
+.vercel
 </file>
 
 <file path="skills-lock.json">
@@ -4475,282 +4852,23 @@ export default defineConfig({
 }
 </file>
 
-<file path="src/components/HeroSection.tsx">
-import { useEffect, useRef, useState } from 'react';
-import { motion, useSpring, useReducedMotion } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+<file path="astro.config.mjs">
+// @ts-check
+import { defineConfig } from 'astro/config';
 
-const NAV_LINKS = [
-  { label: 'Servicios', href: '#servicios' },
-  { label: 'Proceso', href: '#about' },
-  { label: 'Contacto', href: '#contacto' },
-];
+import react from '@astrojs/react';
 
-const HLS_SRC =
-  'https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
+import tailwindcss from '@tailwindcss/vite';
 
-function MagneticButton({ children, href }: { children: React.ReactNode; href: string }) {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const reduce = useReducedMotion();
-  const x = useSpring(0, { stiffness: 150, damping: 15 });
-  const y = useSpring(0, { stiffness: 150, damping: 15 });
+// https://astro.build/config
+export default defineConfig({
+  site: 'https://nodo-digital.vercel.app',
+  integrations: [react()],
 
-  useEffect(() => {
-    if (reduce || !ref.current) return;
-    const el = ref.current;
-    const handleMove = (e: PointerEvent) => {
-      const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = (e.clientX - cx) / rect.width;
-      const dy = (e.clientY - cy) / rect.height;
-      x.set(dx * 12);
-      y.set(dy * 12);
-    };
-    const handleLeave = () => { x.set(0); y.set(0); };
-
-    el.addEventListener('pointermove', handleMove);
-    el.addEventListener('pointerleave', handleLeave);
-    return () => {
-      el.removeEventListener('pointermove', handleMove);
-      el.removeEventListener('pointerleave', handleLeave);
-    };
-  }, [reduce]);
-
-  return (
-    <motion.a
-      ref={ref}
-      href={href}
-      style={{ x, y }}
-      className="group inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-semibold text-sm px-8 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out will-change-transform hover:bg-[#4cbf87] hover:shadow-[0_0_30px_rgba(94,210,156,0.15)]"
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.96 }}
-    >
-      {children}
-    </motion.a>
-  );
-}
-
-export default function HeroSection() {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const reduce = useReducedMotion();
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    let hlsInstance: any = null;
-
-    (async () => {
-      const Hls = (await import('hls.js')).default;
-      if (Hls.isSupported()) {
-        hlsInstance = new Hls({ enableWorker: false });
-        hlsInstance.loadSource(HLS_SRC);
-        hlsInstance.attachMedia(video);
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = HLS_SRC;
-    })();
-
-    return () => {
-      if (hlsInstance) hlsInstance.destroy();
-    };
-  }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [menuOpen]);
-
-  const fadeUp = reduce ? {} : {
-    initial: { opacity: 0, y: 30 },
-    animate: { opacity: 1, y: 0 },
-  };
-
-  return (
-    <div className="relative min-h-[100dvh] bg-[#070b0a] overflow-hidden">
-      {/* ── Fixed Video Background ── */}
-      <div className="fixed inset-0 z-0">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-[120%] object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-linear-to-r from-[#070b0a] via-[#070b0a]/80 to-transparent" />
-        <div className="absolute inset-0 bg-linear-to-t from-[#070b0a] via-[#070b0a]/30 to-transparent" />
-
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px]">
-          <svg viewBox="0 0 800 400" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <filter id="h-glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="40" />
-              </filter>
-            </defs>
-            <ellipse cx="400" cy="200" rx="350" ry="120" fill="#5ed29c" opacity="0.06" filter="url(#h-glow)" />
-          </svg>
-        </div>
-      </div>
-
-      {/* ── Navigation ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#070b0a]/60 backdrop-blur-md">
-        <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <motion.a
-            href="/"
-            className="text-white text-lg font-bold tracking-[0.15em]"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-          >
-            XOLVENTA
-          </motion.a>
-
-          <div className="hidden lg:flex items-center gap-8">
-            {NAV_LINKS.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="text-sm text-white/50 hover:text-white transition-colors duration-150"
-              >
-                {link.label}
-              </a>
-            ))}
-            <a
-              href="#contacto"
-              className="ml-4 text-sm font-medium text-[#070b0a] bg-[#5ed29c] px-5 py-2 rounded-full transition-colors duration-200 ease-out hover:bg-[#4cbf87] hover:shadow-[0_0_20px_rgba(94,210,156,0.12)] active:scale-[0.96]"
-            >
-              Iniciar proyecto
-            </a>
-          </div>
-
-          <button
-            className="lg:hidden text-white"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-          >
-            <motion.div
-              animate={menuOpen ? { rotate: 90 } : { rotate: 0 }}
-              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </motion.div>
-          </button>
-        </nav>
-      </header>
-
-      {/* ── Mobile menu ── */}
-      {menuOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 bg-[#070b0a]/95 flex flex-col items-center justify-center gap-10"
-        >
-          <button
-            className="absolute top-6 right-6 text-white"
-            onClick={() => setMenuOpen(false)}
-            aria-label="Cerrar menú"
-          >
-            <X size={24} />
-          </button>
-          {NAV_LINKS.map((link, i) => (
-            <motion.a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="text-white text-2xl font-medium hover:text-[#5ed29c] transition-colors duration-200"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {link.label}
-            </motion.a>
-          ))}
-          <motion.a
-            href="#contacto"
-            onClick={() => setMenuOpen(false)}
-            className="text-[#070b0a] bg-[#5ed29c] px-8 py-3 font-medium text-sm rounded-full"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            whileTap={{ scale: 0.96 }}
-            transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            Iniciar proyecto
-          </motion.a>
-        </motion.div>
-      )}
-
-      {/* ── Hero content ── */}
-      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 min-h-[100dvh] flex flex-col justify-center">
-        {/* Location badge */}
-        <motion.div
-          {...fadeUp}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 border border-white/[0.06] rounded-full mb-12">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#5ed29c]" />
-            <span className="text-xs text-zinc-400">
-              Cd. Victoria, Tamaulipas
-            </span>
-          </div>
-        </motion.div>
-
-        {/* Headline with clip-path reveal */}
-        <motion.div
-          initial={reduce ? {} : { clipPath: 'inset(0 100% 0 0)' }}
-          animate={reduce ? {} : { clipPath: 'inset(0 0 0 0)' }}
-          transition={{ duration: 1, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
-        >
-          <h1 className="text-[clamp(40px,9vw,88px)] font-bold tracking-tight text-white leading-[0.88] max-w-5xl mb-6">
-            Software a la medida
-            <br />
-            <span className="text-[#5ed29c]">de tu negocio</span>
-          </h1>
-        </motion.div>
-
-        {/* Subheadline */}
-        <motion.p
-          {...fadeUp}
-          transition={{ duration: 0.6, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="text-base md:text-lg text-white/50 max-w-xl leading-relaxed mb-12"
-        >
-          Automatización con IA, desarrollo web y sistemas diseñados para tu forma de trabajar.
-        </motion.p>
-
-        {/* CTAs */}
-        <motion.div
-          {...fadeUp}
-          transition={{ duration: 0.6, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col sm:flex-row items-start gap-4"
-        >
-          <MagneticButton href="#contacto">
-            Iniciar proyecto
-            <svg
-              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
-          </MagneticButton>
-          <a
-            href="#servicios"
-            className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors duration-200 py-3.5 px-2"
-          >
-            Ver servicios
-          </a>
-        </motion.div>
-
-      </div>
-    </div>
-  );
-}
+  vite: {
+    plugins: [tailwindcss()]
+  }
+});
 </file>
 
 <file path="src/pages/index.astro">
@@ -4759,6 +4877,7 @@ import Layout from '../layouts/Layout.astro';
 import HeroSection from '../components/HeroSection.tsx';
 import Services from '../components/Services.astro';
 import About from '../components/About.astro';
+import Faq from '../components/Faq.astro';
 import ContactForm from '../components/ContactForm.tsx';
 import Footer from '../components/Footer.astro';
 ---
@@ -4768,16 +4887,160 @@ import Footer from '../components/Footer.astro';
     <HeroSection client:load />
     <Services />
     <About />
+    <Faq />
     <ContactForm client:load />
     <Footer />
   </main>
 </Layout>
 </file>
 
+<file path="package.json">
+{
+  "name": "emprendimiento",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/react": "^5.0.7",
+    "@base-ui/react": "^1.5.0",
+    "@fontsource-variable/geist": "^5.2.9",
+    "@tailwindcss/vite": "^4.3.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^1.3.1",
+    "astro": "^6.4.6",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "esbuild": "0.25.2",
+    "hls.js": "^1.6.16",
+    "lucide-react": "^1.18.0",
+    "motion": "^12.42.2",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "shadcn": "^4.11.0",
+    "tailwind-merge": "^3.6.0",
+    "tailwindcss": "^4.3.1",
+    "tw-animate-css": "^1.4.0"
+  }
+}
+</file>
+
+<file path="src/components/About.astro">
+---
+const pasos = [
+  {
+    titulo: "Diagnóstico sin costo",
+    texto: "Agendamos una videollamada o reunión presencial. Me cuentas cómo funciona tu negocio y qué procesos te gustaría optimizar.",
+  },
+  {
+    titulo: "Propuesta clara",
+    texto: "Recibes una propuesta con tecnologías, tiempos y costos exactos. Sin tecnicismos ni letras chiquitas.",
+  },
+  {
+    titulo: "Construcción y entrega",
+    texto: "Desarrollo el sistema con tecnologías web estables y lo pongo en producción. Incluye pruebas y documentación.",
+  },
+  {
+    titulo: "Acompañamiento continuo",
+    texto: "Soporte técnico después de la entrega. Actualizaciones, ajustes y mejoras conforme tu negocio crece.",
+  },
+];
+---
+
+<section id="about" class="py-32 md:py-44 px-6 relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-[1.1fr_1.3fr] gap-16 lg:gap-28 items-start">
+
+      <!-- Left: Sticky intro -->
+      <div class="lg:sticky lg:top-32 scroll-reveal">
+        <h2 class="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-6">
+          Primero te <span class="text-accent-val">conozco</span>,<br />
+          luego te propongo<br />
+          <span class="text-accent-val">algo útil</span>
+        </h2>
+
+        <p class="text-base md:text-lg text-ink-2 leading-relaxed mb-14 max-w-md">
+          Opero desde Cd. Victoria, Tamaulipas. Conozco los retos diarios de los negocios locales porque trabajo con ellos.
+        </p>
+
+        <div class="border-t border-border pt-6">
+          <p class="text-sm text-ink-3 leading-relaxed">
+            <span class="text-foreground font-medium">Garantía de calidad</span><br />
+            Todo el código se prueba antes de entregarse. Sin sorpresas, sin deuda técnica heredada.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Visual timeline -->
+      <div class="relative">
+        <!-- Vertical line -->
+        <div class="absolute left-[11px] top-3 bottom-3 w-px bg-border hidden md:block" />
+
+        <div class="space-y-16 md:space-y-20">
+          {pasos.map((p, i) => (
+            <div class="relative pl-0 md:pl-10">
+              <div class="hidden md:flex absolute left-0 top-0.5 w-[23px] h-[23px] rounded-full border-2 border-[var(--color-accent-val)] bg-background items-center justify-center z-10">
+                <div class="w-2 h-2 rounded-full bg-[var(--color-accent-val)]" />
+              </div>
+              <div class="md:hidden flex items-center gap-3 mb-3">
+                <span class="font-mono text-[11px] text-ink-3 font-bold tracking-wider">
+                  {`0${i + 1}`}
+                </span>
+                <div class="h-px flex-1 bg-border" />
+              </div>
+              <div>
+                <span class="hidden md:block font-mono text-[11px] text-ink-3 font-bold tracking-wider mb-2">
+                  {`Paso ${i + 1}`}
+                </span>
+                <h3 class="text-lg md:text-xl font-medium text-foreground mb-3">{p.titulo}</h3>
+                <p class="text-ink-2 leading-relaxed">{p.texto}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+</file>
+
+<file path="README.md">
+# Nodo Digital Landing Page
+
+**Soluciones técnicas para negocios de Cd. Victoria.**
+
+🌐 [nodo-digital.vercel.app](https://nodo-digital.vercel.app)
+
+Desarrollo sistemas de venta e inventario, páginas web profesionales y automatizaciones con IA para negocios locales. Sin plantillas genéricas, todo a la medida de cada cliente.
+
+## Servicios
+
+- **Sistemas de venta e inventario** — Punto de venta, control de inventario, corte de caja, clientes. Pago mensual con soporte incluido.
+- **Páginas web** — Tu negocio en internet con diseño profesional, adaptable a celulares y con WhatsApp integrado. Pago único.
+- **Automatizaciones con IA** — Tareas repetitivas que la IA puede hacer por ti: responder mensajes, organizar datos, generar reportes. Pago mensual con soporte.
+- **Asesoría gratuita** — Sin costo ni compromiso. Agendamos una plática, identificamos dónde pierdes tiempo y dinero, y vemos si puedo ayudarte.
+
+## Contacto
+
+WhatsApp: [834 255 0555](https://wa.me/528342550555)  
+Web: [nodo-digital.vercel.app](https://nodo-digital.vercel.app)
+</file>
+
 <file path="src/components/ContactForm.tsx">
 import { motion, useReducedMotion } from 'motion/react';
+import { buttonVariants } from '@/components/ui/button';
 
-const fadeUp = (reduce: boolean) => reduce ? {} : {
+const fadeUp = (reduce: boolean | null | undefined) => reduce ? {} : {
   initial: { opacity: 0, y: 24 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.3 },
@@ -4800,17 +5063,17 @@ function ContactItem({ icon, label, value, href }: {
       transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
     >
       <motion.div
-        className="w-12 h-12 border border-white/[0.08] flex items-center justify-center transition-colors duration-200 group-hover:border-[#5ed29c]/30"
+        className="w-12 h-12 border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.2 }}
       >
-        <span className="text-zinc-400 transition-colors duration-200 group-hover:text-[#5ed29c]">
+        <span className="text-ink-3 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]">
           {icon}
         </span>
       </motion.div>
       <div>
-        <p className="text-[11px] text-zinc-600 uppercase tracking-wider font-medium">{label}</p>
-        <p className="text-white text-lg font-medium">{value}</p>
+        <p className="text-[11px] text-ink-3 uppercase tracking-wider font-medium">{label}</p>
+        <p className="text-foreground text-lg font-medium">{value}</p>
       </div>
     </Tag>
   );
@@ -4822,17 +5085,17 @@ export default function ContactForm() {
 
   return (
     <section id="contacto" className="py-32 md:py-44 px-6 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto relative">        
+      <div className="max-w-7xl mx-auto relative">
         <motion.div
           {...anim}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-2xl mb-20"
         >
-          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-white leading-[0.92] mb-5">
+          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
             ¿Listo para modernizar<br />
-            <span className="text-[#5ed29c]">tu negocio</span>?
+            <span className="text-[var(--color-accent-val)]">tu negocio</span>?
           </h2>
-          <p className="text-base md:text-lg text-zinc-500 leading-relaxed">
+          <p className="text-base md:text-lg text-ink-2 leading-relaxed">
             Cuéntame qué procesos de tu negocio te gustaría optimizar. Te ofrezco una asesoría gratuita de 30 minutos para identificar oportunidades con tecnología real.
           </p>
         </motion.div>
@@ -4880,29 +5143,30 @@ export default function ContactForm() {
           <motion.div
             {...anim}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="border border-white/[0.08] p-8 md:p-12 bg-white/[0.02] relative overflow-hidden rounded-2xl"
+            className="border border-border p-8 md:p-12 bg-surface relative overflow-hidden rounded-xl"
           >
-            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[#5ed29c]/20 to-transparent" />
-            <h3 className="text-white font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
-            <p className="text-zinc-400 leading-relaxed text-sm mb-8">
+            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-accent-val)]/20 to-transparent" />
+            <h3 className="text-foreground font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
+            <p className="text-ink-2 leading-relaxed text-sm mb-8">
               Antes de agendar una videollamada, llena este formulario de diagnóstico para que llegue con contexto de tu negocio.
             </p>
 
-            <motion.a
-              href="https://forms.gle/sDkykwkQc9MqcBFj6"
+            <a
+              href="https://forms.gle/tmoA9zL5wGZK4d1m7"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-3 bg-[#5ed29c] text-[#070b0a] font-medium text-sm h-12 px-6 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[#4cbf87] hover:shadow-[0_0_25px_rgba(94,210,156,0.12)] relative overflow-hidden"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.96 }}
+              className={buttonVariants({
+                variant: 'default',
+                className: "inline-flex items-center justify-center gap-3 w-full h-12 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
+              })}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
               </svg>
               Llenar formulario de diagnóstico
-            </motion.a>
+            </a>
 
-            <p className="text-center text-zinc-600 text-xs font-medium mt-6">
+            <p className="text-center text-ink-3 text-xs font-medium mt-6">
               Sin compromiso. Solo conversamos si ves valor en lo que propongo.
             </p>
           </motion.div>
@@ -4913,238 +5177,324 @@ export default function ContactForm() {
 }
 </file>
 
-<file path="package.json">
-{
-  "name": "emprendimiento",
-  "type": "module",
-  "version": "0.0.1",
-  "engines": {
-    "node": ">=22.12.0"
-  },
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "@astrojs/react": "^5.0.7",
-    "@base-ui/react": "^1.5.0",
-    "@fontsource-variable/geist": "^5.2.9",
-    "@tailwindcss/vite": "^4.3.1",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^1.3.1",
-    "astro": "^6.4.6",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "esbuild": "0.25.2",
-    "hls.js": "^1.6.16",
-    "lucide-react": "^1.18.0",
-    "motion": "^12.42.2",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "shadcn": "^4.11.0",
-    "tailwind-merge": "^3.6.0",
-    "tailwindcss": "^4.3.1",
-    "tw-animate-css": "^1.4.0"
-  }
+<file path="src/components/HeroSection.tsx">
+import { useEffect, useRef, useState } from 'react';
+import { motion, useSpring, useReducedMotion } from 'motion/react';
+import { Menu, X, ArrowRight } from 'lucide-react';
+import { buttonVariants } from '@/components/ui/button';
+
+const NAV_LINKS = [
+  { label: 'Servicios', href: '#servicios' },
+  { label: 'Proceso', href: '#about' },
+  { label: 'FAQ', href: '#faq' },
+  { label: 'Contacto', href: '#contacto' },
+];
+
+const HLS_SRC =
+  'https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
+
+function MagneticButton({ children, href }: { children: React.ReactNode; href: string }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const reduce = useReducedMotion();
+  const x = useSpring(0, { stiffness: 150, damping: 15 });
+  const y = useSpring(0, { stiffness: 150, damping: 15 });
+
+  useEffect(() => {
+    if (reduce || !ref.current) return;
+    const el = ref.current;
+    const handleMove = (e: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) / rect.width;
+      const dy = (e.clientY - cy) / rect.height;
+      x.set(dx * 12);
+      y.set(dy * 12);
+    };
+    const handleLeave = () => { x.set(0); y.set(0); };
+
+    el.addEventListener('pointermove', handleMove);
+    el.addEventListener('pointerleave', handleLeave);
+    return () => {
+      el.removeEventListener('pointermove', handleMove);
+      el.removeEventListener('pointerleave', handleLeave);
+    };
+  }, [reduce]);
+
+  return (
+    <motion.a
+      ref={ref}
+      href={href}
+      style={{ x, y }}
+      className="group inline-flex items-center gap-3 bg-primary text-primary-foreground font-semibold text-sm px-8 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out will-change-transform hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_30px_var(--color-accent-subtle-val)]"
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.96 }}
+    >
+      {children}
+    </motion.a>
+  );
 }
-</file>
 
-<file path="README.md">
-# Xolventa Landing Page
+export default function HeroSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const reduce = useReducedMotion();
 
-**Soluciones técnicas para negocios de Cd. Victoria.**
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
 
-🌐 [xolventa.vercel.app](https://xolventa.vercel.app)
+    let hlsInstance: any = null;
 
-Desarrollo sistemas de venta e inventario, páginas web profesionales y automatizaciones con IA para negocios locales. Sin plantillas genéricas, todo a la medida de cada cliente.
+    (async () => {
+      const Hls = (await import('hls.js')).default;
+      if (Hls.isSupported()) {
+        hlsInstance = new Hls({ enableWorker: false });
+        hlsInstance.loadSource(HLS_SRC);
+        hlsInstance.attachMedia(video);
+      } else if (video.canPlayType('application/vnd.apple.mpegurl')) video.src = HLS_SRC;
+    })();
 
-## Servicios
+    return () => {
+      if (hlsInstance) hlsInstance.destroy();
+    };
+  }, []);
 
-- **Sistemas de venta e inventario** — Punto de venta, control de inventario, corte de caja, clientes. Pago mensual con soporte incluido.
-- **Páginas web** — Tu negocio en internet con diseño profesional, adaptable a celulares y con WhatsApp integrado. Pago único.
-- **Automatizaciones con IA** — Tareas repetitivas que la IA puede hacer por ti: responder mensajes, organizar datos, generar reportes. Pago mensual con soporte.
-- **Asesoría gratuita** — Sin costo ni compromiso. Agendamos una plática, identificamos dónde pierdes tiempo y dinero, y vemos si puedo ayudarte.
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
 
-## Contacto
+  const fadeUp = reduce ? {} : {
+    initial: { opacity: 0, y: 30 },
+    animate: { opacity: 1, y: 0 },
+  };
 
-WhatsApp: [834 255 0555](https://wa.me/528342550555)  
-Web: [xolventa.vercel.app](https://xolventa.vercel.app)
-</file>
+  return (
+    <div className="relative min-h-[100dvh] bg-background overflow-hidden">
+      {/* ── Fixed Video Background ── */}
+      <div className="fixed inset-0 z-0">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-[120%] object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-linear-to-r from-background via-background/80 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
 
-<file path="src/components/About.astro">
----
-const pasos = [
-  {
-    titulo: "Diagnóstico sin costo",
-    texto: "Agendamos una videollamada o reunión presencial. Me cuentas cómo funciona tu negocio y qué procesos te gustaría optimizar.",
-  },
-  {
-    titulo: "Propuesta clara",
-    texto: "Recibes una propuesta con tecnologías, tiempos y costos exactos. Sin tecnicismos ni letras chiquitas.",
-  },
-  {
-    titulo: "Construcción y entrega",
-    texto: "Desarrollo el sistema con tecnologías web estables y lo pongo en producción. Incluye pruebas y documentación.",
-  },
-  {
-    titulo: "Acompañamiento continuo",
-    texto: "Soporte técnico después de la entrega. Actualizaciones, ajustes y mejoras conforme tu negocio crece.",
-  },
-];
-
-const stats = [
-  { valor: "100%", label: "Enfoque Local" },
-  { valor: "+10", label: "Años de Experiencia" },
-  { valor: "24/7", label: "Soporte Técnico" },
-];
----
-
-<section id="about" class="py-32 md:py-44 px-6 relative">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-[1.1fr_1.3fr] gap-16 lg:gap-28 items-start">
-
-      <!-- Left: Sticky intro -->
-      <div class="lg:sticky lg:top-32 scroll-reveal">
-        <h2 class="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-white leading-[0.92] mb-6">
-          Primero te <span class="text-[#5ed29c]">conozco</span>,<br />
-          luego te propongo<br />
-          <span class="text-[#5ed29c]">algo útil</span>
-        </h2>
-
-        <p class="text-base md:text-lg text-zinc-500 leading-relaxed mb-14 max-w-md">
-          Opero desde Cd. Victoria, Tamaulipas. Conozco los retos diarios de los negocios locales porque trabajo con ellos.
-        </p>
-
-        <div class="grid grid-cols-3 gap-6 mb-12">
-          {stats.map(stat => (
-            <div>
-              <span class="text-3xl md:text-4xl font-bold text-white block mb-1">{stat.valor}</span>
-              <span class="text-[10px] text-zinc-600 uppercase tracking-wider font-medium">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <div class="border-t border-white/[0.06] pt-6">
-          <p class="text-sm text-zinc-500 leading-relaxed">
-            <span class="text-white font-medium">Garantía de calidad</span><br />
-            Todo el código se prueba antes de entregarse. Sin sorpresas, sin deuda técnica heredada.
-          </p>
+        {/* Ambient glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px]">
+          <svg viewBox="0 0 800 400" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <filter id="h-glow" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="40" />
+              </filter>
+            </defs>
+            <ellipse cx="400" cy="200" rx="350" ry="120" fill="var(--color-accent-val)" opacity="0.06" filter="url(#h-glow)" />
+          </svg>
         </div>
       </div>
 
-      <!-- Right: Accordion steps -->
-      <div class="space-y-0">
-        {pasos.map((p, i) => (
-          <div class={i > 0 ? "border-t border-white/[0.06]" : ""}>
-            <details class="group" open={i === 0}>
-              <summary class="flex items-center gap-5 py-8 cursor-pointer list-none">
-                <span class="font-mono text-[11px] text-zinc-600 font-bold tracking-wider shrink-0">
-                  {`0${i + 1}`}
-                </span>
-                <h3 class="text-lg md:text-xl font-medium text-white flex-1">{p.titulo}</h3>
-                <div class="w-8 h-8 border border-white/[0.06] flex items-center justify-center transition-[border-color,background-color] duration-300 group-open:border-[#5ed29c]/30 group-open:bg-[#5ed29c]/[0.05]">
-                  <svg class="w-3.5 h-3.5 text-zinc-500 transition-transform duration-300 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 5v14" />
-                    <path d="M5 12h14" />
-                  </svg>
-                </div>
-              </summary>
-              <div class="pb-8 pl-[3.25rem]">
-                <p class="text-zinc-400 leading-relaxed">{p.texto}</p>
-              </div>
-            </details>
+      {/* ── Navigation ── */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-md">
+        <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <motion.a
+            href="/"
+            className="text-foreground text-lg font-bold tracking-[0.15em]"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+          >
+            NODO DIGITAL
+          </motion.a>
+
+          <div className="hidden lg:flex items-center gap-6">
+            {NAV_LINKS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="text-sm text-ink-2 hover:text-foreground transition-colors duration-150"
+              >
+                {link.label}
+              </a>
+            ))}
+            <a
+              href="#contacto"
+              className={buttonVariants({
+                variant: 'default',
+                className: "rounded-full px-5 h-9 text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
+              })}
+            >
+              Iniciar proyecto
+            </a>
           </div>
-        ))}
-      </div>
 
-    </div>
-  </div>
-</section>
-</file>
-
-<file path="src/components/Footer.astro">
----
-const currentYear = new Date().getFullYear();
----
-
-<footer class="border-t border-white/[0.06] py-20 px-6 relative">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid md:grid-cols-4 gap-12 mb-16">
-      <div class="md:col-span-2">
-        <a href="/" class="flex items-center gap-3 mb-6 w-fit">
-          <div class="w-9 h-9 bg-[#5ed29c] flex items-center justify-center">
-            <span class="text-[#070b0a] font-bold text-sm">X</span>
+          <div className="flex lg:hidden">
+            <button
+              className="text-foreground"
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            >
+              <motion.div
+                animate={menuOpen ? { rotate: 90 } : { rotate: 0 }}
+                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+              >
+                {menuOpen ? <X size={22} /> : <Menu size={22} />}
+              </motion.div>
+            </button>
           </div>
-          <span class="text-xl font-bold tracking-tight text-white">Xolventa</span>
-        </a>
-        <p class="text-zinc-500 leading-relaxed max-w-sm text-sm">
-          Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
-        </p>
-      </div>
-
-      <div>
-        <span class="font-mono text-[10px] text-zinc-600 uppercase tracking-[0.2em] block mb-5">Navegación</span>
-        <nav class="space-y-3">
-          <a href="#servicios" class="block text-sm text-zinc-500 hover:text-white transition-colors duration-200 w-fit">Servicios</a>
-          <a href="#about" class="block text-sm text-zinc-500 hover:text-white transition-colors duration-200 w-fit">Metodología</a>
-          <a href="#contacto" class="block text-sm text-zinc-500 hover:text-white transition-colors duration-200 w-fit">Contacto</a>
         </nav>
-      </div>
+      </header>
 
-      <div>
-        <span class="font-mono text-[10px] text-zinc-600 uppercase tracking-[0.2em] block mb-5">Contacto</span>
-        <a
-          href="https://wa.me/528342550555"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-white transition-colors duration-200 group"
+      {/* ── Mobile menu ── */}
+      {menuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-40 bg-background/95 flex flex-col items-center justify-center gap-10"
         >
-          <svg class="w-4 h-4 transition-colors duration-200 group-hover:text-[#5ed29c]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          834 255 0555
-        </a>
+          <button
+            className="absolute top-6 right-6 text-foreground"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Cerrar menú"
+          >
+            <X size={24} />
+          </button>
+          {NAV_LINKS.map((link, i) => (
+            <motion.a
+              key={link.label}
+              href={link.href}
+              onClick={() => setMenuOpen(false)}
+              className="text-foreground text-2xl font-medium hover:text-[var(--color-accent-val)] transition-colors duration-200"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {link.label}
+            </motion.a>
+          ))}
+          <motion.a
+            href="#contacto"
+            onClick={() => setMenuOpen(false)}
+            className="text-primary-foreground bg-primary px-8 py-3 font-medium text-sm rounded-full inline-flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          >
+            Iniciar proyecto
+          </motion.a>
+        </motion.div>
+      )}
+
+      {/* ── Hero content ── */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 min-h-[100dvh] flex flex-col justify-center">
+        {/* Location badge */}
+        <motion.div
+          {...fadeUp}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <div className="inline-flex items-center gap-2 px-3 py-1 border border-border rounded-full mb-12">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-val)]" />
+            <span className="text-xs text-ink-2">
+              Cd. Victoria, Tamaulipas
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Headline with clip-path reveal */}
+        <motion.div
+          initial={reduce ? {} : { clipPath: 'inset(0 100% 0 0)' }}
+          animate={reduce ? {} : { clipPath: 'inset(0 0 0 0)' }}
+          transition={{ duration: 1, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
+        >
+          <h1 className="text-[clamp(40px,9vw,88px)] font-bold tracking-tight text-foreground leading-[0.88] max-w-5xl mb-6">
+            Apps que se adaptan
+            <br />
+            <span className="text-[var(--color-accent-val)]">a tu negocio, no al revés</span>
+          </h1>
+        </motion.div>
+
+        {/* Subheadline */}
+        <motion.p
+          {...fadeUp}
+          transition={{ duration: 0.6, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="text-base md:text-lg text-ink-2 max-w-xl leading-relaxed mb-12"
+        >
+          Desarrollamos apps nativas para Mac, Windows, iOS, Android y Linux — además de web. Tu negocio dicta las reglas, no el software.
+        </motion.p>
+
+        {/* CTAs */}
+        <motion.div
+          {...fadeUp}
+          transition={{ duration: 0.6, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col sm:flex-row items-start gap-4"
+        >
+          <MagneticButton href="#contacto">
+            Iniciar proyecto
+            <svg
+              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14" />
+              <path d="m12 5 7 7-7 7" />
+            </svg>
+          </MagneticButton>
+          <a
+            href="#servicios"
+            className="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground transition-colors duration-200 py-3.5 px-2 group/secondary"
+          >
+            Ver servicios
+            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/secondary:translate-x-0.5" />
+          </a>
+        </motion.div>
+
       </div>
     </div>
-
-    <div class="h-px bg-linear-to-r from-transparent via-white/[0.06] to-transparent mb-8" />
-
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="text-sm text-zinc-600">
-        &copy; {currentYear} Xolventa. Todos los derechos reservados.
-      </p>
-      <p class="text-sm text-zinc-600">
-        Cd. Victoria, Tamaulipas
-      </p>
-    </div>
-  </div>
-</footer>
+  );
+}
 </file>
 
 <file path="src/components/Services.astro">
 ---
+import { Badge } from './ui/badge';
+
 const servicios = [
   {
+    id: "01",
     titulo: "Software a la medida",
-    texto: "Sistemas diseñados específicamente para la operación y los procesos de tu negocio.",
-    tags: ["Arquitectura escalable", "Soporte continuo"],
+    texto: "Apps nativas para Mac, Windows, iOS, Android y Linux — escritorio, móvil o web. El software se adapta a tu negocio, no al revés.",
+    tags: ["Multiplataforma", "Arquitectura escalable", "Soporte continuo"],
+    imagen: "/images/software-dev.jpg",
   },
   {
+    id: "02",
     titulo: "Presencia web profesional",
     texto: "Páginas rápidas, optimizadas y conectadas con WhatsApp para capturar clientes 24/7.",
     tags: ["Pago único", "Rendimiento premium"],
+    imagen: "/images/web-presence.jpg",
   },
   {
+    id: "03",
     titulo: "Automatización con IA",
     texto: "Chatbots inteligentes que responden a tus clientes, organizan datos y generan reportes automáticos.",
     tags: ["Bots 24/7", "Sin intervención"],
+    imagen: "/images/ai-automation.jpg",
   },
   {
+    id: "04",
     titulo: "Consultoría tecnológica",
     texto: "Diagnóstico de procesos operativos. Identificamos áreas de mejora en tiempo y costo.",
     tags: ["Sin costo", "Sin compromiso"],
+    imagen: "/images/consulting.jpg",
   },
 ];
 ---
@@ -5154,100 +5504,63 @@ const servicios = [
     <!-- Header -->
     <div class="mb-20 md:mb-28">
       <div class="scroll-reveal">
-        <h2 class="text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-white leading-[0.92] max-w-4xl">
-          Soluciones que se adaptan<br />
-          <span class="text-[#5ed29c]">a tu negocio</span>
+        <h2 class="text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-foreground leading-[0.92] max-w-4xl">
+          Para cualquier<br />
+          <span class="text-accent-val">dispositivo, en cualquier lugar</span>
         </h2>
       </div>
-      <p class="text-base md:text-lg text-zinc-500 leading-relaxed max-w-xl mt-6">
-        Herramientas digitales diseñadas para resolver problemas reales de tu operación diaria.
+      <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-xl mt-6">
+        Apps de escritorio, móviles y web que funcionan como necesitas — no como el software de siempre te obliga.
       </p>
     </div>
 
-    <!-- Bento Grid -->
-    <div class="grid md:grid-cols-12 gap-5">
-      <!-- Card 01: Featured -->
-      <div class="hover-card md:col-span-7 border border-white/[0.06] bg-white/[0.02] p-8 md:p-12 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
-        <div class="absolute top-0 right-0 w-80 h-80 bg-[#5ed29c]/[0.04] rounded-full blur-3xl pointer-events-none" />
-        <div class="relative z-10">
-          <h3 class="text-2xl md:text-3xl font-semibold text-white mb-4 leading-tight">
-            {servicios[0].titulo}
-          </h3>
-          <p class="text-zinc-400 leading-relaxed max-w-lg mb-8">
-            {servicios[0].texto}
-          </p>
-        </div>
-        <div class="relative z-10 flex flex-wrap gap-2">
-          {servicios[0].tags.map(tag => (
-            <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
-          ))}
-        </div>
-        <div class="absolute inset-0 bg-linear-to-tr from-[#5ed29c]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      </div>
-
-      <!-- Card 02 -->
-      <div class="hover-card md:col-span-5 border border-white/[0.06] bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
-        <div class="relative z-10">
-          <h3 class="text-xl md:text-2xl font-semibold text-white mb-3 leading-tight">
-            {servicios[1].titulo}
-          </h3>
-          <p class="text-zinc-400 leading-relaxed mb-8">
-            {servicios[1].texto}
-          </p>
-        </div>
-        <div class="relative z-10 flex flex-wrap gap-2">
-          {servicios[1].tags.map(tag => (
-            <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
-          ))}
-        </div>
-        <div class="absolute inset-0 bg-linear-to-tr from-[#5ed29c]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      </div>
-
-      <!-- Card 03 -->
-      <div class="hover-card md:col-span-5 border border-white/[0.06] bg-white/[0.02] p-8 md:p-10 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
-        <div class="absolute inset-0 bg-[linear-gradient(135deg,rgba(94,210,156,0.02),transparent_50%)] pointer-events-none" />
-        <div class="relative z-10">
-          <h3 class="text-xl md:text-2xl font-semibold text-white mb-3 leading-tight">
-            {servicios[2].titulo}
-          </h3>
-          <p class="text-zinc-400 leading-relaxed mb-8">
-            {servicios[2].texto}
-          </p>
-        </div>
-        <div class="relative z-10 flex flex-wrap gap-2">
-          {servicios[2].tags.map(tag => (
-            <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
-          ))}
-        </div>
-        <div class="absolute inset-0 bg-linear-to-tr from-[#5ed29c]/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      </div>
-
-      <!-- Card 04: CTA -->
-      <div class="hover-card md:col-span-7 border border-[#5ed29c]/[0.08] bg-[#5ed29c]/[0.02] p-8 md:p-12 flex flex-col justify-between relative overflow-hidden group rounded-2xl">
-        <div class="relative z-10">
-          <h3 class="text-xl md:text-2xl font-semibold text-white mb-3 leading-tight">
-            {servicios[3].titulo}
-          </h3>
-          <p class="text-zinc-400 leading-relaxed mb-10">
-            {servicios[3].texto}
-          </p>
-        </div>
-        <div class="relative z-10">
-          <div class="flex flex-wrap gap-2 mb-8">
-            {servicios[3].tags.map(tag => (
-              <span class="text-xs text-zinc-500 border border-white/[0.06] px-3 py-1.5 hover:border-[#5ed29c]/30 hover:text-zinc-300 transition-colors duration-200">{tag}</span>
-            ))}
+    <!-- Numbered narrative -->
+    <div class="space-y-24 md:space-y-32">
+      {servicios.map((svc, i) => (
+        <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+          <!-- Text side -->
+          <div class={`scroll-reveal ${i % 2 === 1 ? "md:order-2" : "md:order-1"}`}>
+            <span class="font-mono text-[13px] text-ink-3 font-bold tracking-[0.15em] block mb-4">
+              {svc.id}
+            </span>
+            <h3 class="text-3xl md:text-4xl font-semibold text-foreground leading-[1.08] mb-5">
+              {svc.titulo}
+            </h3>
+            <p class="text-ink-2 leading-relaxed mb-8 max-w-md">
+              {svc.texto}
+            </p>
+            <div class="flex flex-wrap gap-2 mb-8">
+              {svc.tags.map(tag => (
+                <Badge variant="secondary" className="text-[11px] px-3 py-1 font-medium tracking-wide border border-[var(--color-border-val)]">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+            {i === servicios.length - 1 && (
+              <a
+                href="#contacto"
+                class="group/btn inline-flex items-center gap-3 bg-primary text-primary-foreground font-medium text-sm px-7 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] active:scale-[0.96]"
+              >
+                Iniciar proyecto
+                <svg class="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+              </a>
+            )}
           </div>
-          <a
-            href="#contacto"
-            class="group/btn inline-flex items-center gap-3 bg-[#5ed29c] text-[#070b0a] font-medium text-sm px-7 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out hover:bg-[#4cbf87] hover:shadow-[0_0_25px_rgba(94,210,156,0.12)] active:scale-[0.96]"
-          >
-            Iniciar proyecto
-            <svg class="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-          </a>
+
+          <!-- Image side -->
+          <div class={`relative ${i % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
+            <div class="relative overflow-hidden rounded-2xl">
+              <img
+                src={svc.imagen}
+                alt={svc.titulo}
+                class="w-full h-[300px] md:h-[400px] object-cover transition-transform duration-700 ease-out hover:scale-105"
+                loading="lazy"
+              />
+              <div class="absolute inset-0 bg-gradient-to-tr from-background/60 via-background/10 to-transparent pointer-events-none" />
+            </div>
+          </div>
         </div>
-        <div class="absolute inset-0 bg-[#5ed29c]/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      </div>
+      ))}
     </div>
   </div>
 </section>
@@ -5282,6 +5595,18 @@ const servicios = [
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-canvas: var(--color-canvas-val);
+  --color-ink: var(--color-ink-val);
+  --color-ink-2: var(--color-ink-2-val);
+  --color-ink-3: var(--color-ink-3-val);
+  --color-accent-val: var(--color-accent-val);
+  --color-accent-h: var(--color-accent-h-val);
+  --color-accent-subtle: var(--color-accent-subtle-val);
+  --color-border-val: var(--color-border-val);
+  --color-surface: var(--color-surface-val);
+  --color-surface-hover: var(--color-surface-hover-val);
+
   --radius-sm: 2px;
   --radius-md: 2px;
   --radius-lg: 2px;
@@ -5289,38 +5614,73 @@ const servicios = [
 }
 
 :root {
-  --color-canvas: #070b0a;
-  --color-ink: #fafafa;
-  --color-ink-2: #a1a1aa;
-  --color-ink-3: #71717a;
-  --color-accent: #5ed29c;
-  --color-accent-h: #4cbf87;
-  --color-accent-subtle: rgba(94, 210, 156, 0.08);
-  --color-border: rgba(255, 255, 255, 0.06);
+  --color-canvas-val: #070b0a;
+  --color-ink-val: #fafafa;
+  --color-ink-2-val: #a1a1aa;
+  --color-ink-3-val: #71717a;
+  --color-accent-val: #5ed29c;
+  --color-accent-h-val: #4cbf87;
+  --color-accent-subtle-val: rgba(94, 210, 156, 0.08);
+  --color-border-val: rgba(255, 255, 255, 0.06);
+  --color-surface-val: rgba(255, 255, 255, 0.03);
+  --color-surface-hover-val: rgba(255, 255, 255, 0.05);
 
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 
-  --background: var(--color-canvas);
-  --foreground: var(--color-ink);
-  --card: rgba(255, 255, 255, 0.03);
-  --card-foreground: var(--color-ink);
-  --popover: var(--color-canvas);
-  --popover-foreground: var(--color-ink);
-  --primary: var(--color-accent);
+  --background: var(--color-canvas-val);
+  --foreground: var(--color-ink-val);
+  --card: var(--color-surface-val);
+  --card-foreground: var(--color-ink-val);
+  --popover: var(--color-canvas-val);
+  --popover-foreground: var(--color-ink-val);
+  --primary: var(--color-accent-val);
   --primary-foreground: #070b0a;
-  --secondary: rgba(255, 255, 255, 0.05);
-  --secondary-foreground: var(--color-ink);
-  --muted: rgba(255, 255, 255, 0.05);
-  --muted-foreground: var(--color-ink-2);
-  --accent: var(--color-accent-subtle);
-  --accent-foreground: var(--color-accent);
+  --secondary: var(--color-surface-hover-val);
+  --secondary-foreground: var(--color-ink-val);
+  --muted: var(--color-surface-hover-val);
+  --muted-foreground: var(--color-ink-2-val);
+  --accent: var(--color-accent-subtle-val);
+  --accent-foreground: var(--color-accent-val);
   --destructive: #ef4444;
-  --border: var(--color-border);
+  --border: var(--color-border-val);
   --input: rgba(255, 255, 255, 0.1);
-  --ring: var(--color-accent);
+  --ring: var(--color-accent-val);
+  --radius: 0px;
+}
+
+.light {
+  --color-canvas-val: #f5f5f0;
+  --color-ink-val: #0a0a0a;
+  --color-ink-2-val: #525252;
+  --color-ink-3-val: #737373;
+  --color-accent-val: #059669;
+  --color-accent-h-val: #047857;
+  --color-accent-subtle-val: rgba(5, 150, 105, 0.08);
+  --color-border-val: rgba(0, 0, 0, 0.08);
+  --color-surface-val: rgba(0, 0, 0, 0.02);
+  --color-surface-hover-val: rgba(0, 0, 0, 0.04);
+
+  --background: var(--color-canvas-val);
+  --foreground: var(--color-ink-val);
+  --card: var(--color-surface-val);
+  --card-foreground: var(--color-ink-val);
+  --popover: var(--color-canvas-val);
+  --popover-foreground: var(--color-ink-val);
+  --primary: var(--color-accent-val);
+  --primary-foreground: #fafafa;
+  --secondary: var(--color-surface-hover-val);
+  --secondary-foreground: var(--color-ink-val);
+  --muted: var(--color-surface-hover-val);
+  --muted-foreground: var(--color-ink-3-val);
+  --accent: var(--color-accent-subtle-val);
+  --accent-foreground: var(--color-accent-val);
+  --destructive: #dc2626;
+  --border: var(--color-border-val);
+  --input: rgba(0, 0, 0, 0.1);
+  --ring: var(--color-accent-val);
   --radius: 0px;
 }
 
@@ -5331,6 +5691,9 @@ const servicios = [
   html {
     @apply scroll-smooth;
     color-scheme: dark;
+  }
+  html.light {
+    color-scheme: light;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
@@ -5352,8 +5715,14 @@ const servicios = [
   ::selection {
     background: rgba(94, 210, 156, 0.15);
   }
+  .light ::selection {
+    background: rgba(5, 150, 105, 0.15);
+  }
   ::-moz-selection {
     background: rgba(94, 210, 156, 0.15);
+  }
+  .light ::-moz-selection {
+    background: rgba(5, 150, 105, 0.15);
   }
 }
 
@@ -5364,9 +5733,7 @@ const servicios = [
   }
 }
 
-/* ── Scroll reveals (opacity + translate) ── */
-/* Content visible by default. JS applies hidden state, observer reveals it. */
-
+/* ── Scroll reveals ── */
 .scroll-reveal {
   transition: opacity 0.8s var(--ease-spring),
               transform 0.8s var(--ease-spring);
@@ -5380,7 +5747,6 @@ const servicios = [
   transform: translateY(0);
 }
 
-/* ── Clip reveals ── */
 .clip-reveal {
   transition: clip-path 1.2s var(--ease-spring);
 }
@@ -5411,7 +5777,6 @@ const servicios = [
   clip-path: inset(0 0 0 0);
 }
 
-/* ── Stagger children ── */
 .stagger-children > * {
   transition: opacity 0.6s var(--ease-spring),
               transform 0.6s var(--ease-spring);
@@ -5431,7 +5796,6 @@ const servicios = [
   transform: translateY(0);
 }
 
-/* ── Card hover effect ── */
 .hover-card {
   transition: transform 0.4s var(--ease-out),
               border-color 0.4s var(--ease-out),
@@ -5440,11 +5804,10 @@ const servicios = [
 }
 .hover-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(94, 210, 156, 0.15);
+  border-color: var(--color-accent-subtle-val);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
-/* ── Grain texture overlay ── */
 .grain-overlay::after {
   content: '';
   position: fixed;
@@ -5457,7 +5820,6 @@ const servicios = [
   background-size: 256px 256px;
 }
 
-/* ── Scrollbar styling ── */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -5465,14 +5827,59 @@ const servicios = [
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(94, 210, 156, 0.2);
+  background: var(--color-accent-subtle-val);
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(94, 210, 156, 0.4);
+  background: color-mix(in srgb, var(--color-accent-val) 40%, transparent);
 }
 
-/* ── Reduced motion ── */
+/* ── Section rhythm ── */
+section + section {
+  border-top: 1px solid var(--color-border-val);
+}
+
+/* ── Focus-visible polish ── */
+:focus-visible {
+  outline: 2px solid var(--color-accent-val);
+  outline-offset: 2px;
+}
+
+/* ── Link underline animation ── */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-accent-val);
+  transition: width 0.3s var(--ease-out);
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* ── Image hover zoom ── */
+.img-zoom {
+  overflow: hidden;
+}
+.img-zoom img {
+  transition: transform 0.6s var(--ease-out);
+}
+.img-zoom:hover img {
+  transform: scale(1.04);
+}
+
+/* ── Badge glow on hover ── */
+.badge-glow:hover {
+  box-shadow: 0 0 12px var(--color-accent-subtle-val);
+  border-color: var(--color-accent-val);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
@@ -5496,6 +5903,65 @@ const servicios = [
 }
 </file>
 
+<file path="src/components/Footer.astro">
+---
+import { Separator } from './ui/separator';
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="border-t border-border py-20 px-6 relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-4 gap-12 mb-16">
+      <div class="md:col-span-2">
+        <a href="/" class="flex items-center gap-3 mb-6 w-fit">
+          <div class="w-9 h-9 bg-primary flex items-center justify-center">
+            <span class="text-primary-foreground font-bold text-sm">N</span>
+          </div>
+          <span class="text-xl font-bold tracking-tight text-foreground">Nodo Digital</span>
+        </a>
+        <p class="text-ink-2 leading-relaxed max-w-sm text-sm">
+          Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
+        </p>
+      </div>
+
+      <div>
+        <span class="font-mono text-[10px] text-ink-3 uppercase tracking-[0.2em] block mb-5">Navegación</span>
+        <nav class="space-y-3">
+          <a href="#servicios" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Servicios</a>
+          <a href="#about" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Proceso</a>
+          <a href="#faq" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">FAQ</a>
+          <a href="#contacto" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Contacto</a>
+        </nav>
+      </div>
+
+      <div>
+        <span class="font-mono text-[10px] text-ink-3 uppercase tracking-[0.2em] block mb-5">Contacto</span>
+        <a
+          href="https://wa.me/528342550555"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground transition-colors duration-200 group"
+        >
+          <svg class="w-4 h-4 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          834 255 0555
+        </a>
+      </div>
+    </div>
+
+    <Separator className="mb-8" />
+
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-ink-3">
+        &copy; {currentYear} Nodo Digital. Todos los derechos reservados.
+      </p>
+      <p class="text-sm text-ink-3">
+        Cd. Victoria, Tamaulipas
+      </p>
+    </div>
+  </div>
+</footer>
+</file>
+
 <file path="src/layouts/Layout.astro">
 ---
 import '@fontsource-variable/geist';
@@ -5509,11 +5975,11 @@ interface Props {
 }
 
 const {
-  title = 'Xolventa | Software a la medida con IA — Cd. Victoria',
+  title = 'Nodo Digital | Software a la medida con IA — Cd. Victoria',
   description = 'Software a la medida para tu negocio en Cd. Victoria. Automatización con IA, desarrollo web profesional y consultoría tecnológica. Primero te conozco, luego te propongo algo útil.'
 } = Astro.props;
 
-const domain = 'https://xolventa.vercel.app';
+const domain = 'https://nodo-digital.vercel.app';
 const ogImage = `${domain}/og-image.webp`;
 ---
 
@@ -5529,7 +5995,6 @@ const ogImage = `${domain}/og-image.webp`;
     <meta name="description" content={description} />
     <meta name="keywords" content="software a la medida Cd. Victoria, desarrollo web Tamaulipas, automatización IA, sistemas de venta, inventario, negocio local, páginas web" />
     <link rel="canonical" href={domain} />
-    <meta name="theme-color" content="#070b0a" />
 
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -5550,7 +6015,7 @@ const ogImage = `${domain}/og-image.webp`;
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
-      "name": "Xolventa",
+      "name": "Nodo Digital",
       "description": description,
       "url": domain,
       "image": ogImage,

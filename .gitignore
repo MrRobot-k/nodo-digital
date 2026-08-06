@@ -96,3 +96,10 @@ repomix-output.xml
 # Editor backups
 *~
 .vercel
+
+.codegraph/
+.agents/
+.mind/
+.opencode/
+.playwright-cli/
+.claude/

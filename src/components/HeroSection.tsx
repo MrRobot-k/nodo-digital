@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, useSpring, useReducedMotion } from 'motion/react';
+import { motion, AnimatePresence, useSpring, useReducedMotion } from 'motion/react';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 
@@ -16,8 +16,11 @@ const HLS_SRC =
 function MagneticButton({ children, href }: { children: React.ReactNode; href: string }) {
   const ref = useRef<HTMLAnchorElement>(null);
   const reduce = useReducedMotion();
-  const x = useSpring(0, { stiffness: 150, damping: 15 });
-  const y = useSpring(0, { stiffness: 150, damping: 15 });
+  // Critically damped by default (damping 1.0, response ~0.4) so the
+  // button settles onto the pointer without overshoot — this is a
+  // reposition, not a flick, so no bounce.
+  const x = useSpring(0, { stiffness: 260, damping: 26, mass: 0.6 });
+  const y = useSpring(0, { stiffness: 260, damping: 26, mass: 0.6 });
 
   useEffect(() => {
     if (reduce || !ref.current) return;
@@ -49,6 +52,7 @@ function MagneticButton({ children, href }: { children: React.ReactNode; href: s
       className="group inline-flex items-center gap-3 bg-primary text-primary-foreground font-semibold text-sm px-8 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out will-change-transform hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_30px_var(--color-accent-subtle-val)]"
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.96 }}
+      transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
     >
       {children}
     </motion.a>
@@ -58,7 +62,15 @@ function MagneticButton({ children, href }: { children: React.ReactNode; href: s
 export default function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const reduce = useReducedMotion();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -119,14 +131,16 @@ export default function HeroSection() {
       </div>
 
       {/* ── Navigation ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-background/60 backdrop-blur-md">
+      <header className={`material-nav fixed top-0 left-0 right-0 z-50${scrolled ? ' is-scrolled' : ''}`}>
         <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <motion.a
             href="/"
-            className="text-foreground text-lg font-bold tracking-[0.15em]"
+            className="flex items-center gap-2.5 text-foreground text-lg font-bold tracking-[0.15em]"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.97 }}
+            transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
           >
+            <img src="/logo-icon.png" alt="" className="h-7 w-7" width={28} height={28} />
             NODO DIGITAL
           </motion.a>
 
@@ -135,31 +149,34 @@ export default function HeroSection() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-sm text-ink-2 hover:text-foreground transition-colors duration-150"
+                className="link-underline text-sm text-ink-2 hover:text-foreground transition-colors duration-150"
               >
                 {link.label}
               </a>
             ))}
-            <a
+            <motion.a
               href="#contacto"
               className={buttonVariants({
                 variant: 'default',
                 className: "rounded-full px-5 h-9 text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
               })}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
             >
               Iniciar proyecto
-            </a>
+            </motion.a>
           </div>
 
           <div className="flex lg:hidden">
             <button
-              className="text-foreground"
+              className="text-foreground active:scale-90 transition-transform duration-150"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
             >
               <motion.div
                 animate={menuOpen ? { rotate: 90 } : { rotate: 0 }}
-                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+                transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
               >
                 {menuOpen ? <X size={22} /> : <Menu size={22} />}
               </motion.div>
@@ -169,15 +186,17 @@ export default function HeroSection() {
       </header>
 
       {/* ── Mobile menu ── */}
+      <AnimatePresence>
       {menuOpen && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-40 bg-background/95 flex flex-col items-center justify-center gap-10"
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98, backdropFilter: 'blur(0px)' }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, backdropFilter: 'blur(24px)' }}
+          exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98, backdropFilter: 'blur(0px)' }}
+          transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+          className="fixed inset-0 z-40 bg-background/90 backdrop-saturate-150 flex flex-col items-center justify-center gap-10"
         >
           <button
-            className="absolute top-6 right-6 text-foreground"
+            className="absolute top-6 right-6 text-foreground active:scale-90 transition-transform duration-150"
             onClick={() => setMenuOpen(false)}
             aria-label="Cerrar menú"
           >
@@ -191,7 +210,8 @@ export default function HeroSection() {
               className="text-foreground text-2xl font-medium hover:text-[var(--color-accent-val)] transition-colors duration-200"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * i, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ delay: 0.05 * i, type: 'spring', bounce: 0, duration: 0.4 }}
             >
               {link.label}
             </motion.a>
@@ -203,12 +223,13 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             whileTap={{ scale: 0.96 }}
-            transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ delay: 0.2, type: 'spring', bounce: 0, duration: 0.4 }}
           >
             Iniciar proyecto
           </motion.a>
         </motion.div>
       )}
+      </AnimatePresence>
 
       {/* ── Hero content ── */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 min-h-[100dvh] flex flex-col justify-center">
@@ -270,7 +291,7 @@ export default function HeroSection() {
           </MagneticButton>
           <a
             href="#servicios"
-            className="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground transition-colors duration-200 py-3.5 px-2 group/secondary"
+            className="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground active:scale-95 transition-[color,transform] duration-150 py-3.5 px-2 group/secondary"
           >
             Ver servicios
             <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/secondary:translate-x-0.5" />
