@@ -2,6 +2,7 @@
 import '@fontsource-variable/geist';
 import Analytics from '@vercel/analytics/astro';
 import SpeedInsights from '@vercel/speed-insights/astro';
+import GoogleAnalytics from '../components/Analytics.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -18,7 +19,6 @@ const domain = 'https://nodo-digital.vercel.app';
 // TODO: crear og-image.webp (1200×630px) para previews sociales.
 // Mientras tanto reusamos apple-touch-icon.png para evitar un 404 en cada share.
 const ogImage = `${domain}/apple-touch-icon.png`;
-const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
 <!doctype html>
@@ -26,16 +26,7 @@ const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
   <head>
     <meta charset="utf-8" />
     <meta name="google-site-verification" content="B8xIL6NB6qKkcGJHVN2TI61g4S3M-O1qSNYruCtW88I" />
-
-    <!-- Google tag (gtag.js) -->
-    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
-    <script define:vars={{ gaId }}>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', gaId);
-    </script>
+    <GoogleAnalytics />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

@@ -124,7 +124,7 @@ export default function HeroSection() {
   return (
     <div className="relative min-h-[100dvh] bg-background overflow-hidden">
       {/* ── Fixed Video Background ── */}
-      <div className="fixed inset-0 z-0">
+      <div className="fixed inset-0 z-0 overflow-hidden">
         <video
           ref={videoRef}
           autoPlay
@@ -216,7 +216,7 @@ export default function HeroSection() {
           animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, backdropFilter: 'blur(24px)' }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98, backdropFilter: 'blur(0px)' }}
           transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
-          className="fixed inset-0 z-40 bg-background/90 backdrop-saturate-150 flex flex-col items-center justify-center gap-10"
+          className="fixed inset-0 z-40 bg-background/90 backdrop-saturate-150 flex flex-col items-center justify-center gap-10 overflow-y-auto py-20"
         >
           <button
             className="absolute top-6 right-6 text-foreground active:scale-90 transition-transform duration-150"
