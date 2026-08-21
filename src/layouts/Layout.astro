@@ -25,6 +25,16 @@ const ogImage = `${domain}/apple-touch-icon.png`;
   <head>
     <meta charset="utf-8" />
     <meta name="google-site-verification" content="B8xIL6NB6qKkcGJHVN2TI61g4S3M-O1qSNYruCtW88I" />
+
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-H7XRL6H9JN"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-H7XRL6H9JN');
+    </script>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
