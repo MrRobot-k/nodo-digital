@@ -3,32 +3,28 @@ import { Badge } from './ui/badge';
 
 const servicios = [
   {
-    id: "01",
     titulo: "Software a la medida",
     texto: "Apps nativas para Mac, Windows, iOS, Android y Linux — escritorio, móvil o web. El software se adapta a tu negocio, no al revés.",
     tags: ["Multiplataforma", "Arquitectura escalable", "Soporte continuo"],
-    imagen: "/images/software-dev.jpg",
+    imagen: "/images/software-dev.webp",
   },
   {
-    id: "02",
     titulo: "Presencia web profesional",
     texto: "Páginas rápidas, optimizadas y conectadas con WhatsApp para capturar clientes 24/7.",
     tags: ["Pago único", "Rendimiento premium"],
-    imagen: "/images/web-presence.jpg",
+    imagen: "/images/web-presence.webp",
   },
   {
-    id: "03",
     titulo: "Automatización con IA",
     texto: "Chatbots inteligentes que responden a tus clientes, organizan datos y generan reportes automáticos.",
     tags: ["Bots 24/7", "Sin intervención"],
-    imagen: "/images/ai-automation.jpg",
+    imagen: "/images/ai-automation.webp",
   },
   {
-    id: "04",
     titulo: "Consultoría tecnológica",
     texto: "Diagnóstico de procesos operativos. Identificamos áreas de mejora en tiempo y costo.",
     tags: ["Sin costo", "Sin compromiso"],
-    imagen: "/images/consulting.jpg",
+    imagen: "/images/consulting.webp",
   },
 ];
 ---
@@ -48,15 +44,12 @@ const servicios = [
       </p>
     </div>
 
-    <!-- Numbered narrative -->
+    <!-- Service blocks -->
     <div class="space-y-24 md:space-y-32">
       {servicios.map((svc, i) => (
         <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
           <!-- Text side -->
           <div class={`scroll-reveal ${i % 2 === 1 ? "md:order-2" : "md:order-1"}`}>
-            <span class="font-mono text-[13px] text-ink-3 font-bold tracking-[0.15em] block mb-4">
-              {svc.id}
-            </span>
             <h3 class="text-3xl md:text-4xl font-semibold text-foreground leading-[1.08] mb-5">
               {svc.titulo}
             </h3>
@@ -82,13 +75,16 @@ const servicios = [
           </div>
 
           <!-- Image side -->
-          <div class={`relative ${i % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
+          <div class={`relative clip-reveal-top ${i % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
             <div class="hover-card relative overflow-hidden rounded-xl border border-border">
               <img
                 src={svc.imagen}
                 alt={svc.titulo}
+                width="1600"
+                height="1067"
                 class="w-full h-[300px] md:h-[400px] object-cover transition-transform duration-700 ease-out hover:scale-105"
                 loading="lazy"
+                decoding="async"
               />
               <div class="absolute inset-0 bg-gradient-to-tr from-background/60 via-background/10 to-transparent pointer-events-none" />
             </div>

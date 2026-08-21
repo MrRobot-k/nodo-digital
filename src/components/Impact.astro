@@ -1,0 +1,52 @@
+---
+const metricas = [
+  {
+    valor: "24/7",
+    label: "Automatización activa",
+    texto: "Bots que responden clientes y organizan datos sin intervención humana.",
+  },
+  {
+    valor: "2-4",
+    label: "Semanas a producción",
+    texto: "Desde diagnóstico hasta deploy en producción, con pruebas y documentación.",
+  },
+  {
+    valor: "100%",
+    label: "Código probado",
+    texto: "Todo se verifica antes de entregar. Sin sorpresas, sin deuda técnica heredada.",
+  },
+  {
+    valor: "∞",
+    label: "Acompañamiento",
+    texto: "Soporte continuo después de la entrega. Actualizaciones conforme creces.",
+  },
+];
+---
+
+<section id="impacto" class="py-32 md:py-44 px-6 relative">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-20 md:mb-28 scroll-reveal">
+      <h2 class="text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-foreground leading-[0.92] max-w-4xl">
+        Resultados que se <span class="text-accent-val">sienten</span><br />
+        en tu operación diaria
+      </h2>
+      <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-xl mt-6">
+        No vendemos software por venderlo. Cada sistema existe para quitarte trabajo repetitivo y devolverte tiempo.
+      </p>
+    </div>
+
+    <!-- Metrics grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 stagger-children">
+      {metricas.map((m) => (
+        <div class="hover-card relative rounded-xl border border-border p-6 md:p-8 bg-[var(--color-surface-val)]">
+          <span class="block text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-none mb-3">
+            {m.valor}
+          </span>
+          <span class="block text-sm font-medium text-foreground mb-2">{m.label}</span>
+          <p class="text-sm text-ink-2 leading-relaxed">{m.texto}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

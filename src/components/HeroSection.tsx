@@ -64,6 +64,7 @@ export default function HeroSection() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const reduce = useReducedMotion();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -71,6 +72,24 @@ export default function HeroSection() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const menu = menuRef.current;
+    if (!menu) return;
+    const focusable = menu.querySelectorAll<HTMLElement>('a, button');
+    if (focusable.length) focusable[0].focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setMenuOpen(false); return; }
+      if (e.key !== 'Tab' || focusable.length < 2) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -189,6 +208,10 @@ export default function HeroSection() {
       <AnimatePresence>
       {menuOpen && (
         <motion.div
+          ref={menuRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menú de navegación"
           initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98, backdropFilter: 'blur(0px)' }}
           animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, backdropFilter: 'blur(24px)' }}
           exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.98, backdropFilter: 'blur(0px)' }}
@@ -276,18 +299,7 @@ export default function HeroSection() {
         >
           <MagneticButton href="#contacto">
             Iniciar proyecto
-            <svg
-              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M5 12h14" />
-              <path d="m12 5 7 7-7 7" />
-            </svg>
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
           </MagneticButton>
           <a
             href="#servicios"

@@ -1,3 +1,4 @@
+import { motion, useReducedMotion } from 'motion/react';
 import {
   Accordion,
   AccordionItem,
@@ -33,21 +34,27 @@ const preguntas = [
 ];
 
 export default function FaqAccordion() {
+  const reduce = useReducedMotion();
+
   return (
     <Accordion className="w-full">
       {preguntas.map((item, i) => (
-        <AccordionItem
+        <motion.div
           key={i}
-          value={`faq-${i}`}
-          className="border-border py-1"
+          initial={reduce ? undefined : { opacity: 0, y: 16 }}
+          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
         >
-          <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-[var(--color-accent-val)] transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
-            {item.q}
-          </AccordionTrigger>
-          <AccordionContent className="text-ink-2 leading-relaxed pb-5 [&>div]:pt-0">
-            {item.r}
-          </AccordionContent>
-        </AccordionItem>
+          <AccordionItem value={`faq-${i}`} className="border-border py-1">
+            <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-[var(--color-accent-val)] transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
+              {item.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-ink-2 leading-relaxed pb-5 [&>div]:pt-0">
+              {item.r}
+            </AccordionContent>
+          </AccordionItem>
+        </motion.div>
       ))}
     </Accordion>
   );
