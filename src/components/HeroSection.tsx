@@ -276,9 +276,9 @@ export default function HeroSection() {
           transition={{ duration: 1, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
         >
           <h1 className="text-[clamp(40px,9vw,88px)] font-bold tracking-tight text-foreground leading-[0.88] max-w-5xl mb-6">
-            Apps que se adaptan
+            Deja de perder tiempo
             <br />
-            <span className="text-[var(--color-accent-val)]">a tu negocio, no al revés</span>
+            <span className="text-[var(--color-accent-val)]">en lo que el software ya puede hacer por ti</span>
           </h1>
         </motion.div>
 
@@ -288,7 +288,7 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="text-base md:text-lg text-ink-2 max-w-xl leading-relaxed mb-12"
         >
-          Desarrollamos apps nativas para Mac, Windows, iOS, Android y Linux — además de web. Tu negocio dicta las reglas, no el software.
+          Sistemas de venta, inventario y chatbots hechos a la medida de tu negocio en Cd. Victoria. Sin letras chiquitas, sin depender de programas genéricos que no entienden cómo trabajas.
         </motion.p>
 
         {/* CTAs */}

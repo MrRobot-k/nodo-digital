@@ -55,11 +55,11 @@ export default function ContactForm() {
           className="max-w-2xl mb-20"
         >
           <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
-            ¿Listo para modernizar<br />
-            <span className="text-[var(--color-accent-val)]">tu negocio</span>?
+            ¿Listo para dejar de perder tiempo<br />
+            <span className="text-[var(--color-accent-val)]">en tareas repetitivas</span>?
           </h2>
           <p className="text-base md:text-lg text-ink-2 leading-relaxed">
-            Cuéntame qué procesos de tu negocio te gustaría optimizar. Te ofrezco una asesoría gratuita de 30 minutos para identificar oportunidades con tecnología real.
+            Cuéntame en qué se te va el tiempo en tu negocio — inventario, ventas, atención a clientes. Te doy una asesoría gratis de 30 minutos, sin compromiso.
           </p>
         </motion.div>
 
