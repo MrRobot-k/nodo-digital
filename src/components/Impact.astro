@@ -37,9 +37,9 @@ const metricas = [
     </div>
 
     <!-- Metrics grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 stagger-children">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 impact-perspective">
       {metricas.map((m) => (
-        <div class="hover-card relative rounded-xl border border-border p-6 md:p-8 bg-[var(--color-surface-val)]">
+        <div class="impact-flip relative rounded-xl border border-border p-6 md:p-8 bg-[var(--color-surface-val)]">
           <span class="block text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-none mb-3">
             {m.valor}
           </span>
@@ -50,3 +50,22 @@ const metricas = [
     </div>
   </div>
 </section>
+
+<script>
+  // Supporting moment: each metric flips into view like a result becoming
+  // visible, extending the tilt language from Services without repeating it.
+  import { animate, onScroll, stagger, utils } from 'animejs';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    utils.set('.impact-flip', { opacity: 0, rotateY: -90, translateZ: -60 });
+    animate('.impact-flip', {
+      opacity: [0, 1],
+      rotateY: [-90, 0],
+      translateZ: [-60, 0],
+      duration: 700,
+      delay: stagger(70),
+      ease: 'outExpo',
+      autoplay: onScroll({ target: '.impact-perspective', enter: 'bottom-=10% top' }),
+    });
+  }
+</script>

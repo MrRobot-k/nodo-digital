@@ -240,6 +240,43 @@
   box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.45);
 }
 
+/* ── 3D tilt cards (anime.js-driven, see Services.astro) ──
+   transform is written per-frame by JS, so it's deliberately excluded
+   from this transition list to avoid fighting the animation engine. */
+.tilt-perspective {
+  perspective: 1400px;
+}
+.tilt-card {
+  transition: border-color 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+  will-change: transform;
+}
+.tilt-card:hover {
+  border-color: var(--color-accent-subtle-val);
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.45);
+}
+.tilt-glare {
+  background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.18), transparent 45%);
+  transition: opacity 0.3s var(--ease-out);
+}
+
+/* ── Impact 3D flip-reveal (anime.js-driven, see Impact.astro) ──
+   transform is written per-frame by JS during entrance, so it's
+   deliberately excluded here to avoid fighting the animation engine. */
+.impact-perspective {
+  perspective: 1200px;
+}
+.impact-flip {
+  will-change: transform;
+}
+
+/* ── Enterprise depth-converge (anime.js-driven, see Enterprise.astro) ── */
+.enterprise-perspective {
+  perspective: 900px;
+}
+.enterprise-chip {
+  will-change: transform;
+}
+
 /* ── Materials: translucent layers that float above content ──
    Weight scales with surface size: nav is a light, functional strip;
    panels are heavier, structural surfaces. Never stack two of these. */

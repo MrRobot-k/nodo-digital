@@ -29,9 +29,9 @@ const capacidades = [
       </div>
 
       <div class="scroll-reveal">
-        <div class="flex flex-wrap gap-2 mb-8">
+        <div class="enterprise-perspective flex flex-wrap gap-2 mb-8">
           {capacidades.map(cap => (
-            <Badge variant="secondary" className="text-[11px] px-3 py-1 font-medium tracking-wide border border-[var(--color-border-val)]">
+            <Badge variant="secondary" className="enterprise-chip text-[11px] px-3 py-1 font-medium tracking-wide border border-[var(--color-border-val)]">
               {cap}
             </Badge>
           ))}
@@ -48,3 +48,23 @@ const capacidades = [
     </div>
   </div>
 </section>
+
+<script>
+  // Supporting moment: capability badges converge out of depth into one
+  // aligned row — several platforms, one project.
+  import { animate, onScroll, stagger, utils } from 'animejs';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    utils.set('.enterprise-chip', { opacity: 0, translateY: 16, translateZ: -100, rotateX: 12 });
+    animate('.enterprise-chip', {
+      opacity: [0, 1],
+      translateY: [16, 0],
+      translateZ: [-100, 0],
+      rotateX: [12, 0],
+      duration: 650,
+      delay: stagger(60),
+      ease: 'outExpo',
+      autoplay: onScroll({ target: '.enterprise-perspective', enter: 'bottom-=10% top' }),
+    });
+  }
+</script>

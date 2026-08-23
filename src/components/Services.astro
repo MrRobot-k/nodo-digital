@@ -75,8 +75,8 @@ const servicios = [
           </div>
 
           <!-- Image side -->
-          <div class={`relative clip-reveal-top ${i % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
-            <div class="hover-card relative overflow-hidden rounded-xl border border-border">
+          <div class={`relative tilt-perspective ${i % 2 === 1 ? "md:order-1" : "md:order-2"}`}>
+            <div class="tilt-card relative overflow-hidden rounded-xl border border-border">
               <img
                 src={svc.imagen}
                 alt={svc.titulo}
@@ -87,6 +87,7 @@ const servicios = [
                 decoding="async"
               />
               <div class="absolute inset-0 bg-gradient-to-tr from-background/60 via-background/10 to-transparent pointer-events-none" />
+              <div class="tilt-glare absolute inset-0 pointer-events-none opacity-0" aria-hidden="true" />
             </div>
           </div>
         </div>
@@ -94,3 +95,54 @@ const servicios = [
     </div>
   </div>
 </section>
+
+<script>
+  // Focal moment: service images tilt in 3D toward the cursor, like the
+  // custom software they represent responding directly to you.
+  import { animate, onScroll, utils } from 'animejs';
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const coarsePointer = matchMedia('(pointer: coarse)').matches;
+
+  document.querySelectorAll('.tilt-card').forEach((card) => {
+    if (reduceMotion) return;
+
+    utils.set(card, { opacity: 0, rotateX: 8, rotateY: -14, translateZ: -80 });
+    animate(card, {
+      opacity: [0, 1],
+      rotateX: [8, 0],
+      rotateY: [-14, 0],
+      translateZ: [-80, 0],
+      duration: 800,
+      ease: 'outExpo',
+      autoplay: onScroll({ target: card, enter: 'bottom-=15% top' }),
+    });
+
+    if (coarsePointer) return;
+
+    const glare = card.querySelector('.tilt-glare');
+
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      animate(card, {
+        rotateY: (px - 0.5) * 16,
+        rotateX: (0.5 - py) * 16,
+        translateZ: 24,
+        duration: 500,
+        ease: 'outQuint',
+      });
+      if (glare) {
+        glare.style.setProperty('--glare-x', `${px * 100}%`);
+        glare.style.setProperty('--glare-y', `${py * 100}%`);
+        glare.style.opacity = '1';
+      }
+    });
+
+    card.addEventListener('pointerleave', () => {
+      animate(card, { rotateX: 0, rotateY: 0, translateZ: 0, duration: 400, ease: 'outExpo' });
+      if (glare) glare.style.opacity = '0';
+    });
+  });
+</script>

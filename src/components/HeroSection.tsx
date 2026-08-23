@@ -121,6 +121,27 @@ export default function HeroSection() {
     animate: { opacity: 1, y: 0 },
   };
 
+  // Ambient depth: the hero's glow drifts in 3D with the cursor, the same
+  // "responds to you" language the service cards use, applied quietly here.
+  const glowX = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+  const glowY = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+  const glowRotateX = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+  const glowRotateY = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+
+  useEffect(() => {
+    if (reduce || matchMedia('(pointer: coarse)').matches) return;
+    const handleMove = (e: PointerEvent) => {
+      const nx = e.clientX / window.innerWidth - 0.5;
+      const ny = e.clientY / window.innerHeight - 0.5;
+      glowX.set(nx * 40);
+      glowY.set(ny * 24);
+      glowRotateY.set(nx * 6);
+      glowRotateX.set(-ny * 6);
+    };
+    window.addEventListener('pointermove', handleMove);
+    return () => window.removeEventListener('pointermove', handleMove);
+  }, [reduce]);
+
   return (
     <div className="relative min-h-[100dvh] bg-background overflow-hidden">
       {/* ── Fixed Video Background ── */}
@@ -136,16 +157,21 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-linear-to-r from-background via-background/80 to-transparent" />
         <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
 
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px]">
-          <svg viewBox="0 0 800 400" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <filter id="h-glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="40" />
-              </filter>
-            </defs>
-            <ellipse cx="400" cy="200" rx="350" ry="120" fill="var(--color-accent-val)" opacity="0.06" filter="url(#h-glow)" />
-          </svg>
+        {/* Ambient glow, tilting in 3D toward the cursor */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px] [perspective:1000px]">
+          <motion.div
+            className="w-full h-full"
+            style={{ x: glowX, y: glowY, rotateX: glowRotateX, rotateY: glowRotateY }}
+          >
+            <svg viewBox="0 0 800 400" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <filter id="h-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="40" />
+                </filter>
+              </defs>
+              <ellipse cx="400" cy="200" rx="350" ry="120" fill="var(--color-accent-val)" opacity="0.06" filter="url(#h-glow)" />
+            </svg>
+          </motion.div>
         </div>
       </div>
 

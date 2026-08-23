@@ -41,10 +41,11 @@ export default function FaqAccordion() {
       {preguntas.map((item, i) => (
         <motion.div
           key={i}
-          initial={reduce ? undefined : { opacity: 0, y: 16 }}
-          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
+          initial={reduce ? undefined : { opacity: 0, y: 16, rotateX: -10 }}
+          whileInView={reduce ? undefined : { opacity: 1, y: 0, rotateX: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+          style={{ perspective: 800, transformOrigin: 'top' }}
         >
           <AccordionItem value={`faq-${i}`} className="border-border py-1">
             <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-[var(--color-accent-val)] transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
