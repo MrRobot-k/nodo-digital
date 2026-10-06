@@ -282,19 +282,6 @@ export default function HeroSection() {
 
       {/* ── Hero content ── */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 pt-32 pb-24 min-h-[100dvh] flex flex-col justify-center">
-        {/* Location badge */}
-        <motion.div
-          {...fadeUp}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 border border-border rounded-full mb-12">
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-val)]" />
-            <span className="text-xs text-ink-2">
-              Cd. Victoria, Tamaulipas
-            </span>
-          </div>
-        </motion.div>
-
         {/* Headline with clip-path reveal */}
         <motion.div
           initial={reduce ? {} : { clipPath: 'inset(0 100% 0 0)' }}
@@ -314,7 +301,7 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="text-base md:text-lg text-ink-2 max-w-xl leading-relaxed mb-12"
         >
-          Sistemas de venta, inventario y chatbots hechos a la medida de tu negocio en Cd. Victoria. Sin letras chiquitas, sin depender de programas genéricos que no entienden cómo trabajas.
+          Sistemas de venta, inventario y chatbots hechos a la medida de tu negocio. Sin letras chiquitas, sin depender de programas genéricos que no entienden cómo trabajas.
         </motion.p>
 
         {/* CTAs */}

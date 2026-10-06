@@ -272,13 +272,275 @@ declare module 'astro:content' {
 <file path=".astro/settings.json">
 {
 	"_variables": {
-		"lastUpdateCheck": 1787272904309
+		"lastUpdateCheck": 1791293718694
 	}
 }
 </file>
 
 <file path=".astro/types.d.ts">
 /// <reference types="astro/client" />
+</file>
+
+<file path="docs/superpowers/specs/2026-07-07-landing-refactor-design.md">
+# Landing Page Refactor — Nodo Digital
+
+## Overview
+Refactor the Nodo Digital landing page to match premium design quality (Ronas IT reference) with a numbered service narrative, real images, visual process timeline, FAQ, and dark/light mode — without requiring client testimonials or social proof stats.
+
+## Sections
+
+### 1. Global Design System (`global.css`)
+- CSS custom properties for all colors → replace every hardcoded `#5ed29c`, `#070b0a`, etc.
+- Light color scheme (`.light` class on `<html>`) with `color-scheme: light`
+- Toggle `dark` class on `<html>` via a small JS toggle in the nav
+- `:root` defaults to dark; `.light` overrides with lighter palette
+- No changes to animation / scroll-reveal / grain classes
+
+### 2. Hero Section (`HeroSection.tsx`)
+- Keep the video background + ambient glow
+- Replace hardcoded `#5ed29c` and `#070b0a` with CSS variables (`var(--color-accent)`, `var(--color-canvas)`)
+- Replace hardcoded `#5ed29c` in hover shadows and MagneticButton with `var(--color-accent)`
+- Add `<html>` dark/light toggle button in nav (small icon button)
+
+### 3. Services (`Services.astro`)
+- Change from bento grid to numbered narrative layout (01–04)
+- Each service card displays:
+  - Number badge (`01`, `02`, `03`, `04`) in mono font
+  - Image from `public/images/` (right-aligned or as background)
+  - Title, description, tags
+  - Hover effects
+- Layout: vertical stack with alternating image-left / image-right on desktop
+- Replace `#5ed29c` and `#070b0a` with CSS variables
+- Image mapping:
+  - 01 Software → `software-dev.jpg`
+  - 02 Web → `web-presence.jpg`
+  - 03 IA → `ai-automation.jpg`
+  - 04 Consultoría → `consulting.jpg`
+
+### 4. Process Timeline (`About.astro`)
+- Convert accordion to a vertical timeline
+- Left: sticky intro (keep as-is, update colors to variables)
+- Right: 4 steps in a visual timeline with:
+  - Vertical line connecting dots
+  - Numbered circles (`01`–`04`)
+  - Step title + description
+- Replace hardcoded colors with CSS variables
+- Remove "stats" section (no client data)
+- Keep "Garantía de calidad" blurb but repurpose
+
+### 5. FAQ (new component `Faq.astro`)
+- 4–6 common questions about software development for local businesses
+- Simple accordion-style (use `<details>`)
+- Questions:
+  - ¿Cuánto cuesta desarrollar un sistema a la medida?
+  - ¿Cuánto tiempo toma hacer una página web?
+  - ¿Necesito conocimientos técnicos para trabajar contigo?
+  - ¿Dan mantenimiento después de entregar el proyecto?
+  - ¿Trabajas solo con negocios locales o también remoto?
+  - ¿Qué tecnologías utilizan?
+- Link from nav
+
+### 6. Contact (`ContactForm.tsx`)
+- Replace hardcoded accent colors with CSS variables
+- Keep existing structure
+
+### 7. Footer (`Footer.astro`)
+- Replace hardcoded colors with CSS variables
+- Keep existing structure
+
+### 8. Nav (`Layout.astro`)
+- Keep skip-to-content, analytics, speed insights
+- Add link to FAQ in nav items
+
+## Design Tokens (CSS Variables)
+
+### Dark (default)
+```
+--color-canvas: #070b0a
+--color-ink: #fafafa
+--color-ink-2: #a1a1aa
+--color-ink-3: #71717a
+--color-accent: #5ed29c
+--color-accent-h: #4cbf87
+--color-accent-subtle: rgba(94, 210, 156, 0.08)
+--color-border: rgba(255, 255, 255, 0.06)
+--color-surface: rgba(255, 255, 255, 0.03)
+--color-surface-hover: rgba(255, 255, 255, 0.05)
+```
+
+### Light (`.light` override)
+```
+--color-canvas: #f5f5f0
+--color-ink: #0a0a0a
+--color-ink-2: #525252
+--color-ink-3: #737373
+--color-accent: #059669
+--color-accent-h: #047857
+--color-accent-subtle: rgba(5, 150, 105, 0.08)
+--color-border: rgba(0, 0, 0, 0.08)
+--color-surface: rgba(0, 0, 0, 0.02)
+--color-surface-hover: rgba(0, 0, 0, 0.04)
+```
+
+## File Changes
+| File | Action |
+|------|--------|
+| `src/styles/global.css` | Add light mode vars, replace hardcoded `#5ed29c`/`#070b0a` with var() |
+| `src/components/HeroSection.tsx` | Replace colors with vars, add theme toggle button |
+| `src/components/Services.astro` | Rewrite to numbered narrative + images |
+| `src/components/About.astro` | Rewrite accordion to timeline, remove stats |
+| `src/components/Faq.astro` | **NEW** — FAQ accordion component |
+| `src/components/ContactForm.tsx` | Replace colors with vars |
+| `src/components/Footer.astro` | Replace colors with vars |
+| `src/pages/index.astro` | Add Faq import + section |
+| `src/layouts/Layout.astro` | Add FAQ link to nav items, light-mode JS |
+
+## Non-goals
+- No testimonials section
+- No portfolio/case studies
+- No stats/metrics
+- No changes to animation system or scroll-reveals
+- No changes to contact form logic
+</file>
+
+<file path="src/components/ui/badge.tsx">
+import { mergeProps } from "@base-ui/react/merge-props"
+import { useRender } from "@base-ui/react/use-render"
+import { cva, type VariantProps } from "class-variance-authority"
+
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  {
+    variants: {
+      variant: {
+        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        secondary:
+          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        destructive:
+          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+        outline:
+          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        ghost:
+          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        link: "text-primary underline-offset-4 hover:underline",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
+
+function Badge({
+  className,
+  variant = "default",
+  render,
+  ...props
+}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
+  return useRender({
+    defaultTagName: "span",
+    props: mergeProps<"span">(
+      {
+        className: cn(badgeVariants({ variant }), className),
+      },
+      props
+    ),
+    render,
+    state: {
+      slot: "badge",
+      variant,
+    },
+  })
+}
+
+export { Badge, badgeVariants }
+</file>
+
+<file path="src/components/ui/separator.tsx">
+import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
+
+import { cn } from "@/lib/utils"
+
+function Separator({
+  className,
+  orientation = "horizontal",
+  ...props
+}: SeparatorPrimitive.Props) {
+  return (
+    <SeparatorPrimitive
+      data-slot="separator"
+      orientation={orientation}
+      className={cn(
+        "shrink-0 bg-border data-horizontal:h-px data-horizontal:w-full data-vertical:w-px data-vertical:self-stretch",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Separator }
+</file>
+
+<file path="src/components/Analytics.astro">
+---
+const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+---
+
+<!-- Google tag (gtag.js) -->
+<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+<script define:vars={{ gaId }}>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', gaId);
+</script>
+</file>
+
+<file path="src/lib/utils.ts">
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+</file>
+
+<file path="components.json">
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "base-nova",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/global.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+  "menuColor": "default",
+  "menuAccent": "subtle",
+  "registries": {}
+}
+</file>
+
+<file path="pnpm-workspace.yaml">
+allowBuilds:
+  esbuild: true
+  sharp: true
 </file>
 
 <file path="PROJECT_STRUCTURE.md">
@@ -523,321 +785,6 @@ className={cn('base-classes', conditional && 'conditional-classes')}
 *Generated for token-efficient AI navigation. Update when structure changes.*
 </file>
 
-<file path="docs/superpowers/specs/2026-07-07-landing-refactor-design.md">
-# Landing Page Refactor — Nodo Digital
-
-## Overview
-Refactor the Nodo Digital landing page to match premium design quality (Ronas IT reference) with a numbered service narrative, real images, visual process timeline, FAQ, and dark/light mode — without requiring client testimonials or social proof stats.
-
-## Sections
-
-### 1. Global Design System (`global.css`)
-- CSS custom properties for all colors → replace every hardcoded `#5ed29c`, `#070b0a`, etc.
-- Light color scheme (`.light` class on `<html>`) with `color-scheme: light`
-- Toggle `dark` class on `<html>` via a small JS toggle in the nav
-- `:root` defaults to dark; `.light` overrides with lighter palette
-- No changes to animation / scroll-reveal / grain classes
-
-### 2. Hero Section (`HeroSection.tsx`)
-- Keep the video background + ambient glow
-- Replace hardcoded `#5ed29c` and `#070b0a` with CSS variables (`var(--color-accent)`, `var(--color-canvas)`)
-- Replace hardcoded `#5ed29c` in hover shadows and MagneticButton with `var(--color-accent)`
-- Add `<html>` dark/light toggle button in nav (small icon button)
-
-### 3. Services (`Services.astro`)
-- Change from bento grid to numbered narrative layout (01–04)
-- Each service card displays:
-  - Number badge (`01`, `02`, `03`, `04`) in mono font
-  - Image from `public/images/` (right-aligned or as background)
-  - Title, description, tags
-  - Hover effects
-- Layout: vertical stack with alternating image-left / image-right on desktop
-- Replace `#5ed29c` and `#070b0a` with CSS variables
-- Image mapping:
-  - 01 Software → `software-dev.jpg`
-  - 02 Web → `web-presence.jpg`
-  - 03 IA → `ai-automation.jpg`
-  - 04 Consultoría → `consulting.jpg`
-
-### 4. Process Timeline (`About.astro`)
-- Convert accordion to a vertical timeline
-- Left: sticky intro (keep as-is, update colors to variables)
-- Right: 4 steps in a visual timeline with:
-  - Vertical line connecting dots
-  - Numbered circles (`01`–`04`)
-  - Step title + description
-- Replace hardcoded colors with CSS variables
-- Remove "stats" section (no client data)
-- Keep "Garantía de calidad" blurb but repurpose
-
-### 5. FAQ (new component `Faq.astro`)
-- 4–6 common questions about software development for local businesses
-- Simple accordion-style (use `<details>`)
-- Questions:
-  - ¿Cuánto cuesta desarrollar un sistema a la medida?
-  - ¿Cuánto tiempo toma hacer una página web?
-  - ¿Necesito conocimientos técnicos para trabajar contigo?
-  - ¿Dan mantenimiento después de entregar el proyecto?
-  - ¿Trabajas solo con negocios locales o también remoto?
-  - ¿Qué tecnologías utilizan?
-- Link from nav
-
-### 6. Contact (`ContactForm.tsx`)
-- Replace hardcoded accent colors with CSS variables
-- Keep existing structure
-
-### 7. Footer (`Footer.astro`)
-- Replace hardcoded colors with CSS variables
-- Keep existing structure
-
-### 8. Nav (`Layout.astro`)
-- Keep skip-to-content, analytics, speed insights
-- Add link to FAQ in nav items
-
-## Design Tokens (CSS Variables)
-
-### Dark (default)
-```
---color-canvas: #070b0a
---color-ink: #fafafa
---color-ink-2: #a1a1aa
---color-ink-3: #71717a
---color-accent: #5ed29c
---color-accent-h: #4cbf87
---color-accent-subtle: rgba(94, 210, 156, 0.08)
---color-border: rgba(255, 255, 255, 0.06)
---color-surface: rgba(255, 255, 255, 0.03)
---color-surface-hover: rgba(255, 255, 255, 0.05)
-```
-
-### Light (`.light` override)
-```
---color-canvas: #f5f5f0
---color-ink: #0a0a0a
---color-ink-2: #525252
---color-ink-3: #737373
---color-accent: #059669
---color-accent-h: #047857
---color-accent-subtle: rgba(5, 150, 105, 0.08)
---color-border: rgba(0, 0, 0, 0.08)
---color-surface: rgba(0, 0, 0, 0.02)
---color-surface-hover: rgba(0, 0, 0, 0.04)
-```
-
-## File Changes
-| File | Action |
-|------|--------|
-| `src/styles/global.css` | Add light mode vars, replace hardcoded `#5ed29c`/`#070b0a` with var() |
-| `src/components/HeroSection.tsx` | Replace colors with vars, add theme toggle button |
-| `src/components/Services.astro` | Rewrite to numbered narrative + images |
-| `src/components/About.astro` | Rewrite accordion to timeline, remove stats |
-| `src/components/Faq.astro` | **NEW** — FAQ accordion component |
-| `src/components/ContactForm.tsx` | Replace colors with vars |
-| `src/components/Footer.astro` | Replace colors with vars |
-| `src/pages/index.astro` | Add Faq import + section |
-| `src/layouts/Layout.astro` | Add FAQ link to nav items, light-mode JS |
-
-## Non-goals
-- No testimonials section
-- No portfolio/case studies
-- No stats/metrics
-- No changes to animation system or scroll-reveals
-- No changes to contact form logic
-</file>
-
-<file path="src/components/ui/badge.tsx">
-import { mergeProps } from "@base-ui/react/merge-props"
-import { useRender } from "@base-ui/react/use-render"
-import { cva, type VariantProps } from "class-variance-authority"
-
-import { cn } from "@/lib/utils"
-
-const badgeVariants = cva(
-  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
-  {
-    variants: {
-      variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        secondary:
-          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-        destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
-        outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
-        ghost:
-          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-)
-
-function Badge({
-  className,
-  variant = "default",
-  render,
-  ...props
-}: useRender.ComponentProps<"span"> & VariantProps<typeof badgeVariants>) {
-  return useRender({
-    defaultTagName: "span",
-    props: mergeProps<"span">(
-      {
-        className: cn(badgeVariants({ variant }), className),
-      },
-      props
-    ),
-    render,
-    state: {
-      slot: "badge",
-      variant,
-    },
-  })
-}
-
-export { Badge, badgeVariants }
-</file>
-
-<file path="src/components/ui/separator.tsx">
-import { Separator as SeparatorPrimitive } from "@base-ui/react/separator"
-
-import { cn } from "@/lib/utils"
-
-function Separator({
-  className,
-  orientation = "horizontal",
-  ...props
-}: SeparatorPrimitive.Props) {
-  return (
-    <SeparatorPrimitive
-      data-slot="separator"
-      orientation={orientation}
-      className={cn(
-        "shrink-0 bg-border data-horizontal:h-px data-horizontal:w-full data-vertical:w-px data-vertical:self-stretch",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-export { Separator }
-</file>
-
-<file path="src/components/Analytics.astro">
----
-const gaId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
----
-
-<!-- Google tag (gtag.js) -->
-<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
-<script define:vars={{ gaId }}>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', gaId);
-</script>
-</file>
-
-<file path="src/components/Enterprise.astro">
----
-import { Badge } from './ui/badge';
-
-const capacidades = [
-  "E-commerce completo",
-  "Integraciones con plataformas externas (Didi, Rappi, UberEats)",
-  "Sistemas ERP",
-  "Arquitecturas multi-servicio",
-];
----
-
-<section id="proyectos-grandes" class="py-24 md:py-32 px-6 relative border-t border-border">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 items-center">
-
-      <div class="scroll-reveal">
-        <span class="font-mono text-[11px] text-ink-3 font-bold tracking-wider mb-4 block">
-          Proyectos a mayor escala
-        </span>
-        <h2 class="text-[clamp(28px,4vw,44px)] font-bold tracking-tight text-foreground leading-[0.95] mb-5">
-          ¿Tu negocio ya <span class="text-accent-val">superó</span><br />
-          lo básico?
-        </h2>
-        <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-md">
-          Cuando el reto ya no es un sistema de venta, sino conectar varias
-          plataformas, procesos y equipos a la vez, el proyecto cambia de
-          escala. También construyo eso.
-        </p>
-      </div>
-
-      <div class="scroll-reveal">
-        <div class="flex flex-wrap gap-2 mb-8">
-          {capacidades.map(cap => (
-            <Badge variant="secondary" className="text-[11px] px-3 py-1 font-medium tracking-wide border border-[var(--color-border-val)]">
-              {cap}
-            </Badge>
-          ))}
-        </div>
-        <a
-          href="#contacto"
-          class="group/btn inline-flex items-center gap-3 border border-border text-foreground font-medium text-sm px-7 py-3.5 rounded-full transition-[background-color,box-shadow,transform] duration-150 ease-out hover:bg-[var(--color-surface-val)] active:scale-[0.96]"
-        >
-          Hablemos de tu proyecto
-          <svg class="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-      </div>
-
-    </div>
-  </div>
-</section>
-</file>
-
-<file path="src/lib/utils.ts">
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-</file>
-
-<file path="components.json">
-{
-  "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "base-nova",
-  "rsc": false,
-  "tsx": true,
-  "tailwind": {
-    "config": "",
-    "css": "src/styles/global.css",
-    "baseColor": "neutral",
-    "cssVariables": true,
-    "prefix": ""
-  },
-  "iconLibrary": "lucide",
-  "rtl": false,
-  "aliases": {
-    "components": "@/components",
-    "utils": "@/lib/utils",
-    "ui": "@/components/ui",
-    "lib": "@/lib",
-    "hooks": "@/hooks"
-  },
-  "menuColor": "default",
-  "menuAccent": "subtle",
-  "registries": {}
-}
-</file>
-
-<file path="pnpm-workspace.yaml">
-allowBuilds:
-  esbuild: true
-  sharp: true
-</file>
-
 <file path="vercel.json">
 {
   "alias": ["nodo-digital.vercel.app"]
@@ -982,6 +929,79 @@ function Button({
 export { Button, buttonVariants }
 </file>
 
+<file path="src/components/Enterprise.astro">
+---
+import { Badge } from './ui/badge';
+
+const capacidades = [
+  "E-commerce completo",
+  "Integraciones con plataformas externas (Didi, Rappi, UberEats)",
+  "Sistemas ERP",
+  "Arquitecturas multi-servicio",
+];
+---
+
+<section id="proyectos-grandes" class="py-24 md:py-32 px-6 relative border-t border-border">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 items-center">
+
+      <div class="scroll-reveal">
+        <span class="font-mono text-[11px] text-ink-3 font-bold tracking-wider mb-4 block">
+          Proyectos a mayor escala
+        </span>
+        <h2 class="text-[clamp(28px,4vw,44px)] font-bold tracking-tight text-foreground leading-[0.95] mb-5">
+          ¿Tu negocio ya <span class="text-accent-val">superó</span><br />
+          lo básico?
+        </h2>
+        <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-md">
+          Cuando el reto ya no es un sistema de venta, sino conectar varias
+          plataformas, procesos y equipos a la vez, el proyecto cambia de
+          escala. También construyo eso.
+        </p>
+      </div>
+
+      <div class="scroll-reveal">
+        <div class="enterprise-perspective flex flex-wrap gap-2 mb-8">
+          {capacidades.map(cap => (
+            <Badge variant="secondary" className="enterprise-chip text-[11px] px-3 py-1 font-medium tracking-wide border border-[var(--color-border-val)]">
+              {cap}
+            </Badge>
+          ))}
+        </div>
+        <a
+          href="#contacto"
+          class="group/btn inline-flex items-center gap-3 border border-border text-foreground font-medium text-sm px-7 py-3.5 rounded-full transition-[background-color,box-shadow,transform] duration-150 ease-out hover:bg-[var(--color-surface-val)] active:scale-[0.96]"
+        >
+          Hablemos de tu proyecto
+          <svg class="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  // Supporting moment: capability badges converge out of depth into one
+  // aligned row — several platforms, one project.
+  import { animate, onScroll, stagger, utils } from 'animejs';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    utils.set('.enterprise-chip', { opacity: 0, translateY: 16, translateZ: -100, rotateX: 12 });
+    animate('.enterprise-chip', {
+      opacity: [0, 1],
+      translateY: [16, 0],
+      translateZ: [-100, 0],
+      rotateX: [12, 0],
+      duration: 650,
+      delay: stagger(60),
+      ease: 'outExpo',
+      autoplay: onScroll({ target: '.enterprise-perspective', enter: 'bottom-=10% top' }),
+    });
+  }
+</script>
+</file>
+
 <file path="src/components/Faq.astro">
 ---
 import FaqAccordion from './FaqAccordion';
@@ -1001,125 +1021,6 @@ import FaqAccordion from './FaqAccordion';
 
     <!-- FAQ Accordion -->
     <FaqAccordion client:load />
-  </div>
-</section>
-</file>
-
-<file path="src/components/FaqAccordion.tsx">
-import { motion, useReducedMotion } from 'motion/react';
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from '@/components/ui/accordion';
-
-const preguntas = [
-  {
-    q: "¿Cuánto cuesta desarrollar un sistema a la medida?",
-    r: "Depende de la complejidad y el alcance. Por eso empezamos con un diagnóstico gratuito donde entendemos tus necesidades y te damos una cotización exacta. No hay costos ocultos ni sorpresas.",
-  },
-  {
-    q: "¿Cuánto tiempo toma hacer una página web profesional?",
-    r: "Una página web optimizada con rendimiento premium puede estar lista en 2 a 4 semanas, dependiendo de las funcionalidades que necesites. Te entrego un sitio rápido, conectado con WhatsApp y listo para captar clientes.",
-  },
-  {
-    q: "¿Necesito conocimientos técnicos para trabajar contigo?",
-    r: "Para nada. Yo me encargo de toda la parte técnica. Solo necesitas saber qué procesos de tu negocio te gustaría mejorar o automatizar. El resto lo hacemos juntos paso a paso.",
-  },
-  {
-    q: "¿Dan mantenimiento después de entregar el proyecto?",
-    r: "Sí, incluyo soporte técnico continuo después de la entrega. Además, podemos acordar actualizaciones y mejoras periódicas conforme tu negocio crezca o cambien tus necesidades.",
-  },
-  {
-    q: "¿Qué tecnologías utilizan?",
-    r: "Trabajo con tecnologías web modernas y estables: React, Node.js, Python, bases de datos relacionales, e integración con APIs. Todo el código se prueba antes de entregarse para garantizar calidad y rendimiento.",
-  },
-  {
-    q: "¿Solo trabajas con negocios locales o también remoto?",
-    r: "Estoy basado en Cd. Victoria, Tamaulipas, pero trabajo con clientes de todo México. Las reuniones pueden ser presenciales (si estás en la ciudad) o por videollamada. El servicio es el mismo.",
-  },
-];
-
-export default function FaqAccordion() {
-  const reduce = useReducedMotion();
-
-  return (
-    <Accordion className="w-full">
-      {preguntas.map((item, i) => (
-        <motion.div
-          key={i}
-          initial={reduce ? undefined : { opacity: 0, y: 16 }}
-          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-        >
-          <AccordionItem value={`faq-${i}`} className="border-border py-1">
-            <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-[var(--color-accent-val)] transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
-              {item.q}
-            </AccordionTrigger>
-            <AccordionContent className="text-ink-2 leading-relaxed pb-5 [&>div]:pt-0">
-              {item.r}
-            </AccordionContent>
-          </AccordionItem>
-        </motion.div>
-      ))}
-    </Accordion>
-  );
-}
-</file>
-
-<file path="src/components/Impact.astro">
----
-const metricas = [
-  {
-    valor: "24/7",
-    label: "Tu negocio sigue atendiendo",
-    texto: "Aunque tú no estés, el sistema responde clientes y organiza datos.",
-  },
-  {
-    valor: "2-4",
-    label: "Semanas a producción",
-    texto: "De la primera plática a tenerlo funcionando en tu negocio.",
-  },
-  {
-    valor: "$0",
-    label: "Costo del diagnóstico",
-    texto: "Platicamos primero. Solo avanzamos si ves valor real.",
-  },
-  {
-    valor: "∞",
-    label: "Acompañamiento",
-    texto: "Sigo dando soporte cuando lo necesites, no desaparezco después de cobrar.",
-  },
-];
----
-
-<section id="impacto" class="py-32 md:py-44 px-6 relative">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="mb-20 md:mb-28 scroll-reveal">
-      <h2 class="text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-foreground leading-[0.92] max-w-4xl">
-        Resultados que se <span class="text-accent-val">sienten</span><br />
-        en tu operación diaria
-      </h2>
-      <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-xl mt-6">
-        No te vendo tecnología porque sí. Te la doy si de verdad te va a quitar trabajo de encima.
-      </p>
-    </div>
-
-    <!-- Metrics grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 stagger-children">
-      {metricas.map((m) => (
-        <div class="hover-card relative rounded-xl border border-border p-6 md:p-8 bg-[var(--color-surface-val)]">
-          <span class="block text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-none mb-3">
-            {m.valor}
-          </span>
-          <span class="block text-sm font-medium text-foreground mb-2">{m.label}</span>
-          <p class="text-sm text-ink-2 leading-relaxed">{m.texto}</p>
-        </div>
-      ))}
-    </div>
   </div>
 </section>
 </file>
@@ -1204,6 +1105,145 @@ User-agent: *
 Allow: /
 
 Sitemap: https://nodo-digital.vercel.app/sitemap.xml
+</file>
+
+<file path="src/components/FaqAccordion.tsx">
+import { motion, useReducedMotion } from 'motion/react';
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
+
+const preguntas = [
+  {
+    q: "¿Cuánto cuesta desarrollar un sistema a la medida?",
+    r: "Depende de la complejidad y el alcance. Por eso empezamos con un diagnóstico gratuito donde entendemos tus necesidades y te damos una cotización exacta. No hay costos ocultos ni sorpresas.",
+  },
+  {
+    q: "¿Cuánto tiempo toma hacer una página web profesional?",
+    r: "Una página web optimizada con rendimiento premium puede estar lista en 2 a 4 semanas, dependiendo de las funcionalidades que necesites. Te entrego un sitio rápido, conectado con WhatsApp y listo para captar clientes.",
+  },
+  {
+    q: "¿Necesito conocimientos técnicos para trabajar contigo?",
+    r: "Para nada. Yo me encargo de toda la parte técnica. Solo necesitas saber qué procesos de tu negocio te gustaría mejorar o automatizar. El resto lo hacemos juntos paso a paso.",
+  },
+  {
+    q: "¿Dan mantenimiento después de entregar el proyecto?",
+    r: "Sí, incluyo soporte técnico continuo después de la entrega. Además, podemos acordar actualizaciones y mejoras periódicas conforme tu negocio crezca o cambien tus necesidades.",
+  },
+  {
+    q: "¿Qué tecnologías utilizan?",
+    r: "Trabajo con tecnologías web modernas y estables: React, Node.js, Python, bases de datos relacionales, e integración con APIs. Todo el código se prueba antes de entregarse para garantizar calidad y rendimiento.",
+  },
+  {
+    q: "¿Solo trabajas con negocios locales o también remoto?",
+    r: "Estoy basado en Cd. Victoria, Tamaulipas, pero trabajo con clientes de todo México. Las reuniones pueden ser presenciales (si estás en la ciudad) o por videollamada. El servicio es el mismo.",
+  },
+];
+
+export default function FaqAccordion() {
+  const reduce = useReducedMotion();
+
+  return (
+    <Accordion className="w-full">
+      {preguntas.map((item, i) => (
+        <motion.div
+          key={i}
+          initial={reduce ? undefined : { opacity: 0, y: 16, rotateX: -10 }}
+          whileInView={reduce ? undefined : { opacity: 1, y: 0, rotateX: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+          style={{ perspective: 800, transformOrigin: 'top' }}
+        >
+          <AccordionItem value={`faq-${i}`} className="border-border py-1">
+            <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-[var(--color-accent-val)] transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
+              {item.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-ink-2 leading-relaxed pb-5 [&>div]:pt-0">
+              {item.r}
+            </AccordionContent>
+          </AccordionItem>
+        </motion.div>
+      ))}
+    </Accordion>
+  );
+}
+</file>
+
+<file path="src/components/Impact.astro">
+---
+const metricas = [
+  {
+    valor: "24/7",
+    label: "Tu negocio sigue atendiendo",
+    texto: "Aunque tú no estés, el sistema responde clientes y organiza datos.",
+  },
+  {
+    valor: "2-4",
+    label: "Semanas a producción",
+    texto: "De la primera plática a tenerlo funcionando en tu negocio.",
+  },
+  {
+    valor: "$0",
+    label: "Costo del diagnóstico",
+    texto: "Platicamos primero. Solo avanzamos si ves valor real.",
+  },
+  {
+    valor: "∞",
+    label: "Acompañamiento",
+    texto: "Sigo dando soporte cuando lo necesites, no desaparezco después de cobrar.",
+  },
+];
+---
+
+<section id="impacto" class="py-32 md:py-44 px-6 relative">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="mb-20 md:mb-28 scroll-reveal">
+      <h2 class="text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-foreground leading-[0.92] max-w-4xl">
+        Resultados que se <span class="text-accent-val">sienten</span><br />
+        en tu operación diaria
+      </h2>
+      <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-xl mt-6">
+        No te vendo tecnología porque sí. Te la doy si de verdad te va a quitar trabajo de encima.
+      </p>
+    </div>
+
+    <!-- Metrics grid -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 impact-perspective">
+      {metricas.map((m) => (
+        <div class="impact-flip relative rounded-xl border border-border p-6 md:p-8 bg-[var(--color-surface-val)]">
+          <span class="block text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-none mb-3">
+            {m.valor}
+          </span>
+          <span class="block text-sm font-medium text-foreground mb-2">{m.label}</span>
+          <p class="text-sm text-ink-2 leading-relaxed">{m.texto}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Supporting moment: each metric flips into view like a result becoming
+  // visible, extending the tilt language from Services without repeating it.
+  import { animate, onScroll, stagger, utils } from 'animejs';
+
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    utils.set('.impact-flip', { opacity: 0, rotateY: -90, translateZ: -60 });
+    animate('.impact-flip', {
+      opacity: [0, 1],
+      rotateY: [-90, 0],
+      translateZ: [-60, 0],
+      duration: 700,
+      delay: stagger(70),
+      ease: 'outExpo',
+      autoplay: onScroll({ target: '.impact-perspective', enter: 'bottom-=10% top' }),
+    });
+  }
+</script>
 </file>
 
 <file path="src/pages/404.astro">
@@ -1612,6 +1652,149 @@ const pasos = [
 </section>
 </file>
 
+<file path="src/components/ContactForm.tsx">
+import { motion, useReducedMotion } from 'motion/react';
+import { buttonVariants } from '@/components/ui/button';
+
+const fadeUp = (reduce: boolean | null | undefined) => reduce ? {} : {
+  initial: { opacity: 0, y: 24 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.3 },
+};
+
+function ContactItem({ icon, label, value, href }: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  href?: string;
+}) {
+  const Tag = href ? motion.a : motion.div;
+  const props = href ? { href, target: '_blank', rel: 'noopener noreferrer' as const } : {};
+
+  return (
+    <Tag
+      {...props}
+      className="flex items-center gap-5 group cursor-pointer"
+      whileHover={{ x: 4 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
+    >
+      <motion.div
+        className="w-12 h-12 rounded-xl border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
+      >
+        <span className="text-ink-3 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]">
+          {icon}
+        </span>
+      </motion.div>
+      <div>
+        <p className="text-[11px] text-ink-3 uppercase tracking-wider font-medium">{label}</p>
+        <p className="text-foreground text-lg font-medium">{value}</p>
+      </div>
+    </Tag>
+  );
+}
+
+export default function ContactForm() {
+  const reduce = useReducedMotion();
+  const anim = fadeUp(reduce);
+
+  return (
+    <section id="contacto" className="py-32 md:py-44 px-6 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto relative">
+        <motion.div
+          {...anim}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-2xl mb-20"
+        >
+          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
+            ¿Listo para dejar de perder tiempo<br />
+            <span className="text-[var(--color-accent-val)]">en tareas repetitivas</span>?
+          </h2>
+          <p className="text-base md:text-lg text-ink-2 leading-relaxed">
+            Cuéntame en qué se te va el tiempo en tu negocio — inventario, ventas, atención a clientes. Te doy una asesoría gratis de 30 minutos, sin compromiso.
+          </p>
+        </motion.div>
+
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
+          <motion.div
+            {...anim}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-8"
+          >
+            <ContactItem
+              href="tel:+528342550555"
+              icon={
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+              }
+              label="Llamada directa"
+              value="+52 834 255 0555"
+            />
+
+            <ContactItem
+              href="https://wa.me/528342550555"
+              icon={
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                </svg>
+              }
+              label="WhatsApp"
+              value="Enviar mensaje"
+            />
+
+            <ContactItem
+              icon={
+                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                  <circle cx="12" cy="10" r="3" />
+                </svg>
+              }
+              label="Ubicación"
+              value="Ciudad Victoria, Tam."
+            />
+          </motion.div>
+
+          <motion.div
+            {...anim}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="material-panel border border-border p-8 md:p-12 relative overflow-hidden rounded-xl"
+          >
+            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-accent-val)]/20 to-transparent" />
+            <h3 className="text-foreground font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
+            <p className="text-ink-2 leading-relaxed text-sm mb-8">
+              Antes de agendar una videollamada, llena este formulario de diagnóstico para que llegue con contexto de tu negocio.
+            </p>
+
+            <a
+              href="https://forms.gle/tmoA9zL5wGZK4d1m7"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={buttonVariants({
+                variant: 'default',
+                className: "inline-flex items-center justify-center gap-3 w-full h-12 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow,transform] duration-150 active:scale-[0.97]"
+              })}
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
+              </svg>
+              Llenar formulario de diagnóstico
+            </a>
+
+            <p className="text-center text-ink-3 text-xs font-medium mt-6">
+              Sin compromiso. Solo conversamos si ves valor en lo que propongo.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+</file>
+
 <file path="src/styles/global.css">
 @import "tailwindcss";
 @import "tw-animate-css";
@@ -1874,6 +2057,24 @@ const pasos = [
   transition: opacity 0.3s var(--ease-out);
 }
 
+/* ── Impact 3D flip-reveal (anime.js-driven, see Impact.astro) ──
+   transform is written per-frame by JS during entrance, so it's
+   deliberately excluded here to avoid fighting the animation engine. */
+.impact-perspective {
+  perspective: 1200px;
+}
+.impact-flip {
+  will-change: transform;
+}
+
+/* ── Enterprise depth-converge (anime.js-driven, see Enterprise.astro) ── */
+.enterprise-perspective {
+  perspective: 900px;
+}
+.enterprise-chip {
+  will-change: transform;
+}
+
 /* ── Materials: translucent layers that float above content ──
    Weight scales with surface size: nav is a light, functional strip;
    panels are heavier, structural surfaces. Never stack two of these. */
@@ -2016,147 +2217,66 @@ section + section {
 }
 </file>
 
-<file path="src/components/ContactForm.tsx">
-import { motion, useReducedMotion } from 'motion/react';
-import { buttonVariants } from '@/components/ui/button';
+<file path="src/components/Footer.astro">
+---
+import { Separator } from './ui/separator';
+const currentYear = new Date().getFullYear();
+---
 
-const fadeUp = (reduce: boolean | null | undefined) => reduce ? {} : {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.3 },
-};
+<footer class="border-t border-border py-20 px-6 relative">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid md:grid-cols-4 gap-12 mb-16 scroll-reveal">
+      <div class="md:col-span-2">
+        <a href="/" class="flex items-center gap-2.5 mb-6 w-fit">
+          <img src="/logo-icon.png" alt="" class="w-9 h-9" width="36" height="36" />
+          <span class="text-xl font-bold tracking-tight text-foreground">Nodo Digital</span>
+        </a>
+        <p class="text-ink-2 leading-relaxed max-w-sm text-sm">
+          Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
+        </p>
+      </div>
 
-function ContactItem({ icon, label, value, href }: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  href?: string;
-}) {
-  const Tag = href ? motion.a : motion.div;
-  const props = href ? { href, target: '_blank', rel: 'noopener noreferrer' as const } : {};
-
-  return (
-    <Tag
-      {...props}
-      className="flex items-center gap-5 group cursor-pointer"
-      whileHover={{ x: 4 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
-    >
-      <motion.div
-        className="w-12 h-12 rounded-xl border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
-      >
-        <span className="text-ink-3 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]">
-          {icon}
-        </span>
-      </motion.div>
       <div>
-        <p className="text-[11px] text-ink-3 uppercase tracking-wider font-medium">{label}</p>
-        <p className="text-foreground text-lg font-medium">{value}</p>
+        <span class="font-mono text-[10px] text-ink-3 uppercase tracking-[0.2em] block mb-5">Navegación</span>
+        <nav class="space-y-3">
+          <a href="#servicios" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Servicios</a>
+          <a href="#about" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Proceso</a>
+          <a href="#faq" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">FAQ</a>
+          <a href="#contacto" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Contacto</a>
+        </nav>
       </div>
-    </Tag>
-  );
-}
 
-export default function ContactForm() {
-  const reduce = useReducedMotion();
-  const anim = fadeUp(reduce);
-
-  return (
-    <section id="contacto" className="py-32 md:py-44 px-6 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto relative">
-        <motion.div
-          {...anim}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="max-w-2xl mb-20"
+      <div>
+        <span class="font-mono text-[10px] text-ink-3 uppercase tracking-[0.2em] block mb-5">Contacto</span>
+        <a
+          href="https://wa.me/528342550555"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground transition-colors duration-200 group"
         >
-          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
-            ¿Listo para dejar de perder tiempo<br />
-            <span className="text-[var(--color-accent-val)]">en tareas repetitivas</span>?
-          </h2>
-          <p className="text-base md:text-lg text-ink-2 leading-relaxed">
-            Cuéntame en qué se te va el tiempo en tu negocio — inventario, ventas, atención a clientes. Te doy una asesoría gratis de 30 minutos, sin compromiso.
-          </p>
-        </motion.div>
-
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-24 items-start">
-          <motion.div
-            {...anim}
-            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="space-y-8"
-          >
-            <ContactItem
-              href="tel:+528342550555"
-              icon={
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-              }
-              label="Llamada directa"
-              value="+52 834 255 0555"
-            />
-
-            <ContactItem
-              href="https://wa.me/528342550555"
-              icon={
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
-                </svg>
-              }
-              label="WhatsApp"
-              value="Enviar mensaje"
-            />
-
-            <ContactItem
-              icon={
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-              }
-              label="Ubicación"
-              value="Ciudad Victoria, Tam."
-            />
-          </motion.div>
-
-          <motion.div
-            {...anim}
-            transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="material-panel border border-border p-8 md:p-12 relative overflow-hidden rounded-xl"
-          >
-            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-accent-val)]/20 to-transparent" />
-            <h3 className="text-foreground font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
-            <p className="text-ink-2 leading-relaxed text-sm mb-8">
-              Antes de agendar una videollamada, llena este formulario de diagnóstico para que llegue con contexto de tu negocio.
-            </p>
-
-            <a
-              href="https://forms.gle/tmoA9zL5wGZK4d1m7"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={buttonVariants({
-                variant: 'default',
-                className: "inline-flex items-center justify-center gap-3 w-full h-12 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow,transform] duration-150 active:scale-[0.97]"
-              })}
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z" />
-              </svg>
-              Llenar formulario de diagnóstico
-            </a>
-
-            <p className="text-center text-ink-3 text-xs font-medium mt-6">
-              Sin compromiso. Solo conversamos si ves valor en lo que propongo.
-            </p>
-          </motion.div>
-        </div>
+          <svg class="w-4 h-4 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          834 255 0555
+        </a>
       </div>
-    </section>
-  );
-}
+    </div>
+
+    <Separator className="mb-8" />
+
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-ink-3">
+        &copy; {currentYear} Nodo Digital. Todos los derechos reservados.
+      </p>
+      <div class="flex items-center gap-6">
+        <a href="/privacidad" class="text-sm text-ink-3 hover:text-foreground transition-colors duration-200">
+          Aviso de Privacidad
+        </a>
+        <p class="text-sm text-ink-3">
+          Cd. Victoria, Tamaulipas
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
 </file>
 
 <file path="src/components/Services.astro">
@@ -2310,68 +2430,6 @@ const servicios = [
 </script>
 </file>
 
-<file path="src/components/Footer.astro">
----
-import { Separator } from './ui/separator';
-const currentYear = new Date().getFullYear();
----
-
-<footer class="border-t border-border py-20 px-6 relative">
-  <div class="max-w-7xl mx-auto">
-    <div class="grid md:grid-cols-4 gap-12 mb-16 scroll-reveal">
-      <div class="md:col-span-2">
-        <a href="/" class="flex items-center gap-2.5 mb-6 w-fit">
-          <img src="/logo-icon.png" alt="" class="w-9 h-9" width="36" height="36" />
-          <span class="text-xl font-bold tracking-tight text-foreground">Nodo Digital</span>
-        </a>
-        <p class="text-ink-2 leading-relaxed max-w-sm text-sm">
-          Ingeniería de software y soluciones web premium para negocios que buscan escalar en Cd. Victoria y todo México.
-        </p>
-      </div>
-
-      <div>
-        <span class="font-mono text-[10px] text-ink-3 uppercase tracking-[0.2em] block mb-5">Navegación</span>
-        <nav class="space-y-3">
-          <a href="#servicios" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Servicios</a>
-          <a href="#about" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Proceso</a>
-          <a href="#faq" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">FAQ</a>
-          <a href="#contacto" class="block text-sm text-ink-2 hover:text-foreground transition-colors duration-200 w-fit">Contacto</a>
-        </nav>
-      </div>
-
-      <div>
-        <span class="font-mono text-[10px] text-ink-3 uppercase tracking-[0.2em] block mb-5">Contacto</span>
-        <a
-          href="https://wa.me/528342550555"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground transition-colors duration-200 group"
-        >
-          <svg class="w-4 h-4 transition-colors duration-200 group-hover:text-[var(--color-accent-val)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          834 255 0555
-        </a>
-      </div>
-    </div>
-
-    <Separator className="mb-8" />
-
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-      <p class="text-sm text-ink-3">
-        &copy; {currentYear} Nodo Digital. Todos los derechos reservados.
-      </p>
-      <div class="flex items-center gap-6">
-        <a href="/privacidad" class="text-sm text-ink-3 hover:text-foreground transition-colors duration-200">
-          Aviso de Privacidad
-        </a>
-        <p class="text-sm text-ink-3">
-          Cd. Victoria, Tamaulipas
-        </p>
-      </div>
-    </div>
-  </div>
-</footer>
-</file>
-
 <file path="src/components/HeroSection.tsx">
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useSpring, useReducedMotion } from 'motion/react';
@@ -2496,6 +2554,27 @@ export default function HeroSection() {
     animate: { opacity: 1, y: 0 },
   };
 
+  // Ambient depth: the hero's glow drifts in 3D with the cursor, the same
+  // "responds to you" language the service cards use, applied quietly here.
+  const glowX = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+  const glowY = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+  const glowRotateX = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+  const glowRotateY = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
+
+  useEffect(() => {
+    if (reduce || matchMedia('(pointer: coarse)').matches) return;
+    const handleMove = (e: PointerEvent) => {
+      const nx = e.clientX / window.innerWidth - 0.5;
+      const ny = e.clientY / window.innerHeight - 0.5;
+      glowX.set(nx * 40);
+      glowY.set(ny * 24);
+      glowRotateY.set(nx * 6);
+      glowRotateX.set(-ny * 6);
+    };
+    window.addEventListener('pointermove', handleMove);
+    return () => window.removeEventListener('pointermove', handleMove);
+  }, [reduce]);
+
   return (
     <div className="relative min-h-[100dvh] bg-background overflow-hidden">
       {/* ── Fixed Video Background ── */}
@@ -2511,16 +2590,21 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-linear-to-r from-background via-background/80 to-transparent" />
         <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
 
-        {/* Ambient glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px]">
-          <svg viewBox="0 0 800 400" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
-            <defs>
-              <filter id="h-glow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="40" />
-              </filter>
-            </defs>
-            <ellipse cx="400" cy="200" rx="350" ry="120" fill="var(--color-accent-val)" opacity="0.06" filter="url(#h-glow)" />
-          </svg>
+        {/* Ambient glow, tilting in 3D toward the cursor */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px] [perspective:1000px]">
+          <motion.div
+            className="w-full h-full"
+            style={{ x: glowX, y: glowY, rotateX: glowRotateX, rotateY: glowRotateY }}
+          >
+            <svg viewBox="0 0 800 400" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <filter id="h-glow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="40" />
+                </filter>
+              </defs>
+              <ellipse cx="400" cy="200" rx="350" ry="120" fill="var(--color-accent-val)" opacity="0.06" filter="url(#h-glow)" />
+            </svg>
+          </motion.div>
         </div>
       </div>
 

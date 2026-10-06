@@ -29,7 +29,7 @@ const preguntas = [
   },
   {
     q: "¿Solo trabajas con negocios locales o también remoto?",
-    r: "Estoy basado en Cd. Victoria, Tamaulipas, pero trabajo con clientes de todo México. Las reuniones pueden ser presenciales (si estás en la ciudad) o por videollamada. El servicio es el mismo.",
+    r: "Trabajo con clientes de todo México. Las reuniones pueden ser presenciales (según tu ubicación) o por videollamada. El servicio es el mismo.",
   },
 ];
 

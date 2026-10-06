@@ -1,6 +1,6 @@
 # Nodo Digital Landing Page
 
-**Soluciones técnicas para negocios de Cd. Victoria.**
+**Soluciones técnicas para negocios.**
 
 🌐 [nodo-digital.vercel.app](https://nodo-digital.vercel.app)
 

@@ -11,8 +11,8 @@ interface Props {
 }
 
 const {
-  title = 'Nodo Digital | Software a la medida con IA — Cd. Victoria',
-  description = 'Software a la medida para tu negocio en Cd. Victoria. Automatización con IA, desarrollo web profesional y consultoría tecnológica. Primero te conozco, luego te propongo algo útil.'
+  title = 'Nodo Digital | Software a la medida con IA',
+  description = 'Software a la medida para tu negocio. Automatización con IA, desarrollo web profesional y consultoría tecnológica. Primero te conozco, luego te propongo algo útil.'
 } = Astro.props;
 
 const domain = 'https://nodo-digital.vercel.app';
@@ -32,7 +32,7 @@ const ogImage = `${domain}/apple-touch-icon.png`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <meta name="keywords" content="software a la medida Cd. Victoria, desarrollo web Tamaulipas, automatización IA, sistemas de venta, inventario, negocio local, páginas web" />
+    <meta name="keywords" content="software a la medida, desarrollo web, automatización IA, sistemas de venta, inventario, negocio local, páginas web" />
     <link rel="canonical" href={domain} />
 
     <meta property="og:title" content={title} />
@@ -59,13 +59,7 @@ const ogImage = `${domain}/apple-touch-icon.png`;
       "url": domain,
       "image": ogImage,
       "telephone": "+528342550555",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Ciudad Victoria",
-        "addressRegion": "Tamaulipas",
-        "addressCountry": "MX"
-      },
-      "areaServed": "Ciudad Victoria, Tamaulipas",
+      "areaServed": "MX",
       "priceRange": "$$",
       "contactPoint": {
         "@type": "ContactPoint",
