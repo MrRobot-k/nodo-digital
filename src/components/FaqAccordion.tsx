@@ -13,7 +13,7 @@ const preguntas = [
   },
   {
     q: "¿Cuánto tiempo toma hacer una página web profesional?",
-    r: "Una página web optimizada con rendimiento premium puede estar lista en 2 a 4 semanas, dependiendo de las funcionalidades que necesites. Te entrego un sitio rápido, conectado con WhatsApp y listo para captar clientes.",
+    r: "Una página web rápida y optimizada puede estar lista en 2 a 4 semanas, dependiendo de las funcionalidades que necesites. Te entrego un sitio rápido, conectado con WhatsApp y listo para captar clientes.",
   },
   {
     q: "¿Necesito conocimientos técnicos para trabajar contigo?",
@@ -41,14 +41,13 @@ export default function FaqAccordion() {
       {preguntas.map((item, i) => (
         <motion.div
           key={i}
-          initial={reduce ? undefined : { opacity: 0, y: 16, rotateX: -10 }}
-          whileInView={reduce ? undefined : { opacity: 1, y: 0, rotateX: 0 }}
+          initial={reduce ? undefined : { opacity: 0, y: 10 }}
+          whileInView={reduce ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.5, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
-          style={{ perspective: 800, transformOrigin: 'top' }}
         >
           <AccordionItem value={`faq-${i}`} className="border-border py-1">
-            <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-[var(--color-accent-val)] transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
+            <AccordionTrigger className="text-base md:text-lg font-medium text-foreground leading-snug py-5 hover:no-underline hover:text-foreground transition-colors duration-200 [&[data-slot=accordion-trigger]]:px-0">
               {item.q}
             </AccordionTrigger>
             <AccordionContent className="text-ink-2 leading-relaxed pb-5 [&>div]:pt-0">

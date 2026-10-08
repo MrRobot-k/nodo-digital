@@ -1,6 +1,4 @@
 ---
-import { Badge } from './ui/badge';
-
 const capacidades = [
   "E-commerce completo",
   "Integraciones con plataformas externas (Didi, Rappi, UberEats)",
@@ -9,17 +7,13 @@ const capacidades = [
 ];
 ---
 
-<section id="proyectos-grandes" class="py-24 md:py-32 px-6 relative border-t border-border">
+<section id="proyectos-grandes" class="py-16 md:py-24 px-6 relative border-t border-border">
   <div class="max-w-7xl mx-auto">
-    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 items-center">
+    <div class="grid lg:grid-cols-[1fr_1.2fr] gap-10 lg:gap-20 items-start">
 
       <div class="scroll-reveal">
-        <span class="font-mono text-[11px] text-ink-3 font-bold tracking-wider mb-4 block">
-          Proyectos a mayor escala
-        </span>
-        <h2 class="text-[clamp(28px,4vw,44px)] font-bold tracking-tight text-foreground leading-[0.95] mb-5">
-          ¿Tu negocio ya <span class="text-accent-val">superó</span><br />
-          lo básico?
+        <h2 class="text-[clamp(28px,4vw,42px)] font-bold tracking-tight text-foreground leading-[1.05] mb-5">
+          ¿Tu negocio ya superó lo básico?
         </h2>
         <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-md">
           Cuando el reto ya no es un sistema de venta, sino conectar varias
@@ -29,42 +23,19 @@ const capacidades = [
       </div>
 
       <div class="scroll-reveal">
-        <div class="enterprise-perspective flex flex-wrap gap-2 mb-8">
+        <ul class="divide-y divide-border border-y border-border mb-8">
           {capacidades.map(cap => (
-            <Badge variant="secondary" className="enterprise-chip text-[11px] px-3 py-1 font-medium tracking-wide border border-[var(--color-border-val)]">
-              {cap}
-            </Badge>
+            <li class="py-3.5 text-foreground">{cap}</li>
           ))}
-        </div>
+        </ul>
         <a
           href="#contacto"
-          class="group/btn inline-flex items-center gap-3 border border-border text-foreground font-medium text-sm px-7 py-3.5 rounded-full transition-[background-color,box-shadow,transform] duration-150 ease-out hover:bg-[var(--color-surface-val)] active:scale-[0.96]"
+          class="inline-flex items-center border border-border text-foreground font-medium text-sm px-6 py-3 rounded-md transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-surface-hover-val)] active:scale-[0.97]"
         >
           Hablemos de tu proyecto
-          <svg class="w-4 h-4 transition-transform duration-200 group-hover/btn:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
         </a>
       </div>
 
     </div>
   </div>
 </section>
-
-<script>
-  // Supporting moment: capability badges converge out of depth into one
-  // aligned row — several platforms, one project.
-  import { animate, onScroll, stagger, utils } from 'animejs';
-
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    utils.set('.enterprise-chip', { opacity: 0, translateY: 16, translateZ: -100, rotateX: 12 });
-    animate('.enterprise-chip', {
-      opacity: [0, 1],
-      translateY: [16, 0],
-      translateZ: [-100, 0],
-      rotateX: [12, 0],
-      duration: 650,
-      delay: stagger(60),
-      ease: 'outExpo',
-      autoplay: onScroll({ target: '.enterprise-perspective', enter: 'bottom-=10% top' }),
-    });
-  }
-</script>

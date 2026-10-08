@@ -25,7 +25,7 @@ function ContactItem({ icon, label, value, href }: {
       transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
     >
       <motion.div
-        className="w-12 h-12 rounded-xl border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
+        className="w-12 h-12 rounded-md border border-border flex items-center justify-center transition-colors duration-200 group-hover:[border-color:var(--color-accent-val)]"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
@@ -35,7 +35,7 @@ function ContactItem({ icon, label, value, href }: {
         </span>
       </motion.div>
       <div>
-        <p className="text-[11px] text-ink-3 uppercase tracking-wider font-medium">{label}</p>
+        <p className="text-sm text-ink-3">{label}</p>
         <p className="text-foreground text-lg font-medium">{value}</p>
       </div>
     </Tag>
@@ -47,19 +47,18 @@ export default function ContactForm() {
   const anim = fadeUp(reduce);
 
   return (
-    <section id="contacto" className="py-32 md:py-44 px-6 relative overflow-hidden">
+    <section id="contacto" className="py-24 md:py-36 px-6 relative overflow-hidden">
       <div className="max-w-7xl mx-auto relative">
         <motion.div
           {...anim}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-2xl mb-20"
         >
-          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[0.92] mb-5">
-            ¿Listo para dejar de perder tiempo<br />
-            <span className="text-[var(--color-accent-val)]">en tareas repetitivas</span>?
+          <h2 className="text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-[1] mb-5">
+            Cuéntame en qué se te va el tiempo
           </h2>
           <p className="text-base md:text-lg text-ink-2 leading-relaxed">
-            Cuéntame en qué se te va el tiempo en tu negocio — inventario, ventas, atención a clientes. Te doy una asesoría gratis de 30 minutos, sin compromiso.
+            Inventario, ventas, atención a clientes: dime dónde pierdes horas y lo vemos. Te doy una asesoría gratis de 30 minutos, sin compromiso.
           </p>
         </motion.div>
 
@@ -95,9 +94,8 @@ export default function ContactForm() {
           <motion.div
             {...anim}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="material-panel border border-border p-8 md:p-12 relative overflow-hidden rounded-xl"
+            className="material-panel border border-border p-8 md:p-12 relative overflow-hidden rounded-md"
           >
-            <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-[var(--color-accent-val)]/20 to-transparent" />
             <h3 className="text-foreground font-semibold text-lg mb-3">Cuéntame sobre tu negocio</h3>
             <p className="text-ink-2 leading-relaxed text-sm mb-8">
               Antes de agendar una videollamada, llena este formulario de diagnóstico para que llegue con contexto de tu negocio.
@@ -109,7 +107,7 @@ export default function ContactForm() {
               rel="noopener noreferrer"
               className={buttonVariants({
                 variant: 'default',
-                className: "inline-flex items-center justify-center gap-3 w-full h-12 rounded-full text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_25px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow,transform] duration-150 active:scale-[0.97]"
+                className: "inline-flex items-center justify-center gap-3 w-full h-12 rounded-md text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] transition-[background-color,transform] duration-150 active:scale-[0.97]"
               })}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">

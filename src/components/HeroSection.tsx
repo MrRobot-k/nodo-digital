@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useSpring, useReducedMotion } from 'motion/react';
-import { Menu, X, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import { Menu, X } from 'lucide-react';
 import { buttonVariants } from '@/components/ui/button';
 
 const NAV_LINKS = [
@@ -13,49 +13,14 @@ const NAV_LINKS = [
 const HLS_SRC =
   'https://stream.mux.com/tLkHO1qZoaaQOUeVWo8hEBeGQfySP02EPS02BmnNFyXys.m3u8';
 
-function MagneticButton({ children, href }: { children: React.ReactNode; href: string }) {
-  const ref = useRef<HTMLAnchorElement>(null);
-  const reduce = useReducedMotion();
-  // Critically damped by default (damping 1.0, response ~0.4) so the
-  // button settles onto the pointer without overshoot — this is a
-  // reposition, not a flick, so no bounce.
-  const x = useSpring(0, { stiffness: 260, damping: 26, mass: 0.6 });
-  const y = useSpring(0, { stiffness: 260, damping: 26, mass: 0.6 });
-
-  useEffect(() => {
-    if (reduce || !ref.current) return;
-    const el = ref.current;
-    const handleMove = (e: PointerEvent) => {
-      const rect = el.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      const dx = (e.clientX - cx) / rect.width;
-      const dy = (e.clientY - cy) / rect.height;
-      x.set(dx * 12);
-      y.set(dy * 12);
-    };
-    const handleLeave = () => { x.set(0); y.set(0); };
-
-    el.addEventListener('pointermove', handleMove);
-    el.addEventListener('pointerleave', handleLeave);
-    return () => {
-      el.removeEventListener('pointermove', handleMove);
-      el.removeEventListener('pointerleave', handleLeave);
-    };
-  }, [reduce]);
-
+function PrimaryLink({ children, href }: { children: React.ReactNode; href: string }) {
   return (
-    <motion.a
-      ref={ref}
+    <a
       href={href}
-      style={{ x, y }}
-      className="group inline-flex items-center gap-3 bg-primary text-primary-foreground font-semibold text-sm px-8 py-3.5 rounded-full transition-[background-color,box-shadow] duration-200 ease-out will-change-transform hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_30px_var(--color-accent-subtle-val)]"
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.96 }}
-      transition={{ type: 'spring', bounce: 0, duration: 0.35 }}
+      className="inline-flex items-center bg-primary text-primary-foreground font-semibold text-sm px-7 py-3.5 rounded-md transition-[background-color,transform] duration-150 ease-out hover:bg-[var(--color-accent-h-val)] active:scale-[0.97]"
     >
       {children}
-    </motion.a>
+    </a>
   );
 }
 
@@ -121,27 +86,6 @@ export default function HeroSection() {
     animate: { opacity: 1, y: 0 },
   };
 
-  // Ambient depth: the hero's glow drifts in 3D with the cursor, the same
-  // "responds to you" language the service cards use, applied quietly here.
-  const glowX = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
-  const glowY = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
-  const glowRotateX = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
-  const glowRotateY = useSpring(0, { stiffness: 40, damping: 20, mass: 1 });
-
-  useEffect(() => {
-    if (reduce || matchMedia('(pointer: coarse)').matches) return;
-    const handleMove = (e: PointerEvent) => {
-      const nx = e.clientX / window.innerWidth - 0.5;
-      const ny = e.clientY / window.innerHeight - 0.5;
-      glowX.set(nx * 40);
-      glowY.set(ny * 24);
-      glowRotateY.set(nx * 6);
-      glowRotateX.set(-ny * 6);
-    };
-    window.addEventListener('pointermove', handleMove);
-    return () => window.removeEventListener('pointermove', handleMove);
-  }, [reduce]);
-
   return (
     <div className="relative min-h-[100dvh] bg-background overflow-hidden">
       {/* ── Fixed Video Background ── */}
@@ -152,42 +96,22 @@ export default function HeroSection() {
           muted
           loop
           playsInline
-          className="w-full h-[120%] object-cover opacity-30"
+          className="w-full h-[120%] object-cover opacity-70 saturate-150 contrast-110"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-background via-background/80 to-transparent" />
-        <div className="absolute inset-0 bg-linear-to-t from-background via-background/30 to-transparent" />
-
-        {/* Ambient glow, tilting in 3D toward the cursor */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none w-[800px] h-[400px] [perspective:1000px]">
-          <motion.div
-            className="w-full h-full"
-            style={{ x: glowX, y: glowY, rotateX: glowRotateX, rotateY: glowRotateY }}
-          >
-            <svg viewBox="0 0 800 400" className="w-full h-auto" preserveAspectRatio="xMidYMid meet">
-              <defs>
-                <filter id="h-glow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur stdDeviation="40" />
-                </filter>
-              </defs>
-              <ellipse cx="400" cy="200" rx="350" ry="120" fill="var(--color-accent-val)" opacity="0.06" filter="url(#h-glow)" />
-            </svg>
-          </motion.div>
-        </div>
+        <div className="absolute inset-0 bg-linear-to-r from-background via-background/55 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-background via-background/20 to-transparent" />
       </div>
 
       {/* ── Navigation ── */}
       <header className={`material-nav fixed top-0 left-0 right-0 z-50${scrolled ? ' is-scrolled' : ''}`}>
         <nav className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <motion.a
+          <a
             href="/"
             className="flex items-center gap-2.5 text-foreground text-lg font-bold tracking-[0.15em]"
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
           >
             <img src="/logo-icon.png" alt="" className="h-7 w-7" width={28} height={28} />
-            NODO DIGITAL
-          </motion.a>
+            Nodo Digital
+          </a>
 
           <div className="hidden lg:flex items-center gap-6">
             {NAV_LINKS.map((link) => (
@@ -199,18 +123,15 @@ export default function HeroSection() {
                 {link.label}
               </a>
             ))}
-            <motion.a
+            <a
               href="#contacto"
               className={buttonVariants({
                 variant: 'default',
-                className: "rounded-full px-5 h-9 text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] hover:shadow-[0_0_20px_var(--color-accent-subtle-val)] transition-[background-color,box-shadow] duration-200"
+                className: "rounded-md px-5 h-9 text-sm font-medium bg-primary text-primary-foreground hover:bg-[var(--color-accent-h-val)] transition-colors duration-200"
               })}
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
             >
               Iniciar proyecto
-            </motion.a>
+            </a>
           </div>
 
           <div className="flex lg:hidden">
@@ -268,7 +189,7 @@ export default function HeroSection() {
           <motion.a
             href="#contacto"
             onClick={() => setMenuOpen(false)}
-            className="text-primary-foreground bg-primary px-8 py-3 font-medium text-sm rounded-full inline-flex items-center justify-center"
+            className="text-primary-foreground bg-primary px-8 py-3 font-medium text-sm rounded-md inline-flex items-center justify-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             whileTap={{ scale: 0.96 }}
@@ -288,7 +209,7 @@ export default function HeroSection() {
           animate={reduce ? {} : { clipPath: 'inset(0 0 0 0)' }}
           transition={{ duration: 1, delay: 0.15, ease: [0.23, 1, 0.32, 1] }}
         >
-          <h1 className="text-[clamp(40px,9vw,88px)] font-bold tracking-tight text-foreground leading-[0.88] max-w-5xl mb-6">
+          <h1 className="text-[clamp(40px,9vw,88px)] font-bold tracking-tight text-foreground leading-[0.95] max-w-5xl mb-6">
             Deja de perder tiempo
             <br />
             <span className="text-[var(--color-accent-val)]">en lo que el software ya puede hacer por ti</span>
@@ -310,16 +231,12 @@ export default function HeroSection() {
           transition={{ duration: 0.6, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col sm:flex-row items-start gap-4"
         >
-          <MagneticButton href="#contacto">
-            Iniciar proyecto
-            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" strokeWidth={2.5} />
-          </MagneticButton>
+          <PrimaryLink href="#contacto">Iniciar proyecto</PrimaryLink>
           <a
             href="#servicios"
-            className="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground active:scale-95 transition-[color,transform] duration-150 py-3.5 px-2 group/secondary"
+            className="inline-flex items-center gap-2 text-sm text-ink-2 hover:text-foreground active:scale-95 transition-[color,transform] duration-150 py-3.5 px-2"
           >
             Ver servicios
-            <ArrowRight className="w-3.5 h-3.5 transition-transform duration-200 group-hover/secondary:translate-x-0.5" />
           </a>
         </motion.div>
 

@@ -6,9 +6,9 @@ const metricas = [
     texto: "Aunque tú no estés, el sistema responde clientes y organiza datos.",
   },
   {
-    valor: "2-4",
-    label: "Semanas a producción",
-    texto: "De la primera plática a tenerlo funcionando en tu negocio.",
+    valor: "2 a 4 semanas",
+    label: "De la plática a producción",
+    texto: "Desde la primera conversación hasta tenerlo funcionando en tu negocio.",
   },
   {
     valor: "$0",
@@ -16,56 +16,34 @@ const metricas = [
     texto: "Platicamos primero. Solo avanzamos si ves valor real.",
   },
   {
-    valor: "∞",
-    label: "Acompañamiento",
+    valor: "Soporte",
+    label: "Después de la entrega",
     texto: "Sigo dando soporte cuando lo necesites, no desaparezco después de cobrar.",
   },
 ];
 ---
 
-<section id="impacto" class="py-32 md:py-44 px-6 relative">
-  <div class="max-w-7xl mx-auto">
-    <!-- Header -->
-    <div class="mb-20 md:mb-28 scroll-reveal">
-      <h2 class="text-[clamp(36px,6vw,64px)] font-bold tracking-tight text-foreground leading-[0.92] max-w-4xl">
-        Resultados que se <span class="text-accent-val">sienten</span><br />
-        en tu operación diaria
+<section id="impacto" class="py-20 md:py-28 px-6 relative">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16">
+    <div class="lg:col-span-4 scroll-reveal">
+      <h2 class="text-[clamp(30px,4.5vw,48px)] font-bold tracking-tight text-foreground leading-[1.02]">
+        Resultados que se sienten en tu operación diaria
       </h2>
-      <p class="text-base md:text-lg text-ink-2 leading-relaxed max-w-xl mt-6">
+      <p class="text-base text-ink-2 leading-relaxed mt-5 max-w-sm">
         No te vendo tecnología porque sí. Te la doy si de verdad te va a quitar trabajo de encima.
       </p>
     </div>
 
-    <!-- Metrics grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 impact-perspective">
+    <dl class="lg:col-span-7 lg:col-start-6 divide-y divide-border border-y border-border scroll-reveal">
       {metricas.map((m) => (
-        <div class="impact-flip relative rounded-xl border border-border p-6 md:p-8 bg-[var(--color-surface-val)]">
-          <span class="block text-[clamp(32px,5vw,52px)] font-bold tracking-tight text-foreground leading-none mb-3">
-            {m.valor}
-          </span>
-          <span class="block text-sm font-medium text-foreground mb-2">{m.label}</span>
-          <p class="text-sm text-ink-2 leading-relaxed">{m.texto}</p>
+        <div class="grid sm:grid-cols-[minmax(0,12rem)_1fr] gap-x-8 gap-y-2 py-6">
+          <dt class="text-2xl md:text-3xl font-semibold tracking-tight text-foreground leading-tight">{m.valor}</dt>
+          <dd>
+            <span class="block text-sm font-medium text-foreground mb-1">{m.label}</span>
+            <span class="block text-sm text-ink-2 leading-relaxed">{m.texto}</span>
+          </dd>
         </div>
       ))}
-    </div>
+    </dl>
   </div>
 </section>
-
-<script>
-  // Supporting moment: each metric flips into view like a result becoming
-  // visible, extending the tilt language from Services without repeating it.
-  import { animate, onScroll, stagger, utils } from 'animejs';
-
-  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    utils.set('.impact-flip', { opacity: 0, rotateY: -90, translateZ: -60 });
-    animate('.impact-flip', {
-      opacity: [0, 1],
-      rotateY: [-90, 0],
-      translateZ: [-60, 0],
-      duration: 700,
-      delay: stagger(70),
-      ease: 'outExpo',
-      autoplay: onScroll({ target: '.impact-perspective', enter: 'bottom-=10% top' }),
-    });
-  }
-</script>
